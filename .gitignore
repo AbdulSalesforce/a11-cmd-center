@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build outputs
+client/dist/
+client/build/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+server/data/*.db
+
+# Logs
+*.log
+npm-debug.log*
+server/logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Google credentials (local only)
+server/data/google-*.json
+.a11y-audit/
+
+# Temporary files
+*.tmp
+temp/
+tmp/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Heroku
+.heroku/

@@ -1,0 +1,135 @@
+/* ── WCAG search combobox ── */
+.wcag-combobox {
+  position: relative;
+}
+
+.wcag-listbox {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-focus);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  max-height: 240px;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.wcag-option {
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  font-size: var(--text-sm);
+}
+
+.wcag-option:hover,
+.wcag-option[aria-selected="true"] {
+  background-color: var(--color-accent-subtle);
+  color: var(--color-accent);
+}
+
+.wcag-option mark {
+  background: none;
+  font-weight: var(--font-semibold);
+  color: var(--color-accent);
+}
+
+/* ── Level pill next to criterion ── */
+.wcag-level-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  border-radius: var(--radius-full);
+  margin-left: var(--space-2);
+  background-color: var(--color-accent-subtle);
+  color: var(--color-accent);
+}
+
+/* ── Platform checkboxes ── */
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--font-normal);
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+/* ── Severity toggle ── */
+.severity-group {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  width: fit-content;
+}
+
+.severity-btn {
+  padding: var(--space-2) var(--space-5);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  background: none;
+  border: none;
+  border-right: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+  color: var(--color-text-secondary);
+}
+
+.severity-btn:last-child {
+  border-right: none;
+}
+
+.severity-btn:hover {
+  background-color: var(--color-bg);
+}
+
+.severity-btn:focus-visible {
+  outline: none;
+  box-shadow: inset var(--focus-ring);
+}
+
+.severity-btn[aria-pressed="true"].severity-p1 {
+  background-color: var(--color-p1-bg);
+  color: var(--color-p1-text);
+}
+
+.severity-btn[aria-pressed="true"].severity-p2 {
+  background-color: var(--color-p2-bg);
+  color: var(--color-p2-text);
+}
+
+.severity-btn[aria-pressed="true"].severity-p3 {
+  background-color: var(--color-p3-bg);
+  color: var(--color-p3-text);
+}
+
+/* ── Duplicate warning ── */
+.duplicate-warning {
+  margin-top: var(--space-2);
+}
+
+/* ── Form sections within failure form ── */
+.failure-form-section {
+  margin-bottom: var(--space-8);
+}
+
+.failure-form-section h3 {
+  font-size: var(--text-base);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
