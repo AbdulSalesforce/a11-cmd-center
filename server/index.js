@@ -58,7 +58,8 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(clientBuildPath));
 
   // Serve index.html for all non-API routes (React Router)
-  app.get('*', (req, res) => {
+  // Express 5 requires explicit regex pattern instead of '*'
+  app.get(/^(?!\/api).*$/, (req, res) => {
     res.sendFile(path.join(clientBuildPath, 'index.html'));
   });
 }
