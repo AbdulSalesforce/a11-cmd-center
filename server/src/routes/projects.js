@@ -111,24 +111,24 @@ router.post('/', async (req, res) => {
 
   const id = randomUUID();
 
-  const insertProject = db.prepare(`
-    INSERT INTO projects (id, product_name, auditor_name, pm_name, pm_email, login_path, slack_channel,
-      release_build_name, release_build_id, audit_theme_id, epic_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `);
-
-  const insertAuditor = db.prepare(
-    'INSERT INTO auditors (id, project_id, name, email) VALUES (?, ?, ?, ?)'
-  );
-  const insertTag = db.prepare(
-    'INSERT INTO product_tags (id, project_id, tag_name, tag_id) VALUES (?, ?, ?, ?)'
-  );
-  const insertScope = db.prepare(
-    'INSERT INTO scope_items (id, project_id, page_name, url) VALUES (?, ?, ?, ?)'
-  );
-
   try {
-    await db.transaction(async () => {
+    await db.transaction(async (txDb) => {
+      const insertProject = txDb.prepare(`
+        INSERT INTO projects (id, product_name, auditor_name, pm_name, pm_email, login_path, slack_channel,
+          release_build_name, release_build_id, audit_theme_id, epic_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+
+      const insertAuditor = txDb.prepare(
+        'INSERT INTO auditors (id, project_id, name, email) VALUES (?, ?, ?, ?)'
+      );
+      const insertTag = txDb.prepare(
+        'INSERT INTO product_tags (id, project_id, tag_name, tag_id) VALUES (?, ?, ?, ?)'
+      );
+      const insertScope = txDb.prepare(
+        'INSERT INTO scope_items (id, project_id, page_name, url) VALUES (?, ?, ?, ?)'
+      );
+
       await insertProject.run(id, product_name, auditor_name || null, pm_name || null, pm_email || null, login_path || null, slack_channel || null,
         release_build_name || null, release_build_id || null, audit_theme_id || null, epic_id || null);
 
