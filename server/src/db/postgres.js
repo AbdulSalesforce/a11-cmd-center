@@ -93,6 +93,25 @@ async function initSchema() {
       CREATE INDEX IF NOT EXISTS idx_failures_page ON failures(page_name);
       CREATE INDEX IF NOT EXISTS idx_checklist_scope ON checklist_items(scope_item_id);
     `);
+
+    // Run migrations for existing tables
+    try {
+      await client.query(`
+        DO $$
+        BEGIN
+          IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'projects' AND column_name = 'auditor_name'
+          ) THEN
+            ALTER TABLE projects ADD COLUMN auditor_name TEXT;
+          END IF;
+        END $$;
+      `);
+      console.log('✓ PostgreSQL migrations completed');
+    } catch (migrationErr) {
+      console.error('Migration warning:', migrationErr.message);
+    }
+
     console.log('✓ PostgreSQL schema initialized');
   } finally {
     client.release();
