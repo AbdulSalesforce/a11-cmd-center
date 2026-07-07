@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const { randomUUID } = require('crypto');
-const db = require('../db/schema');
+const db = require('../db');
 
 const router = express.Router({ mergeParams: true });
 

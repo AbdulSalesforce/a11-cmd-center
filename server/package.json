@@ -17,6 +17,7 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
     "googleapis": "^172.0.0",
-    "open": "^11.0.0"
+    "open": "^11.0.0",
+    "pg": "^8.22.0"
   }
 }

@@ -1,6 +1,6 @@
 const express = require('express');
 const { randomUUID } = require('crypto');
-const db = require('../db/schema');
+const db = require('../db');
 
 const router = express.Router({ mergeParams: true });
 
