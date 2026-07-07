@@ -122,7 +122,11 @@ async function initSchema() {
 const db = {
   prepare: (sql) => {
     // Convert datetime('now') to NOW() for PostgreSQL
-    const pgSql = sql.replace(/datetime\('now'\)/g, 'NOW()');
+    // Convert ? placeholders to $1, $2, $3, etc for PostgreSQL
+    let paramCount = 0;
+    const pgSql = sql
+      .replace(/datetime\('now'\)/g, 'NOW()')
+      .replace(/\?/g, () => `$${++paramCount}`);
 
     return {
       get: (...params) => {
@@ -144,7 +148,11 @@ const db = {
 
         // Create transaction-scoped db that uses the same client
         const txPrepare = (sql) => {
-          const pgSql = sql.replace(/datetime\('now'\)/g, 'NOW()');
+          // Convert ? placeholders to $1, $2, $3, etc
+          let paramCount = 0;
+          const pgSql = sql
+            .replace(/datetime\('now'\)/g, 'NOW()')
+            .replace(/\?/g, () => `$${++paramCount}`);
           return {
             run: (...params) => client.query(pgSql, params),
           };
