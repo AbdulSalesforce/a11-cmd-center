@@ -128,30 +128,30 @@ router.post('/', async (req, res) => {
   );
 
   try {
-    await db.transaction(() => {
-      insertProject.run(id, product_name, auditor_name || null, pm_name || null, pm_email || null, login_path || null, slack_channel || null,
+    await db.transaction(async () => {
+      await insertProject.run(id, product_name, auditor_name || null, pm_name || null, pm_email || null, login_path || null, slack_channel || null,
         release_build_name || null, release_build_id || null, audit_theme_id || null, epic_id || null);
 
-      auditors.forEach(a => {
+      for (const a of auditors) {
         if (!a.name || typeof a.name !== 'string' || a.name.length > 200) {
           throw new Error('Invalid auditor name');
         }
-        insertAuditor.run(randomUUID(), id, a.name, a.email || null);
-      });
+        await insertAuditor.run(randomUUID(), id, a.name, a.email || null);
+      }
 
-      product_tags.forEach(t => {
+      for (const t of product_tags) {
         if (!t.tag_name || typeof t.tag_name !== 'string' || t.tag_name.length > 200) {
           throw new Error('Invalid product tag name');
         }
-        insertTag.run(randomUUID(), id, t.tag_name, t.tag_id || null);
-      });
+        await insertTag.run(randomUUID(), id, t.tag_name, t.tag_id || null);
+      }
 
-      scope_items.forEach(s => {
+      for (const s of scope_items) {
         if (!s.page_name || typeof s.page_name !== 'string' || s.page_name.length > 200) {
           throw new Error('Invalid scope item page name');
         }
-        insertScope.run(randomUUID(), id, s.page_name, s.url || null);
-      });
+        await insertScope.run(randomUUID(), id, s.page_name, s.url || null);
+      }
     })();
 
     const project = await db.prepare('SELECT * FROM projects WHERE id = ?').get(id);

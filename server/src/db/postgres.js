@@ -151,7 +151,8 @@ const db = {
         };
 
         // Call the transaction function with prepare method
-        fn({ prepare: txPrepare });
+        // The function might be async, so await it
+        await fn({ prepare: txPrepare });
 
         await client.query('COMMIT');
       } catch (err) {
