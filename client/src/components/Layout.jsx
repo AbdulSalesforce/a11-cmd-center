@@ -8,17 +8,15 @@ export default function Layout() {
       </a>
 
       {/* SLDS Global Header */}
-      <header className="slds-global-header_container" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}>
-        <div className="slds-global-header slds-grid slds-grid_align-spread">
-          <div className="slds-global-header__item">
-            <div className="slds-global-header__logo">
-              <span className="slds-text-heading_large" style={{ color: '#fff', fontWeight: '600' }}>
-                A11y Command Center
-              </span>
-            </div>
+      <header className="slds-global-header_container" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, backgroundColor: '#032d60', height: '48px' }}>
+        <div className="slds-grid slds-grid_align-spread" style={{ height: '100%', padding: '0 1rem', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', paddingLeft: '0.5rem' }}>
+            <span style={{ color: '#0176d3', fontSize: '1.5rem', fontWeight: '700' }}>
+              A11y Command Center
+            </span>
           </div>
-          <div className="slds-global-header__item" style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: '#fff' }}>
-            <span className="slds-text-body_small">WCAG 2.2 Level A & AA</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <span style={{ color: '#ffffff', fontSize: '0.875rem' }}>WCAG 2.2 Level A & AA</span>
           </div>
         </div>
       </header>
