@@ -7,10 +7,10 @@
     "npm": ">=9.x"
   },
   "scripts": {
-    "postinstall": "cd server && npm install && cd ../client && npm install",
+    "postinstall": "cd server && npm install && cd ../client && npm install --include=dev",
     "build": "cd client && npm run build",
     "start": "node server/index.js",
-    "heroku-postbuild": "cd client && npm run build"
+    "heroku-postbuild": "npm run postinstall && cd client && npm run build"
   },
   "keywords": ["accessibility", "audit", "wcag", "salesforce"],
   "author": "Jonathan Bell",
