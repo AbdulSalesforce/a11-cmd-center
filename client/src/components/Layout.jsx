@@ -35,7 +35,17 @@ export default function Layout() {
                     isActive ? "slds-nav-vertical__action slds-is-active" : "slds-nav-vertical__action"
                   }
                 >
-                  Projects
+                  Dashboard
+                </NavLink>
+              </li>
+              <li className="slds-nav-vertical__item">
+                <NavLink
+                  to="/projects"
+                  className={({ isActive }) =>
+                    isActive ? "slds-nav-vertical__action slds-is-active" : "slds-nav-vertical__action"
+                  }
+                >
+                  All Projects
                 </NavLink>
               </li>
               <li className="slds-nav-vertical__item">

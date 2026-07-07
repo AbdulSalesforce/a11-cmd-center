@@ -16,6 +16,7 @@ export default function NewProject() {
 
   const [fields, setFields] = useState({
     product_name: '',
+    auditor_name: '',
     pm_name: '',
     pm_email: '',
     login_path: '',
@@ -95,6 +96,7 @@ export default function NewProject() {
 
     const body = {
       product_name: fields.product_name.trim(),
+      auditor_name: fields.auditor_name.trim() || null,
       pm_name: fields.pm_name.trim() || null,
       pm_email: fields.pm_email.trim() || null,
       login_path: fields.login_path.trim() || null,
@@ -210,6 +212,26 @@ export default function NewProject() {
                 onChange={e => setField('epic_id', e.target.value)}
               />
               <span className="field-hint">Optional.</span>
+            </div>
+          </div>
+        </section>
+
+        <hr className="divider" />
+
+        {/* ── Auditor ── */}
+        <section aria-labelledby="section-auditor">
+          <h3 id="section-auditor" style={{ marginBottom: 'var(--space-5)' }}>Primary auditor</h3>
+          <div className="form-grid">
+            <div className="field field-full">
+              <label htmlFor="auditor_name">Auditor name</label>
+              <input
+                id="auditor_name"
+                type="text"
+                value={fields.auditor_name}
+                onChange={e => setField('auditor_name', e.target.value)}
+                placeholder="Your name"
+              />
+              <span className="field-hint">The lead auditor for this project. You can add additional auditors below.</span>
             </div>
           </div>
         </section>

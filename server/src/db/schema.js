@@ -23,6 +23,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS projects (
     id TEXT PRIMARY KEY,
     product_name TEXT NOT NULL,
+    auditor_name TEXT,
     pm_name TEXT,
     pm_email TEXT,
     login_path TEXT,

@@ -78,7 +78,7 @@ router.get('/:id', (req, res) => {
 
 router.post('/', (req, res) => {
   const {
-    product_name, pm_name, pm_email, login_path, slack_channel,
+    product_name, auditor_name, pm_name, pm_email, login_path, slack_channel,
     release_build_name, release_build_id, audit_theme_id, epic_id,
     auditors = [], product_tags = [], scope_items = []
   } = req.body;
@@ -112,9 +112,9 @@ router.post('/', (req, res) => {
   const id = randomUUID();
 
   const insertProject = db.prepare(`
-    INSERT INTO projects (id, product_name, pm_name, pm_email, login_path, slack_channel,
+    INSERT INTO projects (id, product_name, auditor_name, pm_name, pm_email, login_path, slack_channel,
       release_build_name, release_build_id, audit_theme_id, epic_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   const insertAuditor = db.prepare(
@@ -129,7 +129,7 @@ router.post('/', (req, res) => {
 
   try {
     db.transaction(() => {
-      insertProject.run(id, product_name, pm_name || null, pm_email || null, login_path || null, slack_channel || null,
+      insertProject.run(id, product_name, auditor_name || null, pm_name || null, pm_email || null, login_path || null, slack_channel || null,
         release_build_name || null, release_build_id || null, audit_theme_id || null, epic_id || null);
 
       auditors.forEach(a => {
