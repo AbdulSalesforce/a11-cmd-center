@@ -8,12 +8,12 @@ export default function Layout() {
       </a>
 
       {/* SLDS Global Header */}
-      <header className="slds-global-header_container">
+      <header className="slds-global-header_container" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}>
         <div className="slds-global-header slds-grid slds-grid_align-spread">
           <div className="slds-global-header__item">
             <div className="slds-global-header__logo">
               <span className="slds-text-heading_large" style={{ color: '#fff', fontWeight: '600' }}>
-                A11y Audit Tool
+                A11y Command Center
               </span>
             </div>
           </div>
@@ -23,7 +23,7 @@ export default function Layout() {
         </div>
       </header>
 
-      <div className="slds-grid">
+      <div className="slds-grid" style={{ marginTop: '48px' }}>
         {/* SLDS Navigation */}
         <nav className="slds-nav-vertical slds-p-around_medium" aria-label="Main navigation" style={{ width: '250px', background: '#ffffff', borderRight: '1px solid #dddbda', minHeight: 'calc(100vh - 48px)' }}>
           <div className="slds-nav-vertical__section">
