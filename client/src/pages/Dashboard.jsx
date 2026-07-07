@@ -107,7 +107,19 @@ export default function Dashboard() {
           </div>
         )}
 
-        {!loading && !error && (
+        {!loading && !error && totalProjects === 0 && (
+          <div className="slds-illustration slds-illustration_large">
+            <div className="slds-text-longform">
+              <h3 className="slds-text-heading_medium">No projects yet</h3>
+              <p className="slds-text-body_regular">Get started by creating your first accessibility audit project.</p>
+              <Link to="/projects/new" className="slds-button slds-button_brand slds-m-top_medium">
+                Create Your First Project
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {!loading && !error && totalProjects > 0 && (
           <>
             {/* Stats Cards */}
             <div className="slds-grid slds-wrap slds-gutters slds-m-bottom_large">
@@ -285,18 +297,6 @@ export default function Dashboard() {
                       </div>
                     );
                   })}
-                </div>
-              </div>
-            )}
-
-            {totalProjects === 0 && (
-              <div className="slds-illustration slds-illustration_large">
-                <div className="slds-text-longform">
-                  <h3 className="slds-text-heading_medium">No projects yet</h3>
-                  <p className="slds-text-body_regular">Get started by creating your first accessibility audit project.</p>
-                  <Link to="/projects/new" className="slds-button slds-button_brand slds-m-top_medium">
-                    Create Your First Project
-                  </Link>
                 </div>
               </div>
             )}
