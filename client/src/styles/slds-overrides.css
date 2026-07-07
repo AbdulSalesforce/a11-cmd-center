@@ -1,0 +1,95 @@
+/* SLDS Theming - Apply Salesforce colors to existing components */
+
+/* Override CSS variables to use SLDS colors */
+:root {
+  /* Salesforce brand colors */
+  --color-accent: #0176d3;
+  --color-accent-hover: #014486;
+  --color-bg: #f3f3f3;
+  --color-surface: #ffffff;
+  --color-border: #dddbda;
+  --color-border-focus: #0176d3;
+  --color-text: #181818;
+  --color-text-secondary: #514f4d;
+
+  /* SLDS focus ring */
+  --focus-ring: 0 0 3px #0176d3;
+
+  /* Use Salesforce Sans font */
+  --font-sans: 'Salesforce Sans', Arial, sans-serif;
+}
+
+/* Global header styling to match SLDS */
+.slds-global-header_container {
+  background-color: #032d60;
+  height: 48px;
+}
+
+.slds-global-header {
+  padding: 0 1rem;
+  height: 100%;
+}
+
+/* Buttons - make existing buttons look like SLDS */
+.btn-primary {
+  background-color: #0176d3;
+  border-color: #0176d3;
+}
+
+.btn-primary:hover {
+  background-color: #014486;
+  border-color: #014486;
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  border-color: #dddbda;
+  color: #0176d3;
+}
+
+.btn-secondary:hover {
+  background-color: #f3f3f3;
+}
+
+/* Cards - SLDS shadow */
+.card {
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.1);
+  border: 1px solid #dddbda;
+}
+
+/* Progress bars - SLDS blue */
+.progress-bar-fill,
+.checklist-progress-fill {
+  background-color: #0176d3;
+}
+
+/* Badges with SLDS colors */
+.badge-p1 {
+  background-color: #ea001e;
+  color: #ffffff;
+  border-color: #ea001e;
+}
+
+.badge-p2 {
+  background-color: #fe9339;
+  color: #ffffff;
+  border-color: #fe9339;
+}
+
+.badge-p3 {
+  background-color: #ffc257;
+  color: #181818;
+  border-color: #ffc257;
+}
+
+/* Navigation active state */
+.slds-nav-vertical__action.slds-is-active {
+  background-color: #ecebea;
+  border-left: 2px solid #0176d3;
+  font-weight: 700;
+}
+
+.slds-nav-vertical__action {
+  color: #181818;
+  text-decoration: none;
+}
