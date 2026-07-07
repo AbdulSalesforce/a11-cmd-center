@@ -55,7 +55,7 @@ export default function AuditorDetail() {
               <div className="slds-media__figure">
                 <button
                   className="slds-button slds-button_icon slds-button_icon-border"
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate('/audits')}
                   title="Back to Dashboard"
                 >
                   <svg className="slds-button__icon" aria-hidden="true">
@@ -68,7 +68,7 @@ export default function AuditorDetail() {
                 <nav aria-label="Breadcrumb">
                   <ol className="slds-breadcrumb slds-list_horizontal slds-wrap">
                     <li className="slds-breadcrumb__item">
-                      <Link to="/">Dashboard</Link>
+                      <Link to="/audits">Dashboard</Link>
                     </li>
                     <li className="slds-breadcrumb__item">
                       <span>{decodedName}</span>

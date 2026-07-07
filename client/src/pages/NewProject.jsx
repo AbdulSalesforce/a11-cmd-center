@@ -470,7 +470,7 @@ export default function NewProject() {
           <button type="submit" className="btn btn-primary" disabled={submitting} aria-disabled={submitting}>
             {submitting ? 'Creating project…' : 'Create project'}
           </button>
-          <button type="button" className="btn btn-secondary" onClick={() => navigate('/')}>
+          <button type="button" className="btn btn-secondary" onClick={() => navigate('/audits')}>
             Cancel
           </button>
         </div>
