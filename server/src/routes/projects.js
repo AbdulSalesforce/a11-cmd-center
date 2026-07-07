@@ -6,9 +6,9 @@ const router = express.Router();
 
 const TOTAL_WCAG_AA_CRITERIA = 50;
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const projects = db.prepare(`
+    const projects = await db.prepare(`
       SELECT p.*,
         (SELECT COUNT(*) FROM failures WHERE project_id = p.id) AS failure_count,
         (SELECT COUNT(*) FROM scope_items WHERE project_id = p.id) AS scope_total
@@ -17,20 +17,20 @@ router.get('/', (req, res) => {
     `).all();
 
     // Compute scope_complete by deriving status from checklists
-    const enriched = projects.map(proj => {
-      const scopeItems = db.prepare('SELECT id FROM scope_items WHERE project_id = ?').all(proj.id);
+    const enriched = await Promise.all(projects.map(async proj => {
+      const scopeItems = await db.prepare('SELECT id FROM scope_items WHERE project_id = ?').all(proj.id);
       let completeCount = 0;
 
-      scopeItems.forEach(item => {
-        const checklist = db.prepare('SELECT status FROM checklist_items WHERE scope_item_id = ?').all(item.id);
+      for (const item of scopeItems) {
+        const checklist = await db.prepare('SELECT status FROM checklist_items WHERE scope_item_id = ?').all(item.id);
         const reviewed = checklist.filter(c => c.status !== 'unchecked').length;
         if (reviewed === TOTAL_WCAG_AA_CRITERIA) {
           completeCount++;
         }
-      });
+      }
 
       return { ...proj, scope_complete: completeCount };
-    });
+    }));
 
     res.json(enriched);
   } catch (err) {
@@ -39,18 +39,18 @@ router.get('/', (req, res) => {
   }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
+    const project = await db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
     if (!project) return res.status(404).json({ error: 'Project not found' });
 
-    const auditors = db.prepare('SELECT * FROM auditors WHERE project_id = ?').all(req.params.id);
-    const product_tags = db.prepare('SELECT * FROM product_tags WHERE project_id = ?').all(req.params.id);
-    const scopeItems = db.prepare('SELECT * FROM scope_items WHERE project_id = ?').all(req.params.id);
+    const auditors = await db.prepare('SELECT * FROM auditors WHERE project_id = ?').all(req.params.id);
+    const product_tags = await db.prepare('SELECT * FROM product_tags WHERE project_id = ?').all(req.params.id);
+    const scopeItems = await db.prepare('SELECT * FROM scope_items WHERE project_id = ?').all(req.params.id);
 
     // Derive status and checklist stats for each scope item
-    const scope_items = scopeItems.map(item => {
-      const checklist = db.prepare('SELECT status FROM checklist_items WHERE scope_item_id = ?').all(item.id);
+    const scope_items = await Promise.all(scopeItems.map(async item => {
+      const checklist = await db.prepare('SELECT status FROM checklist_items WHERE scope_item_id = ?').all(item.id);
       const reviewed = checklist.filter(c => c.status !== 'unchecked').length;
       const failCount = checklist.filter(c => c.status === 'fail').length;
 
@@ -67,7 +67,7 @@ router.get('/:id', (req, res) => {
         checklist_reviewed: reviewed,
         checklist_fail: failCount,
       };
-    });
+    }));
 
     res.json({ ...project, auditors, product_tags, scope_items });
   } catch (err) {
@@ -162,11 +162,11 @@ router.post('/', (req, res) => {
   }
 });
 
-router.delete('/:id', (req, res) => {
-  const project = db.prepare('SELECT id FROM projects WHERE id = ?').get(req.params.id);
+router.delete('/:id', async (req, res) => {
+  const project = await db.prepare('SELECT id FROM projects WHERE id = ?').get(req.params.id);
   if (!project) return res.status(404).json({ error: 'Project not found' });
 
-  db.prepare('DELETE FROM projects WHERE id = ?').run(req.params.id);
+  await db.prepare('DELETE FROM projects WHERE id = ?').run(req.params.id);
   res.status(204).end();
 });
 
