@@ -12,5 +12,8 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    // Disable CSS minification to avoid SLDS parsing errors
+    minify: 'esbuild',
+    cssMinify: false,
   },
 })
