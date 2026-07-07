@@ -96,20 +96,20 @@ async function initSchema() {
 
     // Run migrations for existing tables
     try {
-      await client.query(`
-        DO $$
-        BEGIN
-          IF NOT EXISTS (
-            SELECT 1 FROM information_schema.columns
-            WHERE table_name = 'projects' AND column_name = 'auditor_name'
-          ) THEN
-            ALTER TABLE projects ADD COLUMN auditor_name TEXT;
-          END IF;
-        END $$;
+      // Check if column exists and add it if not
+      const columnCheck = await client.query(`
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name = 'projects' AND column_name = 'auditor_name'
       `);
-      console.log('✓ PostgreSQL migrations completed');
+
+      if (columnCheck.rows.length === 0) {
+        await client.query('ALTER TABLE projects ADD COLUMN auditor_name TEXT');
+        console.log('✓ Added auditor_name column to projects table');
+      }
     } catch (migrationErr) {
-      console.error('Migration warning:', migrationErr.message);
+      console.error('Migration error:', migrationErr.message);
+      // Don't fail startup if migration fails
     }
 
     console.log('✓ PostgreSQL schema initialized');
