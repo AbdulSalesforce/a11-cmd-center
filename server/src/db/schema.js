@@ -103,4 +103,46 @@ db.exec(`
   );
 `);
 
-module.exports = db;
+// Wrap the database to make it async-compatible
+const wrappedDb = {
+  prepare: (sql) => {
+    const stmt = db.prepare(sql);
+    return {
+      get: (...params) => Promise.resolve(stmt.get(...params)),
+      all: (...params) => Promise.resolve(stmt.all(...params)),
+      run: (...params) => Promise.resolve(stmt.run(...params)),
+    };
+  },
+  transaction: (fn) => {
+    // For SQLite, we need to handle async transaction functions
+    // by running them outside the transaction and collecting statements
+    return async () => {
+      // Create a proxy that collects operations
+      const operations = [];
+      const txDb = {
+        prepare: (sql) => {
+          const stmt = db.prepare(sql);
+          return {
+            run: (...params) => {
+              operations.push({ stmt, params });
+              return Promise.resolve();
+            },
+          };
+        },
+      };
+
+      // Call the async function to collect operations
+      await fn(txDb);
+
+      // Now execute all operations in a real transaction
+      const realTx = db.transaction(() => {
+        for (const { stmt, params } of operations) {
+          stmt.run(...params);
+        }
+      });
+      realTx();
+    };
+  },
+};
+
+module.exports = wrappedDb;
