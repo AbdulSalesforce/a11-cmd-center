@@ -7,13 +7,13 @@ const router = express.Router({ mergeParams: true });
 const TOTAL_WCAG_AA_CRITERIA = 50;
 
 // GET all scope items with derived status and checklist stats
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { projectId } = req.params;
-    const scopeItems = db.prepare('SELECT * FROM scope_items WHERE project_id = ?').all(projectId);
+    const scopeItems = await db.prepare('SELECT * FROM scope_items WHERE project_id = ?').all(projectId);
 
-    const itemsWithStats = scopeItems.map(item => {
-      const checklist = db.prepare('SELECT status FROM checklist_items WHERE scope_item_id = ?').all(item.id);
+    const itemsWithStats = await Promise.all(scopeItems.map(async item => {
+      const checklist = await db.prepare('SELECT status FROM checklist_items WHERE scope_item_id = ?').all(item.id);
       const reviewed = checklist.filter(c => c.status !== 'unchecked').length;
       const failCount = checklist.filter(c => c.status === 'fail').length;
 
@@ -34,7 +34,7 @@ router.get('/', (req, res) => {
         checklist_reviewed: reviewed,
         checklist_fail: failCount,
       };
-    });
+    }));
 
     res.json(itemsWithStats);
   } catch (err) {

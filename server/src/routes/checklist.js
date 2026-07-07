@@ -4,14 +4,14 @@ const db = require('../db');
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { scopeItemId } = req.params;
 
-    const scopeItem = db.prepare('SELECT * FROM scope_items WHERE id = ?').get(scopeItemId);
+    const scopeItem = await db.prepare('SELECT * FROM scope_items WHERE id = ?').get(scopeItemId);
     if (!scopeItem) return res.status(404).json({ error: 'Scope item not found' });
 
-    const items = db.prepare(
+    const items = await db.prepare(
       'SELECT * FROM checklist_items WHERE scope_item_id = ?'
     ).all(scopeItemId);
     res.json(items);
@@ -21,7 +21,7 @@ router.get('/', (req, res) => {
   }
 });
 
-router.put('/:scId', (req, res) => {
+router.put('/:scId', async (req, res) => {
   try {
     const { scopeItemId, scId } = req.params;
     const { status, na_note } = req.body;
@@ -40,10 +40,10 @@ router.put('/:scId', (req, res) => {
       return res.status(400).json({ error: 'na_note must be a string (max 1000 characters)' });
     }
 
-    const scopeItem = db.prepare('SELECT id FROM scope_items WHERE id = ?').get(scopeItemId);
+    const scopeItem = await db.prepare('SELECT id FROM scope_items WHERE id = ?').get(scopeItemId);
     if (!scopeItem) return res.status(404).json({ error: 'Scope item not found' });
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO checklist_items (id, scope_item_id, sc_id, status, na_note, updated_at)
       VALUES (?, ?, ?, ?, ?, datetime('now'))
       ON CONFLICT(scope_item_id, sc_id) DO UPDATE SET

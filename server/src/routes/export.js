@@ -10,11 +10,11 @@ const router = express.Router({ mergeParams: true });
 
 const SCRIPT_PATH = path.join(__dirname, '..', '..', 'scripts', 'generate_acr.py');
 
-router.get('/acr', (req, res) => {
+router.get('/acr', async (req, res) => {
   try {
     const { projectId } = req.params;
 
-    const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(projectId);
+    const project = await db.prepare('SELECT * FROM projects WHERE id = ?').get(projectId);
     if (!project) return res.status(404).json({ error: 'Project not found' });
 
     // Sanitize product_name for security (max 100 chars, alphanumeric + spaces/hyphens only)
@@ -24,25 +24,29 @@ router.get('/acr', (req, res) => {
       .trim() || 'Unnamed_Project';
 
   // Only allow export when all scope items are complete (derived from checklist)
-  const scopeItems = db.prepare('SELECT id FROM scope_items WHERE project_id = ?').all(projectId);
+  const scopeItems = await db.prepare('SELECT id FROM scope_items WHERE project_id = ?').all(projectId);
   if (scopeItems.length === 0) {
     return res.status(400).json({ error: 'No scope items defined for this project.' });
   }
 
   // Check if all scope items have complete checklists (all 50 WCAG A/AA criteria reviewed)
   const TOTAL_WCAG_AA_CRITERIA = 50;
-  const allComplete = scopeItems.every(item => {
-    const checklist = db.prepare('SELECT status FROM checklist_items WHERE scope_item_id = ?').all(item.id);
+  let allComplete = true;
+  for (const item of scopeItems) {
+    const checklist = await db.prepare('SELECT status FROM checklist_items WHERE scope_item_id = ?').all(item.id);
     const reviewed = checklist.filter(c => c.status !== 'unchecked').length;
-    return reviewed === TOTAL_WCAG_AA_CRITERIA;
-  });
+    if (reviewed !== TOTAL_WCAG_AA_CRITERIA) {
+      allComplete = false;
+      break;
+    }
+  }
 
   if (!allComplete) {
     return res.status(400).json({ error: 'All scope items must be marked complete before generating the ACR.' });
   }
 
   // Build findings list for the Python script: {page, wcag, description}
-  const failures = db.prepare(`
+  const failures = await db.prepare(`
     SELECT page_name, wcag_criterion, subject, details
     FROM failures
     WHERE project_id = ?

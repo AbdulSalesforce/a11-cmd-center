@@ -76,7 +76,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const {
     product_name, auditor_name, pm_name, pm_email, login_path, slack_channel,
     release_build_name, release_build_id, audit_theme_id, epic_id,
@@ -128,7 +128,7 @@ router.post('/', (req, res) => {
   );
 
   try {
-    db.transaction(() => {
+    await db.transaction(() => {
       insertProject.run(id, product_name, auditor_name || null, pm_name || null, pm_email || null, login_path || null, slack_channel || null,
         release_build_name || null, release_build_id || null, audit_theme_id || null, epic_id || null);
 
@@ -154,7 +154,7 @@ router.post('/', (req, res) => {
       });
     })();
 
-    const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
+    const project = await db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
     res.status(201).json(project);
   } catch (err) {
     console.error('Error creating project:', err);
