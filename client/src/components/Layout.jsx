@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import '../styles/header.css';
 
 export default function Layout() {
   const location = useLocation();
@@ -20,56 +21,46 @@ export default function Layout() {
         right: 0,
         zIndex: 1000,
         backgroundColor: '#ffffff',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        borderBottom: '1px solid #e5e5e5'
+        borderBottom: '1px solid #c9c9c9'
       }}>
         <div style={{
-          maxWidth: '1280px',
+          maxWidth: '1440px',
           margin: '0 auto',
-          padding: '0 1.5rem',
+          padding: '0 2rem',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: '60px'
+          height: '64px'
         }}>
           {/* Logo Section */}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginRight: '3rem' }}>
             <NavLink to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
               <img
                 src="/images/salesforce-logo.svg"
                 alt="Salesforce"
-                style={{ height: '32px', width: 'auto' }}
+                style={{ height: '28px', width: 'auto' }}
                 onError={(e) => {
-                  // Fallback if logo not found
                   e.target.style.display = 'none';
-                  e.target.parentElement.innerHTML = '<span style="color: #0176d3; font-size: 1.25rem; font-weight: 700;">Salesforce</span>';
+                  e.target.parentElement.innerHTML = '<span style="color: #032d60; font-size: 1.25rem; font-weight: 700;">Salesforce</span>';
                 }}
               />
             </NavLink>
           </div>
 
           {/* Navigation Links */}
-          <nav role="navigation" aria-label="Main">
+          <nav role="navigation" aria-label="Main" style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
             <ul style={{
               display: 'flex',
               listStyle: 'none',
               margin: 0,
               padding: 0,
-              gap: '2rem',
+              gap: '1.5rem',
               alignItems: 'center'
             }}>
               <li>
                 <NavLink
                   to="/audits"
-                  style={({ isActive }) => ({
-                    color: isActive ? '#0176d3' : '#181818',
-                    textDecoration: 'none',
-                    fontSize: '0.875rem',
-                    fontWeight: '400',
-                    padding: '0.5rem 0',
-                    borderBottom: isActive ? '2px solid #0176d3' : 'none',
-                    transition: 'color 0.2s ease'
-                  })}
+                  className={({ isActive }) => isActive ? 'sf-nav-link active' : 'sf-nav-link'}
                 >
                   Audits
                 </NavLink>
@@ -77,15 +68,7 @@ export default function Layout() {
               <li>
                 <NavLink
                   to="/standards"
-                  style={({ isActive }) => ({
-                    color: isActive ? '#0176d3' : '#181818',
-                    textDecoration: 'none',
-                    fontSize: '0.875rem',
-                    fontWeight: '400',
-                    padding: '0.5rem 0',
-                    borderBottom: isActive ? '2px solid #0176d3' : 'none',
-                    transition: 'color 0.2s ease'
-                  })}
+                  className={({ isActive }) => isActive ? 'sf-nav-link active' : 'sf-nav-link'}
                 >
                   Standards
                 </NavLink>
@@ -93,15 +76,7 @@ export default function Layout() {
               <li>
                 <NavLink
                   to="/tools"
-                  style={({ isActive }) => ({
-                    color: isActive ? '#0176d3' : '#181818',
-                    textDecoration: 'none',
-                    fontSize: '0.875rem',
-                    fontWeight: '400',
-                    padding: '0.5rem 0',
-                    borderBottom: isActive ? '2px solid #0176d3' : 'none',
-                    transition: 'color 0.2s ease'
-                  })}
+                  className={({ isActive }) => isActive ? 'sf-nav-link active' : 'sf-nav-link'}
                 >
                   Tools
                 </NavLink>
@@ -111,10 +86,10 @@ export default function Layout() {
         </div>
       </header>
 
-      <div className="slds-grid" style={{ marginTop: '60px' }}>
+      <div className="slds-grid" style={{ marginTop: '64px' }}>
         {/* SLDS Navigation - Only show on audit-related pages */}
         {showSidebar && (
-          <nav className="slds-nav-vertical slds-p-around_medium" aria-label="Audit navigation" style={{ width: '250px', background: '#ffffff', borderRight: '1px solid #dddbda', minHeight: 'calc(100vh - 60px)' }}>
+          <nav className="slds-nav-vertical slds-p-around_medium" aria-label="Audit navigation" style={{ width: '250px', background: '#ffffff', borderRight: '1px solid #dddbda', minHeight: 'calc(100vh - 64px)' }}>
             <div className="slds-nav-vertical__section">
               <h2 className="slds-nav-vertical__title slds-text-title_caps">Audits Menu</h2>
               <ul>
