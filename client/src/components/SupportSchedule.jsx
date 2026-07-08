@@ -35,15 +35,16 @@ function parseCSV(text) {
     return result;
   };
 
-  const headers = parseCSVLine(lines[0]);
-
+  // Skip header row and parse data rows
+  // Columns: 0=Start Date, 1=End Date, 2=First Working Day, 3=Last Working Day, 4=Person 1, 5=Person 2
   return lines.slice(1).map(line => {
     const values = parseCSVLine(line);
-    const row = {};
-    headers.forEach((header, i) => {
-      row[header] = values[i] || '';
-    });
-    return row;
+    return {
+      'Start Date': values[0] || '',
+      'End Date': values[1] || '',
+      'Person 1': values[4] || '',
+      'Person 2': values[5] || ''
+    };
   });
 }
 
