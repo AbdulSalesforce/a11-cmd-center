@@ -32,11 +32,11 @@ export default function Layout() {
         }}>
           {/* Logo and Navigation */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-            <NavLink to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+            <NavLink to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', lineHeight: 0 }}>
               <img
                 src="/images/salesforce-logo.svg"
                 alt="Salesforce"
-                style={{ height: '36px', width: 'auto' }}
+                style={{ height: '36px', width: 'auto', display: 'block' }}
                 onError={(e) => {
                   e.target.style.display = 'none';
                   e.target.parentElement.innerHTML = '<span style="color: #032d60; font-size: 1.25rem; font-weight: 700;">Salesforce</span>';
