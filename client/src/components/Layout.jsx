@@ -24,10 +24,11 @@ export default function Layout() {
         borderBottom: '1px solid #c9c9c9'
       }}>
         <div style={{
-          padding: '1rem 2rem',
+          padding: '0 2rem',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          height: '64px'
         }}>
           {/* Logo and Navigation */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
@@ -82,7 +83,7 @@ export default function Layout() {
         </div>
       </header>
 
-      <div className="slds-grid" style={{ marginTop: '80px' }}>
+      <div className="slds-grid" style={{ marginTop: '64px' }}>
         {/* SLDS Navigation - Only show on audit-related pages */}
         {showSidebar && (
           <nav className="slds-nav-vertical slds-p-around_medium" aria-label="Audit navigation" style={{ width: '250px', background: '#ffffff', borderRight: '1px solid #dddbda', minHeight: 'calc(100vh - 64px)' }}>
