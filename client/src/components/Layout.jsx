@@ -24,8 +24,6 @@ export default function Layout() {
         borderBottom: '1px solid #c9c9c9'
       }}>
         <div style={{
-          maxWidth: '1440px',
-          margin: '0 auto',
           padding: '0 2rem',
           display: 'flex',
           alignItems: 'center',
@@ -38,7 +36,7 @@ export default function Layout() {
               <img
                 src="/images/salesforce-logo.svg"
                 alt="Salesforce"
-                style={{ height: '28px', width: 'auto' }}
+                style={{ height: '36px', width: 'auto' }}
                 onError={(e) => {
                   e.target.style.display = 'none';
                   e.target.parentElement.innerHTML = '<span style="color: #032d60; font-size: 1.25rem; font-weight: 700;">Salesforce</span>';
