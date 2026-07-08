@@ -175,13 +175,11 @@ export default function Standards() {
         <div className="slds-grid slds-gutters">
           {/* Left Sidebar - Filters */}
           <aside className="slds-col slds-size_1-of-1 slds-medium-size_1-of-4 slds-large-size_1-of-5">
-            <nav className="slds-card" aria-label="Filter standards">
-              <div className="slds-card__header">
-                <h2 className="slds-text-heading_small">Filter by</h2>
-              </div>
-              <div className="slds-card__body slds-card__body_inner slds-p-around_medium">
+            <nav className="slds-nav-vertical" aria-label="Filter standards">
+              <div className="slds-nav-vertical__section">
+                <h2 className="slds-nav-vertical__title">Filter by</h2>
                 <fieldset className="slds-form-element">
-                  <legend className="slds-form-element__legend slds-form-element__label slds-assistive-text">Filter Standards</legend>
+                  <legend className="slds-assistive-text">Filter Standards</legend>
                   <div className="slds-form-element__control">
                     {/* Level A */}
                     <div className="slds-checkbox slds-m-bottom_small">
