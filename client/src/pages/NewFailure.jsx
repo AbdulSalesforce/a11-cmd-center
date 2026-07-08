@@ -143,7 +143,7 @@ export default function NewFailure() {
       const c = WCAG_CRITERIA.find(c => c.full === criterion);
       if (c) {
         if (!fields.severity) setField('severity', getSuggestedSeverity(c.id));
-        setField('recommendations', c.remediation ?? '');
+        setField('recommendations', getScRemediation(criterion));
       }
     }
   }
