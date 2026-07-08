@@ -32,8 +32,8 @@ export default function Layout() {
           justifyContent: 'space-between',
           height: '64px'
         }}>
-          {/* Logo Section */}
-          <div style={{ display: 'flex', alignItems: 'center', marginRight: '3rem' }}>
+          {/* Logo and Navigation */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             <NavLink to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
               <img
                 src="/images/salesforce-logo.svg"
@@ -45,44 +45,43 @@ export default function Layout() {
                 }}
               />
             </NavLink>
-          </div>
 
-          {/* Navigation Links */}
-          <nav role="navigation" aria-label="Main" style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
-            <ul style={{
-              display: 'flex',
-              listStyle: 'none',
-              margin: 0,
-              padding: 0,
-              gap: '1.5rem',
-              alignItems: 'center'
-            }}>
-              <li>
-                <NavLink
-                  to="/audits"
-                  className={({ isActive }) => isActive ? 'sf-nav-link active' : 'sf-nav-link'}
-                >
-                  Audits
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/standards"
-                  className={({ isActive }) => isActive ? 'sf-nav-link active' : 'sf-nav-link'}
-                >
-                  Standards
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/tools"
-                  className={({ isActive }) => isActive ? 'sf-nav-link active' : 'sf-nav-link'}
-                >
-                  Tools
-                </NavLink>
-              </li>
-            </ul>
-          </nav>
+            <nav role="navigation" aria-label="Main">
+              <ul style={{
+                display: 'flex',
+                listStyle: 'none',
+                margin: 0,
+                padding: 0,
+                gap: '2rem',
+                alignItems: 'center'
+              }}>
+                <li>
+                  <NavLink
+                    to="/audits"
+                    className={({ isActive }) => isActive ? 'sf-nav-link active' : 'sf-nav-link'}
+                  >
+                    Audits
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/standards"
+                    className={({ isActive }) => isActive ? 'sf-nav-link active' : 'sf-nav-link'}
+                  >
+                    Standards
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/tools"
+                    className={({ isActive }) => isActive ? 'sf-nav-link active' : 'sf-nav-link'}
+                  >
+                    Tools
+                  </NavLink>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
       </header>
 
