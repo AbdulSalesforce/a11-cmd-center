@@ -12,28 +12,68 @@ export default function Layout() {
         Skip to main content
       </a>
 
-      {/* SLDS Global Header */}
-      <header className="slds-global-header_container" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, backgroundColor: '#032d60' }}>
-        <div className="slds-global-header slds-grid slds-grid_align-spread" style={{ padding: '0 1rem' }}>
-          <div className="slds-global-header__item" style={{ display: 'flex', alignItems: 'center', paddingLeft: '0.5rem' }}>
-            <NavLink to="/" style={{ textDecoration: 'none' }}>
-              <span style={{ color: '#0176d3', fontSize: '1.5rem', fontWeight: '700' }}>
-                A11y Command Center
-              </span>
+      {/* Salesforce-style Header */}
+      <header style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        backgroundColor: '#ffffff',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        borderBottom: '1px solid #e5e5e5'
+      }}>
+        <div style={{
+          maxWidth: '1280px',
+          margin: '0 auto',
+          padding: '0 1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          height: '60px'
+        }}>
+          {/* Logo Section */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <NavLink to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+              {/* Placeholder for Salesforce logo - replace with actual logo */}
+              <div style={{
+                width: '140px',
+                height: '32px',
+                backgroundColor: '#0176d3',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#ffffff',
+                fontSize: '0.875rem',
+                fontWeight: '700',
+                borderRadius: '4px'
+              }}>
+                SALESFORCE LOGO
+              </div>
             </NavLink>
           </div>
-          <div className="slds-global-header__item" style={{ display: 'flex', alignItems: 'center' }}>
-            <ul className="slds-global-header__navigation" style={{ display: 'flex', listStyle: 'none', margin: 0, padding: 0, gap: '0.5rem' }}>
+
+          {/* Navigation Links */}
+          <nav role="navigation" aria-label="Main">
+            <ul style={{
+              display: 'flex',
+              listStyle: 'none',
+              margin: 0,
+              padding: 0,
+              gap: '2rem',
+              alignItems: 'center'
+            }}>
               <li>
                 <NavLink
                   to="/audits"
                   style={({ isActive }) => ({
-                    color: '#ffffff',
-                    padding: '0.75rem 1rem',
+                    color: isActive ? '#0176d3' : '#181818',
                     textDecoration: 'none',
-                    display: 'block',
-                    borderBottom: isActive ? '3px solid #0176d3' : '3px solid transparent',
-                    fontWeight: isActive ? '700' : '400'
+                    fontSize: '0.875rem',
+                    fontWeight: '400',
+                    padding: '0.5rem 0',
+                    borderBottom: isActive ? '2px solid #0176d3' : 'none',
+                    transition: 'color 0.2s ease'
                   })}
                 >
                   Audits
@@ -43,41 +83,43 @@ export default function Layout() {
                 <NavLink
                   to="/standards"
                   style={({ isActive }) => ({
-                    color: '#ffffff',
-                    padding: '0.75rem 1rem',
+                    color: isActive ? '#0176d3' : '#181818',
                     textDecoration: 'none',
-                    display: 'block',
-                    borderBottom: isActive ? '3px solid #0176d3' : '3px solid transparent',
-                    fontWeight: isActive ? '700' : '400'
+                    fontSize: '0.875rem',
+                    fontWeight: '400',
+                    padding: '0.5rem 0',
+                    borderBottom: isActive ? '2px solid #0176d3' : 'none',
+                    transition: 'color 0.2s ease'
                   })}
                 >
-                  Salesforce A11Y Standards
+                  Standards
                 </NavLink>
               </li>
               <li>
                 <NavLink
                   to="/tools"
                   style={({ isActive }) => ({
-                    color: '#ffffff',
-                    padding: '0.75rem 1rem',
+                    color: isActive ? '#0176d3' : '#181818',
                     textDecoration: 'none',
-                    display: 'block',
-                    borderBottom: isActive ? '3px solid #0176d3' : '3px solid transparent',
-                    fontWeight: isActive ? '700' : '400'
+                    fontSize: '0.875rem',
+                    fontWeight: '400',
+                    padding: '0.5rem 0',
+                    borderBottom: isActive ? '2px solid #0176d3' : 'none',
+                    transition: 'color 0.2s ease'
                   })}
                 >
                   Tools
                 </NavLink>
               </li>
             </ul>
-          </div>
+          </nav>
         </div>
       </header>
 
-      <div className="slds-grid" style={{ marginTop: '64px' }}>
+      <div className="slds-grid" style={{ marginTop: '60px' }}>
         {/* SLDS Navigation - Only show on audit-related pages */}
         {showSidebar && (
-          <nav className="slds-nav-vertical slds-p-around_medium" aria-label="Audit navigation" style={{ width: '250px', background: '#ffffff', borderRight: '1px solid #dddbda', minHeight: 'calc(100vh - 64px)' }}>
+          <nav className="slds-nav-vertical slds-p-around_medium" aria-label="Audit navigation" style={{ width: '250px', background: '#ffffff', borderRight: '1px solid #dddbda', minHeight: 'calc(100vh - 60px)' }}>
             <div className="slds-nav-vertical__section">
               <h2 className="slds-nav-vertical__title slds-text-title_caps">Audits Menu</h2>
               <ul>
