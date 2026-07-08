@@ -1,0 +1,30 @@
+/* Salesforce.com-style header navigation */
+
+.sf-nav-link {
+  color: #181818;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 1.25rem 0;
+  display: inline-block;
+  position: relative;
+  transition: color 0.15s ease;
+}
+
+.sf-nav-link:hover {
+  color: #0176d3;
+}
+
+.sf-nav-link.active {
+  font-weight: 700;
+}
+
+.sf-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: #0176d3;
+}
