@@ -121,29 +121,30 @@ export default function Standards() {
 
   return (
     <div className="slds-scope">
-      <div className="slds-container_large slds-container_center slds-p-around_large">
-        {/* Page Header */}
-        <div className="slds-page-header slds-m-bottom_large">
-          <div className="slds-page-header__row">
-            <div className="slds-page-header__col-title">
-              <div className="slds-media">
-                <div className="slds-media__body">
-                  <div className="slds-page-header__name">
-                    <div className="slds-page-header__name-title">
-                      <h1>
-                        <span className="slds-page-header__title slds-truncate" title="Salesforce Accessibility Standards">
-                          Salesforce Accessibility Standards
-                        </span>
-                      </h1>
-                    </div>
+      {/* Page Header */}
+      <div className="slds-page-header">
+        <div className="slds-page-header__row">
+          <div className="slds-page-header__col-title">
+            <div className="slds-media">
+              <div className="slds-media__body">
+                <div className="slds-page-header__name">
+                  <div className="slds-page-header__name-title">
+                    <h1>
+                      <span className="slds-page-header__title slds-truncate" title="Salesforce Accessibility Standards">
+                        Salesforce Accessibility Standards
+                      </span>
+                    </h1>
                   </div>
-                  <p className="slds-page-header__name-meta">WCAG 2.2 Level A & AA Compliance Guidelines</p>
                 </div>
+                <p className="slds-page-header__name-meta">WCAG 2.2 Level A & AA Compliance Guidelines</p>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
+      {/* Content */}
+      <div className="slds-m-top_large">
         {/* Overview */}
         <div className="slds-card slds-m-bottom_large">
           <div className="slds-card__body slds-card__body_inner slds-p-around_large">
@@ -173,8 +174,8 @@ export default function Standards() {
         {/* Main Content with Sidebar */}
         <div className="slds-grid slds-gutters">
           {/* Left Sidebar - Filters */}
-          <div className="slds-col slds-size_1-of-1 slds-medium-size_1-of-4 slds-large-size_1-of-5">
-            <div className="slds-card">
+          <aside className="slds-col slds-size_1-of-1 slds-medium-size_1-of-4 slds-large-size_1-of-5">
+            <nav className="slds-card" aria-label="Filter standards">
               <div className="slds-card__header">
                 <h2 className="slds-text-heading_small">Filter by</h2>
               </div>
@@ -226,8 +227,8 @@ export default function Standards() {
                   </div>
                 </fieldset>
               </div>
-            </div>
-          </div>
+            </nav>
+          </aside>
 
           {/* Right Content - Standards */}
           <div className="slds-col slds-size_1-of-1 slds-medium-size_3-of-4 slds-large-size_4-of-5">
