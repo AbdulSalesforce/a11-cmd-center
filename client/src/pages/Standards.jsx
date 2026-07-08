@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import standardsContent from '../data/standards-content.json';
 
 export default function Standards() {
-  const [selectedSc, setSelectedSc] = useState(null);
 
   // WCAG 2.2 Success Criteria organized by POUR principles
   const criteria = {
@@ -95,15 +94,6 @@ export default function Standards() {
 
   const hasStandardsContent = standardsContent.standards && Object.keys(standardsContent.standards).length > 0;
 
-  const handleScClick = (scId) => {
-    setSelectedSc(selectedSc === scId ? null : scId);
-  };
-
-  const getStandardContent = (scId) => {
-    if (!hasStandardsContent) return null;
-    return standardsContent.standards[scId];
-  };
-
   return (
     <div className="slds-scope">
       <div className="slds-container_large slds-container_center slds-p-around_large">
@@ -178,42 +168,21 @@ export default function Standards() {
                     <span className="slds-badge" style={{ backgroundColor: '#04844b', color: '#ffffff', marginRight: '0.5rem' }}>Level A</span>
                   </h3>
                   <ul className="slds-list_vertical slds-has-dividers_top">
-                    {principle.levelA.map(sc => {
-                      const standardContent = getStandardContent(sc.id);
-                      const isExpanded = selectedSc === sc.id;
-                      return (
-                        <li key={sc.id} className="slds-item slds-p-vertical_small">
-                          <button
-                            onClick={() => handleScClick(sc.id)}
-                            className="slds-text-link"
-                            style={{
-                              fontSize: '0.875rem',
-                              background: 'none',
-                              border: 'none',
-                              padding: 0,
-                              cursor: 'pointer',
-                              textAlign: 'left',
-                              width: '100%'
-                            }}
-                          >
-                            <strong>{sc.id}</strong> {sc.name}
-                            {standardContent && <span style={{ marginLeft: '0.5rem' }}>{isExpanded ? '▼' : '▶'}</span>}
-                          </button>
-                          {isExpanded && standardContent && (
-                            <div
-                              className="slds-box slds-box_small slds-m-top_small"
-                              style={{
-                                backgroundColor: '#f3f3f3',
-                                fontSize: '0.875rem',
-                                lineHeight: '1.6'
-                              }}
-                            >
-                              <div dangerouslySetInnerHTML={{ __html: standardContent.html }} />
-                            </div>
-                          )}
-                        </li>
-                      );
-                    })}
+                    {principle.levelA.map(sc => (
+                      <li key={sc.id} className="slds-item slds-p-vertical_small">
+                        <Link
+                          to={`/standards/${sc.id}`}
+                          className="slds-text-link"
+                          style={{
+                            fontSize: '0.875rem',
+                            display: 'block',
+                            padding: '0.25rem 0'
+                          }}
+                        >
+                          <strong>{sc.id}</strong> {sc.name}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               )}
@@ -225,42 +194,21 @@ export default function Standards() {
                     <span className="slds-badge" style={{ backgroundColor: '#0176d3', color: '#ffffff', marginRight: '0.5rem' }}>Level AA</span>
                   </h3>
                   <ul className="slds-list_vertical slds-has-dividers_top">
-                    {principle.levelAA.map(sc => {
-                      const standardContent = getStandardContent(sc.id);
-                      const isExpanded = selectedSc === sc.id;
-                      return (
-                        <li key={sc.id} className="slds-item slds-p-vertical_small">
-                          <button
-                            onClick={() => handleScClick(sc.id)}
-                            className="slds-text-link"
-                            style={{
-                              fontSize: '0.875rem',
-                              background: 'none',
-                              border: 'none',
-                              padding: 0,
-                              cursor: 'pointer',
-                              textAlign: 'left',
-                              width: '100%'
-                            }}
-                          >
-                            <strong>{sc.id}</strong> {sc.name}
-                            {standardContent && <span style={{ marginLeft: '0.5rem' }}>{isExpanded ? '▼' : '▶'}</span>}
-                          </button>
-                          {isExpanded && standardContent && (
-                            <div
-                              className="slds-box slds-box_small slds-m-top_small"
-                              style={{
-                                backgroundColor: '#f3f3f3',
-                                fontSize: '0.875rem',
-                                lineHeight: '1.6'
-                              }}
-                            >
-                              <div dangerouslySetInnerHTML={{ __html: standardContent.html }} />
-                            </div>
-                          )}
-                        </li>
-                      );
-                    })}
+                    {principle.levelAA.map(sc => (
+                      <li key={sc.id} className="slds-item slds-p-vertical_small">
+                        <Link
+                          to={`/standards/${sc.id}`}
+                          className="slds-text-link"
+                          style={{
+                            fontSize: '0.875rem',
+                            display: 'block',
+                            padding: '0.25rem 0'
+                          }}
+                        >
+                          <strong>{sc.id}</strong> {sc.name}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               )}
