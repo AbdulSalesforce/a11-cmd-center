@@ -135,23 +135,29 @@ router.post('/', async (req, res) => {
 
     // Auto-mark the corresponding SC as "fail" in the checklist for matching scope items
     if (wcag_criterion) {
-      const allPages = [page_name, ...additional_pages].filter(Boolean);
+      // Extract SC ID from full criterion string (e.g., "SC 1.1.1 Non-text Content (A)" -> "1.1.1")
+      const scIdMatch = wcag_criterion.match(/SC\s+([\d.]+)/);
+      const scId = scIdMatch ? scIdMatch[1] : null;
 
-      for (const pageName of allPages) {
-        if (typeof pageName !== 'string' || pageName.length > 200) {
-          throw new Error('Invalid page name');
-        }
-        const scopeItems = await db.prepare('SELECT id FROM scope_items WHERE project_id = ? AND page_name = ?')
-          .all(projectId, pageName);
+      if (scId) {
+        const allPages = [page_name, ...additional_pages].filter(Boolean);
 
-        for (const item of scopeItems) {
-          await db.prepare(`
-            INSERT INTO checklist_items (id, scope_item_id, sc_id, status, updated_at)
-            VALUES (?, ?, ?, 'fail', datetime('now'))
-            ON CONFLICT(scope_item_id, sc_id) DO UPDATE SET
-              status = CASE WHEN status = 'unchecked' THEN 'fail' ELSE status END,
-              updated_at = datetime('now')
-          `).run(randomUUID(), item.id, wcag_criterion);
+        for (const pageName of allPages) {
+          if (typeof pageName !== 'string' || pageName.length > 200) {
+            throw new Error('Invalid page name');
+          }
+          const scopeItems = await db.prepare('SELECT id FROM scope_items WHERE project_id = ? AND page_name = ?')
+            .all(projectId, pageName);
+
+          for (const item of scopeItems) {
+            await db.prepare(`
+              INSERT INTO checklist_items (id, scope_item_id, sc_id, status, updated_at)
+              VALUES (?, ?, ?, 'fail', datetime('now'))
+              ON CONFLICT(scope_item_id, sc_id) DO UPDATE SET
+                status = CASE WHEN status = 'unchecked' THEN 'fail' ELSE status END,
+                updated_at = datetime('now')
+            `).run(randomUUID(), item.id, scId);
+          }
         }
       }
     }
