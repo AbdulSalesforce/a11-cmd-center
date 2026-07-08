@@ -5,7 +5,8 @@ export default function Layout() {
   const location = useLocation();
   const showSidebar = location.pathname.startsWith('/audits') ||
                       location.pathname.startsWith('/projects') ||
-                      location.pathname.startsWith('/auditors');
+                      location.pathname.startsWith('/auditors') ||
+                      location.pathname.startsWith('/standards');
 
   return (
     <div className="slds-scope">
@@ -84,45 +85,52 @@ export default function Layout() {
       </header>
 
       <div className="slds-grid" style={{ marginTop: '64px' }}>
-        {/* SLDS Navigation - Only show on audit-related pages */}
+        {/* SLDS Navigation - Only show on audit-related and standards pages */}
         {showSidebar && (
-          <nav className="slds-nav-vertical slds-p-around_medium" aria-label="Audit navigation" style={{ width: '250px', background: '#ffffff', borderRight: '1px solid #dddbda', minHeight: 'calc(100vh - 64px)' }}>
-            <div className="slds-nav-vertical__section">
-              <h2 className="slds-nav-vertical__title slds-text-title_caps">Audits Menu</h2>
-              <ul>
-                <li className="slds-nav-vertical__item">
-                  <NavLink
-                    to="/audits"
-                    end
-                    className={({ isActive }) =>
-                      isActive ? "slds-nav-vertical__action slds-is-active" : "slds-nav-vertical__action"
-                    }
-                  >
-                    Dashboard
-                  </NavLink>
-                </li>
-                <li className="slds-nav-vertical__item">
-                  <NavLink
-                    to="/projects"
-                    className={({ isActive }) =>
-                      isActive ? "slds-nav-vertical__action slds-is-active" : "slds-nav-vertical__action"
-                    }
-                  >
-                    All Projects
-                  </NavLink>
-                </li>
-                <li className="slds-nav-vertical__item">
-                  <NavLink
-                    to="/projects/new"
-                    className={({ isActive }) =>
-                      isActive ? "slds-nav-vertical__action slds-is-active" : "slds-nav-vertical__action"
-                    }
-                  >
-                    New Project
-                  </NavLink>
-                </li>
-              </ul>
-            </div>
+          <nav className="slds-nav-vertical slds-p-around_medium" aria-label={location.pathname.startsWith('/standards') ? 'Standards navigation' : 'Audit navigation'} style={{ width: '250px', background: '#ffffff', borderRight: '1px solid #dddbda', minHeight: 'calc(100vh - 64px)' }}>
+            {location.pathname.startsWith('/standards') ? (
+              <div className="slds-nav-vertical__section">
+                <h2 className="slds-nav-vertical__title slds-text-title_caps">Filter by</h2>
+                <div id="standards-filters-mount"></div>
+              </div>
+            ) : (
+              <div className="slds-nav-vertical__section">
+                <h2 className="slds-nav-vertical__title slds-text-title_caps">Audits Menu</h2>
+                <ul>
+                  <li className="slds-nav-vertical__item">
+                    <NavLink
+                      to="/audits"
+                      end
+                      className={({ isActive }) =>
+                        isActive ? "slds-nav-vertical__action slds-is-active" : "slds-nav-vertical__action"
+                      }
+                    >
+                      Dashboard
+                    </NavLink>
+                  </li>
+                  <li className="slds-nav-vertical__item">
+                    <NavLink
+                      to="/projects"
+                      className={({ isActive }) =>
+                        isActive ? "slds-nav-vertical__action slds-is-active" : "slds-nav-vertical__action"
+                      }
+                    >
+                      All Projects
+                    </NavLink>
+                  </li>
+                  <li className="slds-nav-vertical__item">
+                    <NavLink
+                      to="/projects/new"
+                      className={({ isActive }) =>
+                        isActive ? "slds-nav-vertical__action slds-is-active" : "slds-nav-vertical__action"
+                      }
+                    >
+                      New Project
+                    </NavLink>
+                  </li>
+                </ul>
+              </div>
+            )}
           </nav>
         )}
 

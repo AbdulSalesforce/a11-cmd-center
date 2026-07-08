@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import standardsContent from '../data/standards-content.json';
 
@@ -8,13 +9,60 @@ export default function Standards() {
     levelAA: true,
     newIn22: false
   });
+  const [mountNode, setMountNode] = useState(null);
 
   // Success criteria new in WCAG 2.2
   const newIn22 = ['2.4.11', '2.5.8', '3.3.7', '3.3.8'];
 
+  useEffect(() => {
+    // Find the mount point in Layout.jsx
+    const node = document.getElementById('standards-filters-mount');
+    setMountNode(node);
+  }, []);
+
   function toggleFilter(filterName) {
     setFilters(prev => ({ ...prev, [filterName]: !prev[filterName] }));
   }
+
+  // Render filters into the sidebar mount point
+  const filterControls = mountNode ? createPortal(
+    <ul>
+      <li className="slds-nav-vertical__item">
+        <label className="slds-checkbox">
+          <input
+            type="checkbox"
+            checked={filters.levelA}
+            onChange={() => toggleFilter('levelA')}
+          />
+          <span className="slds-checkbox_faux"></span>
+          <span className="slds-form-element__label">Level A</span>
+        </label>
+      </li>
+      <li className="slds-nav-vertical__item">
+        <label className="slds-checkbox">
+          <input
+            type="checkbox"
+            checked={filters.levelAA}
+            onChange={() => toggleFilter('levelAA')}
+          />
+          <span className="slds-checkbox_faux"></span>
+          <span className="slds-form-element__label">Level AA</span>
+        </label>
+      </li>
+      <li className="slds-nav-vertical__item">
+        <label className="slds-checkbox">
+          <input
+            type="checkbox"
+            checked={filters.newIn22}
+            onChange={() => toggleFilter('newIn22')}
+          />
+          <span className="slds-checkbox_faux"></span>
+          <span className="slds-form-element__label">New in 2.2</span>
+        </label>
+      </li>
+    </ul>,
+    mountNode
+  ) : null;
 
   // WCAG 2.2 Success Criteria organized by POUR principles
   const criteria = {
@@ -121,6 +169,7 @@ export default function Standards() {
 
   return (
     <div className="slds-scope">
+      {filterControls}
       {/* Page Header */}
       <div className="slds-page-header">
         <div className="slds-page-header__row">
@@ -171,66 +220,7 @@ export default function Standards() {
           </div>
         </div>
 
-        {/* Main Content with Sidebar */}
-        <div className="slds-grid slds-gutters">
-          {/* Left Sidebar - Filters */}
-          <aside className="slds-col slds-size_1-of-1 slds-medium-size_1-of-4 slds-large-size_1-of-5">
-            <nav className="slds-nav-vertical" aria-label="Filter standards">
-              <div className="slds-nav-vertical__section">
-                <h2 className="slds-nav-vertical__title">Filter by</h2>
-                <fieldset className="slds-form-element">
-                  <legend className="slds-assistive-text">Filter Standards</legend>
-                  <div className="slds-form-element__control">
-                    {/* Level A */}
-                    <div className="slds-checkbox slds-m-bottom_small">
-                      <input
-                        type="checkbox"
-                        id="filter-level-a"
-                        checked={filters.levelA}
-                        onChange={() => toggleFilter('levelA')}
-                      />
-                      <label className="slds-checkbox__label" htmlFor="filter-level-a">
-                        <span className="slds-checkbox_faux"></span>
-                        <span className="slds-form-element__label">Level A</span>
-                      </label>
-                    </div>
-
-                    {/* Level AA */}
-                    <div className="slds-checkbox slds-m-bottom_small">
-                      <input
-                        type="checkbox"
-                        id="filter-level-aa"
-                        checked={filters.levelAA}
-                        onChange={() => toggleFilter('levelAA')}
-                      />
-                      <label className="slds-checkbox__label" htmlFor="filter-level-aa">
-                        <span className="slds-checkbox_faux"></span>
-                        <span className="slds-form-element__label">Level AA</span>
-                      </label>
-                    </div>
-
-                    {/* New in 2.2 */}
-                    <div className="slds-checkbox">
-                      <input
-                        type="checkbox"
-                        id="filter-new-22"
-                        checked={filters.newIn22}
-                        onChange={() => toggleFilter('newIn22')}
-                      />
-                      <label className="slds-checkbox__label" htmlFor="filter-new-22">
-                        <span className="slds-checkbox_faux"></span>
-                        <span className="slds-form-element__label">New in 2.2</span>
-                      </label>
-                    </div>
-                  </div>
-                </fieldset>
-              </div>
-            </nav>
-          </aside>
-
-          {/* Right Content - Standards */}
-          <div className="slds-col slds-size_1-of-1 slds-medium-size_3-of-4 slds-large-size_4-of-5">
-            {/* WCAG Success Criteria by POUR */}
+        {/* WCAG Success Criteria by POUR */}
         {Object.entries(criteria).map(([key, principle]) => (
           <div key={key} className="slds-card slds-m-bottom_large">
             <div className="slds-card__header slds-grid">
@@ -311,29 +301,27 @@ export default function Standards() {
           </div>
         ))}
 
-            {/* External Resources */}
-            <div className="slds-card">
-              <div className="slds-card__body slds-card__body_inner slds-p-around_large">
-                <h2 className="slds-text-heading_medium slds-m-bottom_medium">External Resources</h2>
-                <ul className="slds-list_dotted">
-                  <li>
-                    <a href="https://www.w3.org/TR/WCAG22/" target="_blank" rel="noopener noreferrer" className="slds-text-link">
-                      WCAG 2.2 Specification
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://www.w3.org/WAI/WCAG22/quickref/" target="_blank" rel="noopener noreferrer" className="slds-text-link">
-                      How to Meet WCAG (Quick Reference)
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://www.w3.org/WAI/WCAG22/Understanding/" target="_blank" rel="noopener noreferrer" className="slds-text-link">
-                      Understanding WCAG 2.2
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
+        {/* External Resources */}
+        <div className="slds-card">
+          <div className="slds-card__body slds-card__body_inner slds-p-around_large">
+            <h2 className="slds-text-heading_medium slds-m-bottom_medium">External Resources</h2>
+            <ul className="slds-list_dotted">
+              <li>
+                <a href="https://www.w3.org/TR/WCAG22/" target="_blank" rel="noopener noreferrer" className="slds-text-link">
+                  WCAG 2.2 Specification
+                </a>
+              </li>
+              <li>
+                <a href="https://www.w3.org/WAI/WCAG22/quickref/" target="_blank" rel="noopener noreferrer" className="slds-text-link">
+                  How to Meet WCAG (Quick Reference)
+                </a>
+              </li>
+              <li>
+                <a href="https://www.w3.org/WAI/WCAG22/Understanding/" target="_blank" rel="noopener noreferrer" className="slds-text-link">
+                  Understanding WCAG 2.2
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
