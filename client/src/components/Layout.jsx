@@ -35,21 +35,16 @@ export default function Layout() {
           {/* Logo Section */}
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <NavLink to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-              {/* Placeholder for Salesforce logo - replace with actual logo */}
-              <div style={{
-                width: '140px',
-                height: '32px',
-                backgroundColor: '#0176d3',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#ffffff',
-                fontSize: '0.875rem',
-                fontWeight: '700',
-                borderRadius: '4px'
-              }}>
-                SALESFORCE LOGO
-              </div>
+              <img
+                src="/images/salesforce-logo.svg"
+                alt="Salesforce"
+                style={{ height: '32px', width: 'auto' }}
+                onError={(e) => {
+                  // Fallback if logo not found
+                  e.target.style.display = 'none';
+                  e.target.parentElement.innerHTML = '<span style="color: #0176d3; font-size: 1.25rem; font-weight: 700;">Salesforce</span>';
+                }}
+              />
             </NavLink>
           </div>
 
