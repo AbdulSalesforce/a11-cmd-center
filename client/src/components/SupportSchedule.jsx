@@ -8,10 +8,37 @@ function parseCSV(text) {
   const lines = text.trim().split('\n');
   if (lines.length < 2) return [];
 
-  const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g, '').trim());
+  // Parse CSV with proper quote handling
+  const parseCSVLine = (line) => {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+
+      if (char === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (char === ',' && !inQuotes) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    result.push(current.trim());
+    return result;
+  };
+
+  const headers = parseCSVLine(lines[0]);
 
   return lines.slice(1).map(line => {
-    const values = line.split(',').map(v => v.replace(/^"|"$/g, '').trim());
+    const values = parseCSVLine(line);
     const row = {};
     headers.forEach((header, i) => {
       row[header] = values[i] || '';
@@ -109,13 +136,18 @@ export default function SupportSchedule() {
         const istRows = parseCSV(istText);
         const estRows = parseCSV(estText);
 
+        console.log('IST Sample row:', istRows[0]);
+        console.log('EST Sample row:', estRows[0]);
+
         // Find current and next week for IST
         let istCurrent = null;
         let istNext = null;
         for (const row of istRows) {
           if (isCurrentWeek(row['Start Date'], row['End Date'])) {
+            console.log('Found IST current week:', row);
             istCurrent = row;
           } else if (!istNext && isNextWeek(row['Start Date'], row['End Date'])) {
+            console.log('Found IST next week:', row);
             istNext = row;
           }
         }
