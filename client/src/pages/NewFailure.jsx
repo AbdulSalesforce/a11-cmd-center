@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import WcagPicker from '../components/WcagPicker';
 import { getSuggestedSeverity, WCAG_CRITERIA } from '../data/wcag';
+import standardsContent from '../data/standards-content.json';
 
 function buildStepsBoilerplate(loginPath) {
   if (!loginPath) return '';
@@ -9,8 +10,22 @@ function buildStepsBoilerplate(loginPath) {
 }
 
 function getScRemediation(criterionFull) {
+  // Try to get remediation from cached Salesforce standards first
   const c = WCAG_CRITERIA.find(c => c.full === criterionFull);
-  return c?.remediation ?? '';
+  if (!c) return '';
+
+  // Extract SC ID (e.g., "SC 1.1.1" -> "1.1.1")
+  const scId = c.id.replace('SC ', '');
+
+  // Check if we have Salesforce standards content
+  if (standardsContent.standards && standardsContent.standards[scId]) {
+    const salesforceStandard = standardsContent.standards[scId];
+    // Use Salesforce remediation if available, otherwise fall back to generic
+    return salesforceStandard.remediation || c.remediation || '';
+  }
+
+  // Fallback to generic remediation from wcag.js
+  return c.remediation ?? '';
 }
 import '../styles/failure-form.css';
 

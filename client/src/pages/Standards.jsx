@@ -1,4 +1,9 @@
+import { useState } from 'react';
+import standardsContent from '../data/standards-content.json';
+
 export default function Standards() {
+  const [selectedSc, setSelectedSc] = useState(null);
+
   // WCAG 2.2 Success Criteria organized by POUR principles
   const criteria = {
     perceivable: {
@@ -88,9 +93,15 @@ export default function Standards() {
     }
   };
 
-  const getConfluenceUrl = (scId) => {
-    // Base URL pattern - update with actual Confluence page URL pattern
-    return `https://confluence.internal.salesforce.com/display/PAID/${scId.replace(/\./g, '-')}`;
+  const hasStandardsContent = standardsContent.standards && Object.keys(standardsContent.standards).length > 0;
+
+  const handleScClick = (scId) => {
+    setSelectedSc(selectedSc === scId ? null : scId);
+  };
+
+  const getStandardContent = (scId) => {
+    if (!hasStandardsContent) return null;
+    return standardsContent.standards[scId];
   };
 
   return (
@@ -124,11 +135,23 @@ export default function Standards() {
             <h2 className="slds-text-heading_medium slds-m-bottom_medium">Overview</h2>
             <p className="slds-text-body_regular slds-m-bottom_medium">
               Salesforce is committed to making our products accessible to all users. We follow the Web Content Accessibility Guidelines (WCAG) 2.2 at Level A and AA conformance.
-              This page provides links to detailed standards and implementation guidance for each success criterion.
+              This page provides detailed standards and implementation guidance for each success criterion.
             </p>
             <p className="slds-text-body_regular">
               The guidelines are organized according to the four principles of accessibility (POUR): Perceivable, Operable, Understandable, and Robust.
             </p>
+            {hasStandardsContent && standardsContent.metadata?.lastUpdated && (
+              <p className="slds-text-body_small slds-text-color_weak slds-m-top_medium">
+                Last updated: {new Date(standardsContent.metadata.lastUpdated).toLocaleDateString()}
+              </p>
+            )}
+            {!hasStandardsContent && (
+              <div className="slds-box slds-box_small slds-theme_warning slds-m-top_medium">
+                <p className="slds-text-body_small">
+                  ⚠️ Standards content has not been fetched yet. Run <code>npm run fetch-standards</code> in the server directory to populate detailed content.
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -155,19 +178,42 @@ export default function Standards() {
                     <span className="slds-badge" style={{ backgroundColor: '#04844b', color: '#ffffff', marginRight: '0.5rem' }}>Level A</span>
                   </h3>
                   <ul className="slds-list_vertical slds-has-dividers_top">
-                    {principle.levelA.map(sc => (
-                      <li key={sc.id} className="slds-item slds-p-vertical_small">
-                        <a
-                          href={getConfluenceUrl(sc.id)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="slds-text-link"
-                          style={{ fontSize: '0.875rem' }}
-                        >
-                          <strong>{sc.id}</strong> {sc.name}
-                        </a>
-                      </li>
-                    ))}
+                    {principle.levelA.map(sc => {
+                      const standardContent = getStandardContent(sc.id);
+                      const isExpanded = selectedSc === sc.id;
+                      return (
+                        <li key={sc.id} className="slds-item slds-p-vertical_small">
+                          <button
+                            onClick={() => handleScClick(sc.id)}
+                            className="slds-text-link"
+                            style={{
+                              fontSize: '0.875rem',
+                              background: 'none',
+                              border: 'none',
+                              padding: 0,
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              width: '100%'
+                            }}
+                          >
+                            <strong>{sc.id}</strong> {sc.name}
+                            {standardContent && <span style={{ marginLeft: '0.5rem' }}>{isExpanded ? '▼' : '▶'}</span>}
+                          </button>
+                          {isExpanded && standardContent && (
+                            <div
+                              className="slds-box slds-box_small slds-m-top_small"
+                              style={{
+                                backgroundColor: '#f3f3f3',
+                                fontSize: '0.875rem',
+                                lineHeight: '1.6'
+                              }}
+                            >
+                              <div dangerouslySetInnerHTML={{ __html: standardContent.html }} />
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               )}
@@ -179,19 +225,42 @@ export default function Standards() {
                     <span className="slds-badge" style={{ backgroundColor: '#0176d3', color: '#ffffff', marginRight: '0.5rem' }}>Level AA</span>
                   </h3>
                   <ul className="slds-list_vertical slds-has-dividers_top">
-                    {principle.levelAA.map(sc => (
-                      <li key={sc.id} className="slds-item slds-p-vertical_small">
-                        <a
-                          href={getConfluenceUrl(sc.id)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="slds-text-link"
-                          style={{ fontSize: '0.875rem' }}
-                        >
-                          <strong>{sc.id}</strong> {sc.name}
-                        </a>
-                      </li>
-                    ))}
+                    {principle.levelAA.map(sc => {
+                      const standardContent = getStandardContent(sc.id);
+                      const isExpanded = selectedSc === sc.id;
+                      return (
+                        <li key={sc.id} className="slds-item slds-p-vertical_small">
+                          <button
+                            onClick={() => handleScClick(sc.id)}
+                            className="slds-text-link"
+                            style={{
+                              fontSize: '0.875rem',
+                              background: 'none',
+                              border: 'none',
+                              padding: 0,
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              width: '100%'
+                            }}
+                          >
+                            <strong>{sc.id}</strong> {sc.name}
+                            {standardContent && <span style={{ marginLeft: '0.5rem' }}>{isExpanded ? '▼' : '▶'}</span>}
+                          </button>
+                          {isExpanded && standardContent && (
+                            <div
+                              className="slds-box slds-box_small slds-m-top_small"
+                              style={{
+                                backgroundColor: '#f3f3f3',
+                                fontSize: '0.875rem',
+                                lineHeight: '1.6'
+                              }}
+                            >
+                              <div dangerouslySetInnerHTML={{ __html: standardContent.html }} />
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               )}
