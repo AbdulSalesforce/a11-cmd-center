@@ -1,7 +1,20 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import standardsContent from '../data/standards-content.json';
 
 export default function Standards() {
+  const [filters, setFilters] = useState({
+    levelA: true,
+    levelAA: true,
+    newIn22: false
+  });
+
+  // Success criteria new in WCAG 2.2
+  const newIn22 = ['2.4.11', '2.5.8', '3.3.7', '3.3.8'];
+
+  function toggleFilter(filterName) {
+    setFilters(prev => ({ ...prev, [filterName]: !prev[filterName] }));
+  }
 
   // WCAG 2.2 Success Criteria organized by POUR principles
   const criteria = {
@@ -94,6 +107,18 @@ export default function Standards() {
 
   const hasStandardsContent = standardsContent.standards && Object.keys(standardsContent.standards).length > 0;
 
+  // Filter criteria based on selected filters
+  function shouldShowCriterion(sc, level) {
+    // Level filter
+    if (level === 'A' && !filters.levelA) return false;
+    if (level === 'AA' && !filters.levelAA) return false;
+
+    // New in 2.2 filter
+    if (filters.newIn22 && !newIn22.includes(sc.id)) return false;
+
+    return true;
+  }
+
   return (
     <div className="slds-scope">
       <div className="slds-container_large slds-container_center slds-p-around_large">
@@ -145,7 +170,68 @@ export default function Standards() {
           </div>
         </div>
 
-        {/* WCAG Success Criteria by POUR */}
+        {/* Main Content with Sidebar */}
+        <div className="slds-grid slds-gutters">
+          {/* Left Sidebar - Filters */}
+          <div className="slds-col slds-size_1-of-1 slds-medium-size_1-of-4 slds-large-size_1-of-5">
+            <div className="slds-card">
+              <div className="slds-card__header">
+                <h2 className="slds-text-heading_small">Filter by</h2>
+              </div>
+              <div className="slds-card__body slds-card__body_inner slds-p-around_medium">
+                <fieldset className="slds-form-element">
+                  <legend className="slds-form-element__legend slds-form-element__label slds-assistive-text">Filter Standards</legend>
+                  <div className="slds-form-element__control">
+                    {/* Level A */}
+                    <div className="slds-checkbox slds-m-bottom_small">
+                      <input
+                        type="checkbox"
+                        id="filter-level-a"
+                        checked={filters.levelA}
+                        onChange={() => toggleFilter('levelA')}
+                      />
+                      <label className="slds-checkbox__label" htmlFor="filter-level-a">
+                        <span className="slds-checkbox_faux"></span>
+                        <span className="slds-form-element__label">Level A</span>
+                      </label>
+                    </div>
+
+                    {/* Level AA */}
+                    <div className="slds-checkbox slds-m-bottom_small">
+                      <input
+                        type="checkbox"
+                        id="filter-level-aa"
+                        checked={filters.levelAA}
+                        onChange={() => toggleFilter('levelAA')}
+                      />
+                      <label className="slds-checkbox__label" htmlFor="filter-level-aa">
+                        <span className="slds-checkbox_faux"></span>
+                        <span className="slds-form-element__label">Level AA</span>
+                      </label>
+                    </div>
+
+                    {/* New in 2.2 */}
+                    <div className="slds-checkbox">
+                      <input
+                        type="checkbox"
+                        id="filter-new-22"
+                        checked={filters.newIn22}
+                        onChange={() => toggleFilter('newIn22')}
+                      />
+                      <label className="slds-checkbox__label" htmlFor="filter-new-22">
+                        <span className="slds-checkbox_faux"></span>
+                        <span className="slds-form-element__label">New in 2.2</span>
+                      </label>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Content - Standards */}
+          <div className="slds-col slds-size_1-of-1 slds-medium-size_3-of-4 slds-large-size_4-of-5">
+            {/* WCAG Success Criteria by POUR */}
         {Object.entries(criteria).map(([key, principle]) => (
           <div key={key} className="slds-card slds-m-bottom_large">
             <div className="slds-card__header slds-grid">
@@ -162,13 +248,13 @@ export default function Standards() {
             </div>
             <div className="slds-card__body slds-card__body_inner">
               {/* Level A */}
-              {principle.levelA.length > 0 && (
+              {principle.levelA.filter(sc => shouldShowCriterion(sc, 'A')).length > 0 && (
                 <div className="slds-m-bottom_large">
                   <h3 className="slds-text-heading_small slds-m-bottom_small">
                     <span className="slds-badge" style={{ backgroundColor: '#04844b', color: '#ffffff', marginRight: '0.5rem' }}>Level A</span>
                   </h3>
                   <ul className="slds-list_vertical slds-has-dividers_top">
-                    {principle.levelA.map(sc => (
+                    {principle.levelA.filter(sc => shouldShowCriterion(sc, 'A')).map(sc => (
                       <li key={sc.id} className="slds-item slds-p-vertical_small">
                         <Link
                           to={`/standards/${sc.id}`}
@@ -180,6 +266,11 @@ export default function Standards() {
                           }}
                         >
                           <strong>{sc.id}</strong> {sc.name}
+                          {newIn22.includes(sc.id) && (
+                            <span className="slds-badge slds-badge_lightest slds-m-left_x-small" style={{ fontSize: '0.75rem' }}>
+                              New in 2.2
+                            </span>
+                          )}
                         </Link>
                       </li>
                     ))}
@@ -188,13 +279,13 @@ export default function Standards() {
               )}
 
               {/* Level AA */}
-              {principle.levelAA.length > 0 && (
+              {principle.levelAA.filter(sc => shouldShowCriterion(sc, 'AA')).length > 0 && (
                 <div>
                   <h3 className="slds-text-heading_small slds-m-bottom_small">
                     <span className="slds-badge" style={{ backgroundColor: '#0176d3', color: '#ffffff', marginRight: '0.5rem' }}>Level AA</span>
                   </h3>
                   <ul className="slds-list_vertical slds-has-dividers_top">
-                    {principle.levelAA.map(sc => (
+                    {principle.levelAA.filter(sc => shouldShowCriterion(sc, 'AA')).map(sc => (
                       <li key={sc.id} className="slds-item slds-p-vertical_small">
                         <Link
                           to={`/standards/${sc.id}`}
@@ -206,6 +297,11 @@ export default function Standards() {
                           }}
                         >
                           <strong>{sc.id}</strong> {sc.name}
+                          {newIn22.includes(sc.id) && (
+                            <span className="slds-badge slds-badge_lightest slds-m-left_x-small" style={{ fontSize: '0.75rem' }}>
+                              New in 2.2
+                            </span>
+                          )}
                         </Link>
                       </li>
                     ))}
@@ -216,27 +312,29 @@ export default function Standards() {
           </div>
         ))}
 
-        {/* External Resources */}
-        <div className="slds-card">
-          <div className="slds-card__body slds-card__body_inner slds-p-around_large">
-            <h2 className="slds-text-heading_medium slds-m-bottom_medium">External Resources</h2>
-            <ul className="slds-list_dotted">
-              <li>
-                <a href="https://www.w3.org/TR/WCAG22/" target="_blank" rel="noopener noreferrer" className="slds-text-link">
-                  WCAG 2.2 Specification
-                </a>
-              </li>
-              <li>
-                <a href="https://www.w3.org/WAI/WCAG22/quickref/" target="_blank" rel="noopener noreferrer" className="slds-text-link">
-                  How to Meet WCAG (Quick Reference)
-                </a>
-              </li>
-              <li>
-                <a href="https://www.w3.org/WAI/WCAG22/Understanding/" target="_blank" rel="noopener noreferrer" className="slds-text-link">
-                  Understanding WCAG 2.2
-                </a>
-              </li>
-            </ul>
+            {/* External Resources */}
+            <div className="slds-card">
+              <div className="slds-card__body slds-card__body_inner slds-p-around_large">
+                <h2 className="slds-text-heading_medium slds-m-bottom_medium">External Resources</h2>
+                <ul className="slds-list_dotted">
+                  <li>
+                    <a href="https://www.w3.org/TR/WCAG22/" target="_blank" rel="noopener noreferrer" className="slds-text-link">
+                      WCAG 2.2 Specification
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://www.w3.org/WAI/WCAG22/quickref/" target="_blank" rel="noopener noreferrer" className="slds-text-link">
+                      How to Meet WCAG (Quick Reference)
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://www.w3.org/WAI/WCAG22/Understanding/" target="_blank" rel="noopener noreferrer" className="slds-text-link">
+                      Understanding WCAG 2.2
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
