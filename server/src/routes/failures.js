@@ -95,10 +95,22 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    const next = await db.prepare(
-      'SELECT COALESCE(MAX(sf_issue_id), 0) + 1 AS next_id FROM failures WHERE project_id = ?'
-    ).get(projectId);
-    const sf_issue_id = next.next_id;
+    // Find the lowest available sf_issue_id (fill gaps from deleted failures)
+    const existingIds = await db.prepare(
+      'SELECT sf_issue_id FROM failures WHERE project_id = ? ORDER BY sf_issue_id ASC'
+    ).all(projectId);
+
+    let sf_issue_id = 1;
+    const ids = existingIds.map(row => row.sf_issue_id);
+
+    // Find first gap in sequence
+    for (const id of ids) {
+      if (id === sf_issue_id) {
+        sf_issue_id++;
+      } else {
+        break; // Found a gap
+      }
+    }
 
     const id = randomUUID();
 
