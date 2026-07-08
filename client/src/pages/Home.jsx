@@ -1,3 +1,5 @@
+import SupportSchedule from '../components/SupportSchedule';
+
 export default function Home() {
   return (
     <div className="slds-scope">
@@ -10,6 +12,11 @@ export default function Home() {
           <p className="slds-text-body_regular slds-text-color_weak" style={{ fontSize: '1.125rem', maxWidth: '800px', margin: '0 auto' }}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
+        </div>
+
+        {/* Support Schedule */}
+        <div className="slds-m-bottom_x-large">
+          <SupportSchedule />
         </div>
 
         {/* Feature Cards */}
