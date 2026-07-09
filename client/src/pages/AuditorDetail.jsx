@@ -48,44 +48,45 @@ export default function AuditorDetail() {
   return (
     <div className="slds-scope">
       {/* Page Header */}
-      <div className="slds-page-header">
-        <div className="slds-page-header__row">
-          <div className="slds-page-header__col-title">
-            <div className="slds-media">
-              <div className="slds-media__figure">
-                <button
-                  className="slds-button slds-button_icon slds-button_icon-border"
-                  onClick={() => navigate('/audits')}
-                  title="Back to Dashboard"
-                >
-                  <svg className="slds-button__icon" aria-hidden="true">
-                    <use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#back"></use>
-                  </svg>
-                  <span className="slds-assistive-text">Back to Dashboard</span>
-                </button>
-              </div>
-              <div className="slds-media__body">
-                <nav aria-label="Breadcrumb">
-                  <ol className="slds-breadcrumb slds-list_horizontal slds-wrap">
-                    <li className="slds-breadcrumb__item">
-                      <Link to="/audits">Dashboard</Link>
-                    </li>
-                    <li className="slds-breadcrumb__item">
-                      <span>{decodedName}</span>
-                    </li>
-                  </ol>
-                </nav>
-                <div className="slds-page-header__name">
-                  <div className="slds-page-header__name-title">
-                    <h1>
-                      <span className="slds-page-header__title slds-truncate" title={decodedName}>{decodedName}</span>
-                    </h1>
-                  </div>
-                </div>
-                <p className="slds-page-header__name-meta">{projects.length} project{projects.length !== 1 ? 's' : ''}</p>
-              </div>
-            </div>
+      <div style={{
+        background: 'linear-gradient(to right, #1B5F9E, #2E70B8)',
+        padding: '2rem 2rem 1.5rem',
+        marginBottom: '2rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+          <Link to="/audits" style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem', textDecoration: 'none' }}>
+            Dashboard
+          </Link>
+          <span style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem' }}>/</span>
+          <span style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem' }}>{decodedName}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
+          <div>
+            <h1 style={{
+              color: '#ffffff',
+              fontSize: '2rem',
+              fontWeight: '700',
+              margin: 0,
+              marginBottom: '0.5rem'
+            }}>
+              {decodedName}
+            </h1>
+            <p style={{
+              color: '#ffffff',
+              fontSize: '0.875rem',
+              margin: 0,
+              opacity: 0.9
+            }}>
+              {projects.length} project{projects.length !== 1 ? 's' : ''}
+            </p>
           </div>
+          <button
+            className="slds-button slds-button_neutral"
+            onClick={() => navigate('/audits')}
+            title="Back to Dashboard"
+          >
+            Back to Dashboard
+          </button>
         </div>
       </div>
 

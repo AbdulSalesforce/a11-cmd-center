@@ -1,0 +1,19 @@
+{
+  "note": "This is a sample showing the complete structure. The full file with all 55 criteria will be generated next.",
+  "example": {
+    "1.1.1": {
+      "title": "1.1.1 Non-text Content (A)",
+      "sections": {
+        "benefits": "Success Criterion (SC) 1.1.1 Non-text Content ensures accessibility for users with visual or hearing disabilities by providing text alternatives for meaningful images, icons, charts, graphs, and audio-only content (like podcasts). It also prevents decorative content from cluttering screen reader output.",
+        "wcag_requirements": "...",
+        "salesforce_standards": "...",
+        "best_practices": "...",
+        "testing_protocol": "...",
+        "example_bugs": "...",
+        "techniques": "...",
+        "bug_priority": "...",
+        "resources": "..."
+      }
+    }
+  }
+}

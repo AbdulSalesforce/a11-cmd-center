@@ -35,6 +35,8 @@ Thumbs.db
 
 # Google credentials (local only)
 server/data/google-*.json
+server/google-credentials.json
+server/google-token.json
 .a11y-audit/
 
 # Temporary files

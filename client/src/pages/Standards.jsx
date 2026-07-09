@@ -171,25 +171,28 @@ export default function Standards() {
     <div className="slds-scope">
       {filterControls}
       {/* Page Header */}
-      <div className="slds-page-header">
-        <div className="slds-page-header__row">
-          <div className="slds-page-header__col-title">
-            <div className="slds-media">
-              <div className="slds-media__body">
-                <div className="slds-page-header__name">
-                  <div className="slds-page-header__name-title">
-                    <h1>
-                      <span className="slds-page-header__title slds-truncate" title="Salesforce Accessibility Standards">
-                        Salesforce Accessibility Standards
-                      </span>
-                    </h1>
-                  </div>
-                </div>
-                <p className="slds-page-header__name-meta">WCAG 2.2 Level A & AA Compliance Guidelines</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div style={{
+        background: 'linear-gradient(to right, #1B5F9E, #2E70B8)',
+        padding: '2rem 2rem 1.5rem',
+        marginBottom: '2rem'
+      }}>
+        <h1 style={{
+          color: '#ffffff',
+          fontSize: '2rem',
+          fontWeight: '700',
+          margin: 0,
+          marginBottom: '0.5rem'
+        }}>
+          Salesforce Accessibility Standards
+        </h1>
+        <p style={{
+          color: '#ffffff',
+          fontSize: '0.875rem',
+          margin: 0,
+          opacity: 0.9
+        }}>
+          WCAG 2.2 Level A & AA Compliance Guidelines
+        </p>
       </div>
 
       {/* Content */}

@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch index.js"
+    "dev": "node --watch index.js",
+    "setup-google": "node scripts/setup-google-auth.js",
+    "fetch-standards": "node scripts/fetch-standards.js",
+    "schedule-refresh": "node scripts/schedule-standards-refresh.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +20,7 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
     "googleapis": "^172.0.0",
+    "node-cron": "^3.0.3",
     "open": "^11.0.0",
     "pg": "^8.22.0"
   }

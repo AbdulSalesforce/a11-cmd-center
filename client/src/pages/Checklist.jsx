@@ -75,29 +75,45 @@ export default function Checklist() {
   }
 
   return (
-    <div>
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" style={{ marginBottom: 'var(--space-4)' }}>
-        <ol style={{ listStyle: 'none', display: 'flex', gap: 'var(--space-2)', fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
-          <li><Link to={`/projects/${projectId}`}>{project.product_name}</Link></li>
-          <li aria-hidden="true">/</li>
-          <li aria-current="page">{scopeItem.page_name}</li>
-        </ol>
-      </nav>
-
-      {/* Header */}
-      <div className="checklist-header">
-        <div>
-          <h2 style={{ marginBottom: 'var(--space-1)' }}>{scopeItem.page_name}</h2>
-          {scopeItem.url && (
-            <a href={scopeItem.url} target="_blank" rel="noreferrer" style={{ fontSize: 'var(--text-sm)' }}>
-              {scopeItem.url}
-            </a>
-          )}
+    <div className="slds-scope">
+      <div style={{
+        background: 'linear-gradient(to right, #1B5F9E, #2E70B8)',
+        padding: '2rem 2rem 1.5rem',
+        marginBottom: '2rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+          <Link to={`/projects/${projectId}`} style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem', textDecoration: 'none' }}>
+            {project.product_name}
+          </Link>
+          <span style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem' }}>/</span>
+          <span style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem' }}>{scopeItem.page_name}</span>
         </div>
-        <Link to={`/projects/${projectId}`} className="btn btn-secondary btn-sm">
-          Back to project
-        </Link>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
+          <div>
+            <h1 style={{
+              color: '#ffffff',
+              fontSize: '2rem',
+              fontWeight: '700',
+              margin: 0,
+              marginBottom: '0.5rem'
+            }}>
+              {scopeItem.page_name}
+            </h1>
+            {scopeItem.url && (
+              <a
+                href={scopeItem.url}
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: '#ffffff', fontSize: '0.875rem', opacity: 0.9, textDecoration: 'underline' }}
+              >
+                {scopeItem.url}
+              </a>
+            )}
+          </div>
+          <Link to={`/projects/${projectId}`} className="slds-button slds-button_neutral">
+            Back to project
+          </Link>
+        </div>
       </div>
 
       {/* Progress */}

@@ -2,7 +2,7 @@
 
 .sf-nav-link {
   color: #032d60;
-  text-decoration: none;
+  text-decoration: none !important;
   font-size: 20px;
   font-weight: 400;
   padding: 1.25rem 0;
@@ -13,11 +13,13 @@
 
 .sf-nav-link:hover {
   color: #0176d3;
+  text-decoration: none !important;
 }
 
 .sf-nav-link.active {
   font-weight: 700;
   color: #032d60;
+  text-decoration: none !important;
 }
 
 .sf-nav-link.active::after {

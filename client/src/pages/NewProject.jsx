@@ -126,9 +126,33 @@ export default function NewProject() {
   }
 
   return (
-    <div className="page-section">
-      <h2>New Project</h2>
-      <p className="field-hint" style={{ marginTop: 'var(--space-2)', marginBottom: 'var(--space-8)' }}>
+    <div className="slds-scope">
+      <div style={{
+        background: 'linear-gradient(to right, #1B5F9E, #2E70B8)',
+        padding: '2rem 2rem 1.5rem',
+        marginBottom: '2rem'
+      }}>
+        <h1 style={{
+          color: '#ffffff',
+          fontSize: '2rem',
+          fontWeight: '700',
+          margin: 0,
+          marginBottom: '0.5rem'
+        }}>
+          New Project
+        </h1>
+        <p style={{
+          color: '#ffffff',
+          fontSize: '0.875rem',
+          margin: 0,
+          opacity: 0.9
+        }}>
+          Create a new accessibility audit project
+        </p>
+      </div>
+
+      <div className="page-section">
+      <p className="field-hint" style={{ marginBottom: 'var(--space-8)' }}>
         Fields marked <span aria-hidden="true">*</span><span className="visually-hidden">with an asterisk</span> are required.
       </p>
 
@@ -476,6 +500,7 @@ export default function NewProject() {
         </div>
 
       </form>
+      </div>
     </div>
   );
 }

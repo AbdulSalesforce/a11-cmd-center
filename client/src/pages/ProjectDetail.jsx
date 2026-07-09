@@ -97,32 +97,46 @@ export default function ProjectDetail() {
   }
 
   return (
-    <div>
+    <div className="slds-scope">
       {/* ── Header ── */}
-      <div className="project-header">
-        <div className="project-header-text">
-          <h2>{project.product_name}</h2>
-          <dl className="project-meta">
-            {project.pm_name && (
-              <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
-                <dt>PM:</dt><dd>{project.pm_name}</dd>
-              </div>
-            )}
-            {project.release_build_name && (
-              <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
-                <dt>Build:</dt><dd>{project.release_build_name}</dd>
-              </div>
-            )}
-            {project.slack_channel && (
-              <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
-                <dt>Slack:</dt><dd>{project.slack_channel}</dd>
-              </div>
-            )}
-          </dl>
+      <div style={{
+        background: 'linear-gradient(to right, #1B5F9E, #2E70B8)',
+        padding: '2rem 2rem 1.5rem',
+        marginBottom: '2rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
+          <div>
+            <h1 style={{
+              color: '#ffffff',
+              fontSize: '2rem',
+              fontWeight: '700',
+              margin: 0,
+              marginBottom: '0.5rem'
+            }}>
+              {project.product_name}
+            </h1>
+            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+              {project.pm_name && (
+                <p style={{ color: '#ffffff', fontSize: '0.875rem', margin: 0, opacity: 0.9 }}>
+                  <strong>PM:</strong> {project.pm_name}
+                </p>
+              )}
+              {project.release_build_name && (
+                <p style={{ color: '#ffffff', fontSize: '0.875rem', margin: 0, opacity: 0.9 }}>
+                  <strong>Build:</strong> {project.release_build_name}
+                </p>
+              )}
+              {project.slack_channel && (
+                <p style={{ color: '#ffffff', fontSize: '0.875rem', margin: 0, opacity: 0.9 }}>
+                  <strong>Slack:</strong> {project.slack_channel}
+                </p>
+              )}
+            </div>
+          </div>
+          <Link to={`/projects/${id}/failures/new`} className="slds-button slds-button_brand">
+            Log failure
+          </Link>
         </div>
-        <Link to={`/projects/${id}/failures/new`} className="btn btn-primary">
-          Log failure
-        </Link>
       </div>
 
       {/* ── Tabs ── */}

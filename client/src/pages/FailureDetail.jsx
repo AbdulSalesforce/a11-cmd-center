@@ -46,61 +46,78 @@ export default function FailureDetail() {
   if (!failure || !project) return <p>Failure not found.</p>;
 
   return (
-    <div>
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" style={{ marginBottom: 'var(--space-4)' }}>
-        <ol style={{ listStyle: 'none', display: 'flex', gap: 'var(--space-2)', fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
-          <li><Link to={`/projects/${projectId}`}>{project.product_name}</Link></li>
-          <li aria-hidden="true">/</li>
-          <li><Link to={`/projects/${projectId}?tab=failures`}>Failures</Link></li>
-          <li aria-hidden="true">/</li>
-          <li aria-current="page">SF-{failure.sf_issue_id}</li>
-        </ol>
-      </nav>
-
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 'var(--space-6)' }}>
-        <div>
-          <h2 style={{ marginBottom: 'var(--space-2)' }}>
-            <span style={{ color: 'var(--color-text-secondary)', fontWeight: 'normal' }}>SF-{failure.sf_issue_id}</span>
-            {' '}
-            {failure.subject}
-          </h2>
-          <div style={{ display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap', fontSize: 'var(--text-sm)' }}>
-            <span className={`badge badge-${failure.severity.toLowerCase()}`}>{failure.severity}</span>
-            {failure.page_name && <span><strong>Page:</strong> {failure.page_name}</span>}
-            <span><strong>Criterion:</strong> {failure.wcag_criterion}</span>
-          </div>
+    <div className="slds-scope">
+      <div style={{
+        background: 'linear-gradient(to right, #1B5F9E, #2E70B8)',
+        padding: '2rem 2rem 1.5rem',
+        marginBottom: '2rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+          <Link to={`/projects/${projectId}`} style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem', textDecoration: 'none' }}>
+            {project.product_name}
+          </Link>
+          <span style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem' }}>/</span>
+          <Link to={`/projects/${projectId}?tab=failures`} style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem', textDecoration: 'none' }}>
+            Failures
+          </Link>
+          <span style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem' }}>/</span>
+          <span style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem' }}>SF-{failure.sf_issue_id}</span>
         </div>
-        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-          <Link to={`/projects/${projectId}?tab=failures`} className="btn btn-secondary">
-            Back to failures
-          </Link>
-          <Link to={`/projects/${projectId}/failures/${failureId}/edit`} className="btn btn-primary">
-            Edit
-          </Link>
-          {!confirmDelete ? (
-            <button className="btn btn-danger" onClick={() => setConfirmDelete(true)}>
-              Delete
-            </button>
-          ) : (
-            <>
-              <button
-                className="btn btn-danger"
-                onClick={handleDelete}
-                disabled={deleting}
-              >
-                Confirm delete
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
+          <div>
+            <h1 style={{
+              color: '#ffffff',
+              fontSize: '2rem',
+              fontWeight: '700',
+              margin: 0,
+              marginBottom: '0.5rem'
+            }}>
+              <span style={{ fontWeight: 'normal', opacity: 0.9 }}>SF-{failure.sf_issue_id}</span>
+              {' '}
+              {failure.subject}
+            </h1>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <span className={`badge badge-${failure.severity.toLowerCase()}`}>{failure.severity}</span>
+              {failure.page_name && (
+                <p style={{ color: '#ffffff', fontSize: '0.875rem', margin: 0, opacity: 0.9 }}>
+                  <strong>Page:</strong> {failure.page_name}
+                </p>
+              )}
+              <p style={{ color: '#ffffff', fontSize: '0.875rem', margin: 0, opacity: 0.9 }}>
+                <strong>Criterion:</strong> {failure.wcag_criterion}
+              </p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
+            <Link to={`/projects/${projectId}?tab=failures`} className="slds-button slds-button_neutral">
+              Back to failures
+            </Link>
+            <Link to={`/projects/${projectId}/failures/${failureId}/edit`} className="slds-button slds-button_brand">
+              Edit
+            </Link>
+            {!confirmDelete ? (
+              <button className="slds-button slds-button_destructive" onClick={() => setConfirmDelete(true)}>
+                Delete
               </button>
-              <button
-                className="btn btn-secondary"
-                onClick={() => setConfirmDelete(false)}
-                disabled={deleting}
-              >
-                Cancel
-              </button>
-            </>
-          )}
+            ) : (
+              <>
+                <button
+                  className="slds-button slds-button_destructive"
+                  onClick={handleDelete}
+                  disabled={deleting}
+                >
+                  Confirm delete
+                </button>
+                <button
+                  className="slds-button slds-button_neutral"
+                  onClick={() => setConfirmDelete(false)}
+                  disabled={deleting}
+                >
+                  Cancel
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
 

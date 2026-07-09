@@ -257,16 +257,32 @@ export default function NewFailure() {
   const tagOptions = project.product_tags ?? [];
 
   return (
-    <div className="page-section">
-      <nav aria-label="Breadcrumb" style={{ marginBottom: 'var(--space-4)' }}>
-        <ol style={{ listStyle: 'none', display: 'flex', gap: 'var(--space-2)', fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
-          <li><a href={`/projects/${projectId}`}>{project.product_name}</a></li>
-          <li aria-hidden="true">/</li>
-          <li aria-current="page">{isEditing ? 'Edit failure' : 'Log failure'}</li>
-        </ol>
-      </nav>
+    <div className="slds-scope">
+      <div style={{
+        background: 'linear-gradient(to right, #1B5F9E, #2E70B8)',
+        padding: '2rem 2rem 1.5rem',
+        marginBottom: '2rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+          <Link to={`/projects/${projectId}`} style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem', textDecoration: 'none' }}>
+            {project.product_name}
+          </Link>
+          <span style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem' }}>/</span>
+          <span style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem' }}>
+            {isEditing ? 'Edit failure' : 'Log failure'}
+          </span>
+        </div>
+        <h1 style={{
+          color: '#ffffff',
+          fontSize: '2rem',
+          fontWeight: '700',
+          margin: 0
+        }}>
+          {isEditing ? 'Edit failure' : 'Log failure'}
+        </h1>
+      </div>
 
-      <h2 style={{ marginBottom: 'var(--space-2)' }}>{isEditing ? 'Edit failure' : 'Log failure'}</h2>
+      <div className="page-section">
       <p className="field-hint" style={{ marginBottom: 'var(--space-8)' }}>
         Fields marked <span aria-hidden="true">*</span><span className="visually-hidden">with an asterisk</span> are required.
       </p>
@@ -649,6 +665,7 @@ export default function NewFailure() {
         </div>
 
       </form>
+      </div>
     </div>
   );
 }

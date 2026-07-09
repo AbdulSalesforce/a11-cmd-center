@@ -57,86 +57,145 @@ export default function ProjectList() {
   }
 
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-8)' }}>
-        <h2>Projects</h2>
-        <Link to="/projects/new" className="btn btn-primary">New project</Link>
+    <div className="slds-scope">
+      <div style={{
+        background: 'linear-gradient(to right, #1B5F9E, #2E70B8)',
+        padding: '2rem 2rem 1.5rem',
+        marginBottom: '2rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <h1 style={{
+              color: '#ffffff',
+              fontSize: '2rem',
+              fontWeight: '700',
+              margin: 0,
+              marginBottom: '0.5rem'
+            }}>
+              Projects
+            </h1>
+            <p style={{
+              color: '#ffffff',
+              fontSize: '0.875rem',
+              margin: 0,
+              opacity: 0.9
+            }}>
+              All accessibility audit projects
+            </p>
+          </div>
+          <Link to="/projects/new" className="slds-button slds-button_brand">New project</Link>
+        </div>
       </div>
 
       {loading && <p>Loading projects…</p>}
       {error && <div className="alert alert-error" role="alert">{error}</div>}
 
       {!loading && !error && projects.length === 0 && (
-        <div className="card" style={{ textAlign: 'center', padding: 'var(--space-16)' }}>
-          <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-4)' }}>
-            No projects yet.
-          </p>
-          <Link to="/projects/new" className="btn btn-primary">Create your first project</Link>
+        <div className="slds-illustration slds-illustration_large">
+          <div className="slds-text-longform">
+            <h3 className="slds-text-heading_medium">No projects yet</h3>
+            <p className="slds-text-body_regular">Get started by creating your first accessibility audit project.</p>
+            <Link to="/projects/new" className="slds-button slds-button_brand slds-m-top_medium">
+              Create Your First Project
+            </Link>
+          </div>
         </div>
       )}
 
       {!loading && projects.length > 0 && (
-        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-          {projects.map(project => (
-            <li key={project.id}>
-              <article className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-4)' }}>
-                <div style={{ minWidth: 0 }}>
-                  <h3 style={{ fontSize: 'var(--text-base)', marginBottom: 'var(--space-1)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                    <Link to={`/projects/${project.id}`} style={{ textDecoration: 'none', color: 'var(--color-text)' }}>
-                      {project.product_name}
-                    </Link>
-                    {project.scope_total > 0 && project.scope_complete === project.scope_total && (
-                      <span title="All scope items complete"><CheckIcon /></span>
-                    )}
-                  </h3>
-                  <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
-                    {project.release_build_name && <span>Build {project.release_build_name} · </span>}
-                    {project.failure_count} {project.failure_count === 1 ? 'failure' : 'failures'}
-                    {project.scope_total > 0 && (
-                      <span> · {project.scope_complete}/{project.scope_total} scope items complete</span>
-                    )}
-                  </p>
-                </div>
+        <div className="slds-grid slds-wrap slds-gutters">
+          {projects.map(project => {
+            const progressPercent = project.scope_total > 0
+              ? Math.round((project.scope_complete / project.scope_total) * 100)
+              : 0;
 
-                {confirmingId === project.id ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexShrink: 0 }}>
-                    <span style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', whiteSpace: 'nowrap' }}>
-                      Delete this project?
-                    </span>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => handleConfirmDelete(project.id)}
-                      disabled={deleting}
-                    >
-                      Delete
-                    </button>
-                    <button
-                      className="btn btn-secondary btn-sm"
-                      onClick={handleCancel}
-                      disabled={deleting}
-                    >
-                      Cancel
-                    </button>
+            return (
+              <div key={project.id} className="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                <article className="slds-card">
+                  <div className="slds-card__header slds-grid">
+                    <header className="slds-media slds-media_center slds-has-flexi-truncate">
+                      <div className="slds-media__body">
+                        <h2 className="slds-card__header-title">
+                          <Link to={`/projects/${project.id}`} className="slds-card__header-link">
+                            <span className="slds-truncate" title={project.product_name}>
+                              {project.product_name}
+                              {project.scope_total > 0 && project.scope_complete === project.scope_total && (
+                                <span style={{ marginLeft: '0.5rem' }} title="All scope items complete"><CheckIcon /></span>
+                              )}
+                            </span>
+                          </Link>
+                        </h2>
+                      </div>
+                    </header>
                   </div>
-                ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexShrink: 0 }}>
-                    <Link to={`/projects/${project.id}`} className="btn btn-secondary btn-sm">
-                      Open
-                    </Link>
-                    <button
-                      className="btn btn-ghost btn-sm"
-                      onClick={() => handleDeleteClick(project.id)}
-                      aria-label={`Delete ${project.product_name}`}
-                      style={{ color: 'var(--color-text-secondary)', padding: 'var(--space-1)' }}
-                    >
-                      <TrashIcon />
-                    </button>
+                  <div className="slds-card__body slds-card__body_inner">
+                    <div className="slds-m-bottom_small">
+                      {project.release_build_name && (
+                        <p className="slds-text-body_small slds-m-bottom_xx-small">
+                          <strong>Build:</strong> {project.release_build_name}
+                        </p>
+                      )}
+                      <p className="slds-text-body_small">
+                        <strong>{project.failure_count}</strong> {project.failure_count === 1 ? 'failure' : 'failures'}
+                      </p>
+                    </div>
+                    {project.scope_total > 0 && (
+                      <div className="slds-m-top_medium">
+                        <div className="slds-grid slds-grid_align-spread slds-text-body_small slds-m-bottom_xx-small">
+                          <span><strong>{progressPercent}%</strong> complete</span>
+                          <span><strong>{project.scope_complete}/{project.scope_total}</strong> scope</span>
+                        </div>
+                        <div className="slds-progress-bar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={progressPercent} role="progressbar">
+                          <span className="slds-progress-bar__value" style={{ width: `${progressPercent}%` }}>
+                            <span className="slds-assistive-text">{progressPercent}% Complete</span>
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
-              </article>
-            </li>
-          ))}
-        </ul>
+                  <footer className="slds-card__footer">
+                    {confirmingId === project.id ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem' }}>
+                        <span className="slds-text-body_small">Delete this project?</span>
+                        <button
+                          className="slds-button slds-button_destructive slds-button_stretch"
+                          onClick={() => handleConfirmDelete(project.id)}
+                          disabled={deleting}
+                        >
+                          Delete
+                        </button>
+                        <button
+                          className="slds-button slds-button_neutral slds-button_stretch"
+                          onClick={handleCancel}
+                          disabled={deleting}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <Link to={`/projects/${project.id}`} className="slds-card__footer-action" style={{ flex: 1 }}>
+                          View Project
+                          <svg className="slds-button__icon slds-button__icon_right" aria-hidden="true">
+                            <use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#forward"></use>
+                          </svg>
+                        </Link>
+                        <button
+                          className="slds-button slds-button_icon slds-button_icon-border"
+                          onClick={() => handleDeleteClick(project.id)}
+                          aria-label={`Delete ${project.product_name}`}
+                          title="Delete project"
+                        >
+                          <TrashIcon />
+                        </button>
+                      </div>
+                    )}
+                  </footer>
+                </article>
+              </div>
+            );
+          })}
+        </div>
       )}
     </div>
   );
