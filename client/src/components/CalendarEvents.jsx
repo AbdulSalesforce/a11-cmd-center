@@ -255,12 +255,20 @@ function EventCard({ title, events, showLinks = true }) {
                           href={event.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="slds-text-link"
+                          className="slds-button slds-button_icon slds-button_icon-border"
                           title="View in Google Calendar (opens in new window)"
-                          style={{ fontSize: '1.25rem', lineHeight: '1' }}
+                          aria-label="View in Google Calendar (opens in new window)"
                         >
-                          📅
-                          <span className="slds-assistive-text">View in Google Calendar (opens in new window)</span>
+                          <svg
+                            className="slds-button__icon"
+                            aria-hidden="true"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path d="M14 3h-1V2c0-.6-.4-1-1-1s-1 .4-1 1v1H9V2c0-.6-.4-1-1-1s-1 .4-1 1v1H6c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H6V8h8v8zm-7-6h2v2H7v-2zm3 0h2v2h-2v-2zm3 0h2v2h-2v-2z"/>
+                          </svg>
                         </a>
                       </div>
                     )}
