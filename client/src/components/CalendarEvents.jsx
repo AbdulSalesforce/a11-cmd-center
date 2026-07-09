@@ -124,6 +124,64 @@ function formatEventDateTime(date) {
   return date.toLocaleString('en-US', options);
 }
 
+function formatEventDateRange(startDate, endDate) {
+  if (!startDate) return '';
+
+  // Check if it's an all-day event (no time component)
+  const isAllDay = startDate.getHours() === 0 && startDate.getMinutes() === 0;
+
+  if (!endDate || !isAllDay) {
+    // Regular event with time, show start time only
+    return formatEventDateTime(startDate);
+  }
+
+  // Multi-day event - show date range
+  const startDay = startDate.getDate();
+  const endDay = endDate.getDate();
+  const startMonth = startDate.getMonth();
+  const endMonth = endDate.getMonth();
+
+  // Adjust end date by subtracting 1 day (iCal end dates are exclusive)
+  const adjustedEndDate = new Date(endDate);
+  adjustedEndDate.setDate(adjustedEndDate.getDate() - 1);
+
+  if (startDay === adjustedEndDate.getDate() && startMonth === adjustedEndDate.getMonth()) {
+    // Single day event
+    const options = { weekday: 'short', month: 'short', day: 'numeric' };
+    return startDate.toLocaleString('en-US', options);
+  }
+
+  // Multi-day event
+  const startOptions = { month: 'short', day: 'numeric' };
+  const endOptions = { month: 'short', day: 'numeric' };
+  return `${startDate.toLocaleDateString('en-US', startOptions)} - ${adjustedEndDate.toLocaleDateString('en-US', endOptions)}`;
+}
+
+function cleanDescription(description) {
+  if (!description) return '';
+
+  // Remove common meeting details patterns
+  // Split by newlines and take only the first line or first meaningful content
+  const lines = description.split(/\r?\n/).filter(line => line.trim());
+
+  if (lines.length === 0) return '';
+
+  // Skip lines that look like meeting URLs, join links, or technical details
+  const meaningfulLines = lines.filter(line => {
+    const lower = line.toLowerCase().trim();
+    return !lower.startsWith('http') &&
+           !lower.startsWith('zoom') &&
+           !lower.startsWith('meet.google') &&
+           !lower.includes('meeting id') &&
+           !lower.includes('passcode') &&
+           !lower.includes('join url') &&
+           !lower.startsWith('-::~:~::~:~:~:~:~:~:~:~:~:~');
+  });
+
+  // Return first meaningful line, or first line if all filtered out
+  return (meaningfulLines[0] || lines[0] || '').trim();
+}
+
 function EventCard({ title, events }) {
   if (!events || events.length === 0) {
     return null;
@@ -143,25 +201,28 @@ function EventCard({ title, events }) {
         </div>
         <div className="slds-card__body slds-card__body_inner">
           <ul className="slds-list_vertical slds-has-dividers_top-space">
-            {events.map((event, index) => (
-              <li key={event.id || index} className="slds-item slds-p-vertical_small">
-                <div className="slds-grid slds-wrap">
-                  <div className="slds-col slds-size_1-of-1">
-                    <p className="slds-text-body_regular slds-m-bottom_xx-small">
-                      <strong>{event.summary}</strong>
-                    </p>
-                    <p className="slds-text-body_small slds-text-color_weak">
-                      {formatEventDateTime(event.startDate)}
-                    </p>
-                    {event.description && (
-                      <p className="slds-text-body_small slds-m-top_x-small">
-                        {event.description}
+            {events.map((event, index) => {
+              const cleanedDescription = cleanDescription(event.description);
+              return (
+                <li key={event.id || index} className="slds-item slds-p-vertical_small">
+                  <div className="slds-grid slds-wrap">
+                    <div className="slds-col slds-size_1-of-1">
+                      <p className="slds-text-body_regular slds-m-bottom_xx-small">
+                        <strong>{event.summary}</strong>
                       </p>
-                    )}
+                      <p className="slds-text-body_small slds-text-color_weak">
+                        {formatEventDateRange(event.startDate, event.endDate)}
+                      </p>
+                      {cleanedDescription && (
+                        <p className="slds-text-body_small slds-m-top_x-small">
+                          {cleanedDescription}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
