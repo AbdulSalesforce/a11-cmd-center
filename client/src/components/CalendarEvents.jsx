@@ -217,34 +217,63 @@ function EventCard({ title, events, showLinks = true }) {
     return null;
   }
 
+  // Use blue for A11y Events, gray for Out of Office
+  const borderColor = title === "A11y Events" ? "#0176d3" : "#706e6b";
+
   return (
     <div className="slds-col slds-size_1-of-1">
-      <div className="slds-card slds-m-bottom_medium">
-        <div className="slds-card__header slds-grid">
-          <header className="slds-media slds-media_center slds-has-flexi-truncate">
-            <div className="slds-media__body">
-              <h3 className="slds-card__header-title">
-                <span className="slds-text-heading_small">{title}</span>
-              </h3>
-            </div>
-          </header>
+      <div style={{
+        background: '#ffffff',
+        border: '1px solid #dddbda',
+        borderRadius: '0.25rem',
+        borderLeft: `4px solid ${borderColor}`,
+        marginBottom: '1rem'
+      }}>
+        <div style={{ padding: '1rem 1.5rem 0.75rem' }}>
+          <h3 style={{
+            fontSize: '1.125rem',
+            fontWeight: '700',
+            color: '#080707',
+            marginBottom: '1rem'
+          }}>
+            {title}
+          </h3>
         </div>
-        <div className="slds-card__body slds-card__body_inner">
-          <ul className="slds-list_vertical slds-has-dividers_top-space">
+        <div style={{ padding: '0 1.5rem 1rem' }}>
+          <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
             {events.map((event, index) => {
               const cleanedDescription = cleanDescription(event.description);
               return (
-                <li key={event.id || index} className="slds-item slds-p-vertical_small">
+                <li
+                  key={event.id || index}
+                  style={{
+                    borderTop: index > 0 ? '1px solid #f3f2f2' : 'none',
+                    paddingTop: index > 0 ? '0.75rem' : 0,
+                    paddingBottom: '0.75rem'
+                  }}
+                >
                   <div className="slds-grid slds-wrap slds-grid_vertical-align-start">
                     <div className="slds-col" style={{ flex: '1' }}>
-                      <p className="slds-text-body_regular slds-m-bottom_xx-small">
-                        <strong>{event.summary}</strong>
+                      <p style={{
+                        fontSize: '0.875rem',
+                        fontWeight: '600',
+                        color: '#080707',
+                        marginBottom: '0.25rem'
+                      }}>
+                        {event.summary}
                       </p>
-                      <p className="slds-text-body_small slds-text-color_weak">
+                      <p style={{
+                        fontSize: '0.8125rem',
+                        color: '#706e6b',
+                        marginBottom: cleanedDescription ? '0.5rem' : 0
+                      }}>
                         {formatEventDateRange(event.startDate, event.endDate)}
                       </p>
                       {cleanedDescription && (
-                        <p className="slds-text-body_small slds-m-top_x-small">
+                        <p style={{
+                          fontSize: '0.8125rem',
+                          color: '#3e3e3c'
+                        }}>
                           {cleanedDescription}
                         </p>
                       )}
@@ -255,15 +284,33 @@ function EventCard({ title, events, showLinks = true }) {
                           href={event.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="slds-button slds-button_icon slds-button_icon-border"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '2rem',
+                            height: '2rem',
+                            border: '1px solid #dddbda',
+                            borderRadius: '0.25rem',
+                            color: '#0176d3',
+                            textDecoration: 'none',
+                            transition: 'all 0.2s'
+                          }}
                           title="View in Google Calendar (opens in new window)"
                           aria-label="View in Google Calendar (opens in new window)"
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = '#f3f2f2';
+                            e.currentTarget.style.borderColor = '#0176d3';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.borderColor = '#dddbda';
+                          }}
                         >
                           <svg
-                            className="slds-button__icon"
                             aria-hidden="true"
-                            width="20"
-                            height="20"
+                            width="16"
+                            height="16"
                             viewBox="0 0 20 20"
                             fill="currentColor"
                           >
@@ -422,28 +469,43 @@ export default function CalendarEvents() {
   }
 
   return (
-    <div className="slds-card">
-      <div className="slds-card__header slds-grid">
-        <header className="slds-media slds-media_center slds-has-flexi-truncate">
-          <div className="slds-media__body">
-            <h2 className="slds-card__header-title">
-              <span className="slds-text-heading_small">Upcoming Events This Week</span>
-            </h2>
-          </div>
-        </header>
+    <div>
+      {/* Blue header like the screenshots */}
+      <div style={{
+        background: 'linear-gradient(to right, #1B5F9E, #2E70B8)',
+        padding: '1.5rem 2rem',
+        borderRadius: '0.25rem 0.25rem 0 0',
+        marginBottom: 0
+      }}>
+        <h2 style={{
+          color: '#ffffff',
+          fontSize: '1.5rem',
+          fontWeight: '700',
+          margin: 0
+        }}>
+          Upcoming Events This Week
+        </h2>
       </div>
-      <div className="slds-card__body slds-card__body_inner">
-        <div className="slds-grid slds-wrap slds-gutters">
-          <EventCard
-            title="A11y Events"
-            events={regularEvents}
-            showLinks={true}
-          />
-          <EventCard
-            title="Out of Office"
-            events={oooEvents}
-            showLinks={false}
-          />
+
+      <div style={{
+        background: '#ffffff',
+        borderRadius: '0 0 0.25rem 0.25rem',
+        border: '1px solid #dddbda',
+        borderTop: 'none'
+      }}>
+        <div className="slds-p-around_large">
+          <div className="slds-grid slds-wrap slds-gutters">
+            <EventCard
+              title="A11y Events"
+              events={regularEvents}
+              showLinks={true}
+            />
+            <EventCard
+              title="Out of Office"
+              events={oooEvents}
+              showLinks={false}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -216,44 +216,59 @@ export default function SupportSchedule() {
   }
 
   return (
-    <div className="slds-card">
-      <div className="slds-card__header slds-grid">
-        <header className="slds-media slds-media_center slds-has-flexi-truncate">
-          <div className="slds-media__body">
-            <h2 className="slds-card__header-title">
-              <span className="slds-text-heading_small">Support Schedule</span>
-            </h2>
-          </div>
-        </header>
+    <div>
+      {/* Blue header like the screenshots */}
+      <div style={{
+        background: 'linear-gradient(to right, #1B5F9E, #2E70B8)',
+        padding: '1.5rem 2rem',
+        borderRadius: '0.25rem 0.25rem 0 0',
+        marginBottom: 0
+      }}>
+        <h2 style={{
+          color: '#ffffff',
+          fontSize: '1.5rem',
+          fontWeight: '700',
+          margin: 0
+        }}>
+          Support Schedule
+        </h2>
       </div>
-      <div className="slds-card__body slds-card__body_inner">
-        <div className="slds-grid slds-wrap slds-gutters">
-          {/* India (IST) Schedule */}
-          <div className="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
-            <div className="slds-m-bottom_small">
-              <WeekDisplay week={istSchedule.current} label="This Week" timezone="IST" />
+
+      <div style={{
+        background: '#ffffff',
+        borderRadius: '0 0 0.25rem 0.25rem',
+        border: '1px solid #dddbda',
+        borderTop: 'none'
+      }}>
+        <div className="slds-p-around_large">
+          <div className="slds-grid slds-wrap slds-gutters">
+            {/* India (IST) Schedule */}
+            <div className="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+              <div className="slds-m-bottom_small">
+                <WeekDisplay week={istSchedule.current} label="This Week" timezone="IST" />
+              </div>
+              <div>
+                <WeekDisplay week={istSchedule.next} label="Next Week" timezone="IST" />
+              </div>
             </div>
-            <div>
-              <WeekDisplay week={istSchedule.next} label="Next Week" timezone="IST" />
+
+            {/* US/Canada (EST) Schedule */}
+            <div className="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+              <div className="slds-m-bottom_small">
+                <WeekDisplay week={estSchedule.current} label="This Week" timezone="EST" />
+              </div>
+              <div>
+                <WeekDisplay week={estSchedule.next} label="Next Week" timezone="EST" />
+              </div>
             </div>
           </div>
 
-          {/* US/Canada (EST) Schedule */}
-          <div className="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
-            <div className="slds-m-bottom_small">
-              <WeekDisplay week={estSchedule.current} label="This Week" timezone="EST" />
-            </div>
-            <div>
-              <WeekDisplay week={estSchedule.next} label="Next Week" timezone="EST" />
-            </div>
-          </div>
+          {!istSchedule.current && !istSchedule.next && !estSchedule.current && !estSchedule.next && (
+            <p className="slds-text-body_small slds-text-color_weak slds-p-around_small">
+              No schedule information available for the current period.
+            </p>
+          )}
         </div>
-
-        {!istSchedule.current && !istSchedule.next && !estSchedule.current && !estSchedule.next && (
-          <p className="slds-text-body_small slds-text-color_weak slds-p-around_small">
-            No schedule information available for the current period.
-          </p>
-        )}
       </div>
     </div>
   );
