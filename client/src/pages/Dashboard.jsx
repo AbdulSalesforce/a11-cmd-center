@@ -67,23 +67,28 @@ export default function Dashboard() {
   return (
     <div className="slds-scope">
       {/* Page Header */}
-      <div className="slds-page-header">
-        <div className="slds-page-header__row">
-          <div className="slds-page-header__col-title">
-            <div className="slds-media">
-              <div className="slds-media__body">
-                <div className="slds-page-header__name">
-                  <div className="slds-page-header__name-title">
-                    <h1>
-                      <span className="slds-page-header__title slds-truncate" title="Dashboard">Dashboard</span>
-                    </h1>
-                  </div>
-                </div>
-                <p className="slds-page-header__name-meta">Overview of all accessibility audits</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div style={{
+        background: 'linear-gradient(to right, #1B5F9E, #2E70B8)',
+        padding: '2rem 2rem 1.5rem',
+        marginBottom: '2rem'
+      }}>
+        <h1 style={{
+          color: '#ffffff',
+          fontSize: '2rem',
+          fontWeight: '700',
+          margin: 0,
+          marginBottom: '0.5rem'
+        }}>
+          Dashboard
+        </h1>
+        <p style={{
+          color: '#ffffff',
+          fontSize: '0.875rem',
+          margin: 0,
+          opacity: 0.9
+        }}>
+          Overview of all accessibility audits
+        </p>
       </div>
 
       {/* Content */}
@@ -124,55 +129,75 @@ export default function Dashboard() {
             {/* Stats Cards */}
             <div className="slds-grid slds-wrap slds-gutters slds-m-bottom_large">
               <div className="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4">
-                <article className="slds-card">
-                  <div className="slds-card__body slds-card__body_inner slds-p-around_medium">
-                    <div className="slds-text-align_center">
-                      <div className="slds-text-heading_large" style={{ color: '#0176d3', fontSize: '2.5rem' }}>
-                        {totalProjects}
-                      </div>
-                      <div className="slds-text-body_regular slds-m-top_x-small">Total Projects</div>
-                    </div>
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid #dddbda',
+                  borderRadius: '0.25rem',
+                  borderLeft: '4px solid #0176d3',
+                  padding: '1.5rem',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ color: '#0176d3', fontSize: '3rem', fontWeight: '700', lineHeight: '1' }}>
+                    {totalProjects}
                   </div>
-                </article>
+                  <div style={{ color: '#706e6b', fontSize: '0.875rem', marginTop: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.025em' }}>
+                    Total Projects
+                  </div>
+                </div>
               </div>
 
               <div className="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4">
-                <article className="slds-card">
-                  <div className="slds-card__body slds-card__body_inner slds-p-around_medium">
-                    <div className="slds-text-align_center">
-                      <div className="slds-text-heading_large" style={{ color: '#ea001e', fontSize: '2.5rem' }}>
-                        {totalFailures}
-                      </div>
-                      <div className="slds-text-body_regular slds-m-top_x-small">Total Failures</div>
-                    </div>
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid #dddbda',
+                  borderRadius: '0.25rem',
+                  borderLeft: '4px solid #ea001e',
+                  padding: '1.5rem',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ color: '#ea001e', fontSize: '3rem', fontWeight: '700', lineHeight: '1' }}>
+                    {totalFailures}
                   </div>
-                </article>
+                  <div style={{ color: '#706e6b', fontSize: '0.875rem', marginTop: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.025em' }}>
+                    Total Failures
+                  </div>
+                </div>
               </div>
 
               <div className="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4">
-                <article className="slds-card">
-                  <div className="slds-card__body slds-card__body_inner slds-p-around_medium">
-                    <div className="slds-text-align_center">
-                      <div className="slds-text-heading_large" style={{ color: '#04844b', fontSize: '2.5rem' }}>
-                        {completedProjects}
-                      </div>
-                      <div className="slds-text-body_regular slds-m-top_x-small">Completed Projects</div>
-                    </div>
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid #dddbda',
+                  borderRadius: '0.25rem',
+                  borderLeft: '4px solid #04844b',
+                  padding: '1.5rem',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ color: '#04844b', fontSize: '3rem', fontWeight: '700', lineHeight: '1' }}>
+                    {completedProjects}
                   </div>
-                </article>
+                  <div style={{ color: '#706e6b', fontSize: '0.875rem', marginTop: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.025em' }}>
+                    Completed Projects
+                  </div>
+                </div>
               </div>
 
               <div className="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4">
-                <article className="slds-card">
-                  <div className="slds-card__body slds-card__body_inner slds-p-around_medium">
-                    <div className="slds-text-align_center">
-                      <div className="slds-text-heading_large" style={{ color: '#0176d3', fontSize: '2.5rem' }}>
-                        {avgCompletion}%
-                      </div>
-                      <div className="slds-text-body_regular slds-m-top_x-small">Average Completion</div>
-                    </div>
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid #dddbda',
+                  borderRadius: '0.25rem',
+                  borderLeft: '4px solid #ff9a3c',
+                  padding: '1.5rem',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ color: '#ff9a3c', fontSize: '3rem', fontWeight: '700', lineHeight: '1' }}>
+                    {avgCompletion}%
                   </div>
-                </article>
+                  <div style={{ color: '#706e6b', fontSize: '0.875rem', marginTop: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.025em' }}>
+                    Average Completion
+                  </div>
+                </div>
               </div>
             </div>
 
