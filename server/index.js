@@ -8,6 +8,7 @@ const failuresRouter = require('./src/routes/failures');
 const scopeRouter = require('./src/routes/scope');
 const checklistRouter = require('./src/routes/checklist');
 const exportRouter = require('./src/routes/export');
+const calendarRouter = require('./src/routes/calendar');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -49,6 +50,7 @@ app.use('/api/projects/:projectId/failures', failuresRouter);
 app.use('/api/projects/:projectId/scope', scopeRouter);
 app.use('/api/projects/:projectId/scope/:scopeItemId/checklist', checklistRouter);
 app.use('/api/projects/:projectId/export', exportRouter);
+app.use('/api/calendar', calendarRouter);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 

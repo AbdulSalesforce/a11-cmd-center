@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 
-// Public iCal feed URLs (no API key needed)
-const CALENDAR_1_ID = 'salesforce.com_9fdrqir8u6hfur6plp11vd1ask@group.calendar.google.com';
-const CALENDAR_2_ID = 'salesforce.com_3bpvi4o060oqliqlp97sdvg16k@group.calendar.google.com';
-const ICAL_1_URL = `https://calendar.google.com/calendar/ical/${CALENDAR_1_ID}/public/basic.ics`;
-const ICAL_2_URL = `https://calendar.google.com/calendar/ical/${CALENDAR_2_ID}/public/basic.ics`;
+// Server proxy endpoints for calendar data
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
+const ICAL_1_URL = `${API_BASE}/calendar/calendar1`;
+const ICAL_2_URL = `${API_BASE}/calendar/calendar2`;
 
 function getWeekBounds() {
   const now = new Date();
