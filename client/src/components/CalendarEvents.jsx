@@ -95,6 +95,8 @@ function parseICalEvents(icalText) {
             currentField = 'description';
           } else if (fieldName === 'UID') {
             currentField = 'id';
+          } else if (fieldName === 'URL') {
+            currentField = 'url';
           } else {
             currentField = null;
           }
@@ -220,8 +222,8 @@ function EventCard({ title, events }) {
               const cleanedDescription = cleanDescription(event.description);
               return (
                 <li key={event.id || index} className="slds-item slds-p-vertical_small">
-                  <div className="slds-grid slds-wrap">
-                    <div className="slds-col slds-size_1-of-1">
+                  <div className="slds-grid slds-wrap slds-grid_vertical-align-start">
+                    <div className="slds-col" style={{ flex: '1' }}>
                       <p className="slds-text-body_regular slds-m-bottom_xx-small">
                         <strong>{event.summary}</strong>
                       </p>
@@ -234,6 +236,22 @@ function EventCard({ title, events }) {
                         </p>
                       )}
                     </div>
+                    {event.url && (
+                      <div className="slds-col slds-no-flex slds-m-left_small">
+                        <a
+                          href={event.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="slds-button slds-button_icon slds-button_icon-border-filled"
+                          title="View event in Google Calendar (opens in new window)"
+                        >
+                          <svg className="slds-button__icon" aria-hidden="true">
+                            <use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#new_window"></use>
+                          </svg>
+                          <span className="slds-assistive-text">View event in Google Calendar (opens in new window)</span>
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </li>
               );
