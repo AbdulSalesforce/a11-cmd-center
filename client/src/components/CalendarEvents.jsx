@@ -199,7 +199,7 @@ function cleanDescription(description) {
   return (meaningfulLines[0] || '').trim();
 }
 
-function EventCard({ title, events }) {
+function EventCard({ title, events, showLinks = true }) {
   if (!events || events.length === 0) {
     return null;
   }
@@ -236,7 +236,7 @@ function EventCard({ title, events }) {
                         </p>
                       )}
                     </div>
-                    {event.url && (
+                    {showLinks && event.url && (
                       <div className="slds-col slds-no-flex slds-m-left_small">
                         <a
                           href={event.url}
@@ -264,7 +264,8 @@ function EventCard({ title, events }) {
 }
 
 export default function CalendarEvents() {
-  const [calendar1Events, setCalendar1Events] = useState([]);
+  const [regularEvents, setRegularEvents] = useState([]);
+  const [oooEvents, setOooEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -291,10 +292,37 @@ export default function CalendarEvents() {
           return event.startDate >= start && event.startDate < end;
         });
 
-        // Sort by start date
-        cal1Events.sort((a, b) => a.startDate - b.startDate);
+        // Separate OOO/PTO from regular events
+        const ooo = [];
+        const regular = [];
 
-        setCalendar1Events(cal1Events);
+        cal1Events.forEach(event => {
+          const summary = (event.summary || '').toLowerCase();
+          const isAllDay = event.startDate && event.startDate.getHours() === 0 && event.startDate.getMinutes() === 0;
+          const isMultiDay = event.endDate && event.startDate &&
+                            (event.endDate.getDate() !== event.startDate.getDate() ||
+                             event.endDate.getMonth() !== event.startDate.getMonth());
+
+          // Check if it's OOO/PTO/WFH and multi-day
+          if (isAllDay && isMultiDay &&
+              (summary.includes('ooo') ||
+               summary.includes('pto') ||
+               summary.includes('wfh') ||
+               summary.includes('out of office') ||
+               summary.includes('vacation') ||
+               summary.includes('off'))) {
+            ooo.push(event);
+          } else {
+            regular.push(event);
+          }
+        });
+
+        // Sort by start date
+        regular.sort((a, b) => a.startDate - b.startDate);
+        ooo.sort((a, b) => a.startDate - b.startDate);
+
+        setRegularEvents(regular);
+        setOooEvents(ooo);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching calendar events:', err);
@@ -344,7 +372,7 @@ export default function CalendarEvents() {
     );
   }
 
-  const hasEvents = calendar1Events.length > 0;
+  const hasEvents = regularEvents.length > 0 || oooEvents.length > 0;
 
   if (!hasEvents) {
     return (
@@ -380,7 +408,13 @@ export default function CalendarEvents() {
         <div className="slds-grid slds-wrap slds-gutters">
           <EventCard
             title="A11y Events"
-            events={calendar1Events}
+            events={regularEvents}
+            showLinks={true}
+          />
+          <EventCard
+            title="Out of Office"
+            events={oooEvents}
+            showLinks={false}
           />
         </div>
       </div>
