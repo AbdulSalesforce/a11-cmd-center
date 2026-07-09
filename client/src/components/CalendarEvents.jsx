@@ -105,12 +105,31 @@ function parseICalEvents(icalText) {
     }
   }
 
-  // Parse dates for all events
-  return events.map(event => ({
-    ...event,
-    startDate: event.start ? parseICalDate(event.start) : null,
-    endDate: event.end ? parseICalDate(event.end) : null
-  }));
+  // Parse dates for all events and generate Google Calendar URLs
+  const CALENDAR_ID = 'salesforce.com_9fdrqir8u6hfur6plp11vd1ask@group.calendar.google.com';
+
+  return events.map(event => {
+    // Generate Google Calendar event URL from UID
+    // Format: https://calendar.google.com/calendar/event?eid=ENCODED_ID&ctz=TIMEZONE
+    let eventUrl = null;
+    if (event.id) {
+      // Base64 encode the event ID and calendar ID
+      const eventString = `${event.id} ${CALENDAR_ID}`;
+      try {
+        const encoded = btoa(eventString).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        eventUrl = `https://calendar.google.com/calendar/event?eid=${encoded}`;
+      } catch (e) {
+        console.error('Failed to encode event URL:', e);
+      }
+    }
+
+    return {
+      ...event,
+      startDate: event.start ? parseICalDate(event.start) : null,
+      endDate: event.end ? parseICalDate(event.end) : null,
+      url: eventUrl
+    };
+  });
 }
 
 function formatEventDateTime(date) {
@@ -304,13 +323,20 @@ export default function CalendarEvents() {
                              event.endDate.getMonth() !== event.startDate.getMonth());
 
           // Check if it's OOO/PTO/WFH and multi-day
-          if (isAllDay && isMultiDay &&
-              (summary.includes('ooo') ||
-               summary.includes('pto') ||
-               summary.includes('wfh') ||
-               summary.includes('out of office') ||
-               summary.includes('vacation') ||
-               summary.includes('off'))) {
+          // Look for patterns like "Name OOO", "Name - OOO", "Name PTO", etc.
+          const oooPatterns = [
+            /\booo\b/i,                    // "ooo" as whole word
+            /\bpto\b/i,                    // "pto" as whole word
+            /\bwfh\b/i,                    // "wfh" as whole word
+            /out of office/i,
+            /\bvacation\b/i,
+            /\boff\b/i,
+            /\s-\s(ooo|pto|wfh)/i          // "Name - OOO" pattern
+          ];
+
+          const isOOOEvent = isAllDay && isMultiDay && oooPatterns.some(pattern => pattern.test(summary));
+
+          if (isOOOEvent) {
             ooo.push(event);
           } else {
             regular.push(event);
