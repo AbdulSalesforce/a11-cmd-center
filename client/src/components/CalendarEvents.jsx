@@ -171,7 +171,6 @@ function EventCard({ title, events }) {
 
 export default function CalendarEvents() {
   const [calendar1Events, setCalendar1Events] = useState([]);
-  const [calendar2Events, setCalendar2Events] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -179,36 +178,18 @@ export default function CalendarEvents() {
     async function fetchCalendarEvents() {
       try {
         const { start, end } = getWeekBounds();
-        console.log('Fetching calendars from:', ICAL_1_URL, ICAL_2_URL);
-        console.log('Week bounds:', start, end);
 
-        // Fetch iCal feeds from both calendars (no API key needed)
-        const [cal1Response, cal2Response] = await Promise.all([
-          fetch(ICAL_1_URL),
-          fetch(ICAL_2_URL)
-        ]);
+        // Fetch iCal feed from calendar 1 only (calendar 2 not yet public)
+        const cal1Response = await fetch(ICAL_1_URL);
 
-        console.log('Calendar 1 response:', cal1Response.status, cal1Response.ok);
-        console.log('Calendar 2 response:', cal2Response.status, cal2Response.ok);
-
-        if (!cal1Response.ok || !cal2Response.ok) {
-          throw new Error(`Failed to fetch calendar events: cal1=${cal1Response.status}, cal2=${cal2Response.status}`);
+        if (!cal1Response.ok) {
+          throw new Error(`Failed to fetch calendar events: ${cal1Response.status}`);
         }
 
-        const [cal1Text, cal2Text] = await Promise.all([
-          cal1Response.text(),
-          cal2Response.text()
-        ]);
-
-        console.log('Calendar 1 text length:', cal1Text.length);
-        console.log('Calendar 2 text length:', cal2Text.length);
+        const cal1Text = await cal1Response.text();
 
         // Parse iCal data
         const cal1AllEvents = parseICalEvents(cal1Text);
-        const cal2AllEvents = parseICalEvents(cal2Text);
-
-        console.log('Calendar 1 total events:', cal1AllEvents.length);
-        console.log('Calendar 2 total events:', cal2AllEvents.length);
 
         // Filter events for current week
         const cal1Events = cal1AllEvents.filter(event => {
@@ -216,24 +197,10 @@ export default function CalendarEvents() {
           return event.startDate >= start && event.startDate < end;
         });
 
-        const cal2EventsFiltered = cal2AllEvents.filter(event => {
-          if (!event.startDate) return false;
-          const summary = event.summary || '';
-          const isThisWeek = event.startDate >= start && event.startDate < end;
-          const isNotPlaceholder = !summary.includes('PLACEHOLDER');
-          const isOfficeHours = summary.includes('Accessibility Office Hours');
-          return isThisWeek && isNotPlaceholder && isOfficeHours;
-        });
-
-        console.log('Calendar 1 this week:', cal1Events.length);
-        console.log('Calendar 2 this week (filtered):', cal2EventsFiltered.length);
-
         // Sort by start date
         cal1Events.sort((a, b) => a.startDate - b.startDate);
-        cal2EventsFiltered.sort((a, b) => a.startDate - b.startDate);
 
         setCalendar1Events(cal1Events);
-        setCalendar2Events(cal2EventsFiltered);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching calendar events:', err);
@@ -283,7 +250,7 @@ export default function CalendarEvents() {
     );
   }
 
-  const hasEvents = calendar1Events.length > 0 || calendar2Events.length > 0;
+  const hasEvents = calendar1Events.length > 0;
 
   if (!hasEvents) {
     return (
@@ -320,10 +287,6 @@ export default function CalendarEvents() {
           <EventCard
             title="A11y Events"
             events={calendar1Events}
-          />
-          <EventCard
-            title="Office Hours (Scheduled)"
-            events={calendar2Events}
           />
         </div>
       </div>
