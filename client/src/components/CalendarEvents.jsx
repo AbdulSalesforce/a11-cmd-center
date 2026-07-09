@@ -160,26 +160,41 @@ function formatEventDateRange(startDate, endDate) {
 function cleanDescription(description) {
   if (!description) return '';
 
-  // Remove common meeting details patterns
-  // Split by newlines and take only the first line or first meaningful content
-  const lines = description.split(/\r?\n/).filter(line => line.trim());
+  // Strip HTML tags
+  let cleaned = description.replace(/<[^>]*>/g, ' ');
+
+  // Decode HTML entities
+  cleaned = cleaned.replace(/&quot;/g, '"')
+                   .replace(/&amp;/g, '&')
+                   .replace(/&lt;/g, '<')
+                   .replace(/&gt;/g, '>')
+                   .replace(/&#39;/g, "'")
+                   .replace(/&nbsp;/g, ' ');
+
+  // Split by newlines and filter
+  const lines = cleaned.split(/\r?\n/).filter(line => line.trim());
 
   if (lines.length === 0) return '';
 
-  // Skip lines that look like meeting URLs, join links, or technical details
+  // Skip lines that contain meeting details
   const meaningfulLines = lines.filter(line => {
     const lower = line.toLowerCase().trim();
     return !lower.startsWith('http') &&
-           !lower.startsWith('zoom') &&
-           !lower.startsWith('meet.google') &&
+           !lower.includes('meet.google.com') &&
+           !lower.includes('zoom.us') &&
+           !lower.startsWith('join with') &&
+           !lower.startsWith('or dial') &&
            !lower.includes('meeting id') &&
            !lower.includes('passcode') &&
-           !lower.includes('join url') &&
+           !lower.includes('pin:') &&
+           !lower.includes('more phone numbers') &&
+           !lower.includes('more joining options') &&
+           !lower.includes('learn more about meet') &&
            !lower.startsWith('-::~:~::~:~:~:~:~:~:~:~:~:~');
   });
 
-  // Return first meaningful line, or first line if all filtered out
-  return (meaningfulLines[0] || lines[0] || '').trim();
+  // Return first meaningful line, or empty if all filtered
+  return (meaningfulLines[0] || '').trim();
 }
 
 function EventCard({ title, events }) {
