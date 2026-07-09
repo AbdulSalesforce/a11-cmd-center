@@ -109,18 +109,12 @@ function parseICalEvents(icalText) {
   const CALENDAR_ID = 'salesforce.com_9fdrqir8u6hfur6plp11vd1ask@group.calendar.google.com';
 
   return events.map(event => {
-    // Generate Google Calendar event URL from UID
-    // Format: https://calendar.google.com/calendar/event?eid=ENCODED_ID&ctz=TIMEZONE
+    // Generate Google Calendar URL - use the main calendar URL filtered by event
+    // Since encoding is complex, just link to the calendar on the date of the event
     let eventUrl = null;
-    if (event.id) {
-      // Base64 encode the event ID and calendar ID
-      const eventString = `${event.id} ${CALENDAR_ID}`;
-      try {
-        const encoded = btoa(eventString).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-        eventUrl = `https://calendar.google.com/calendar/event?eid=${encoded}`;
-      } catch (e) {
-        console.error('Failed to encode event URL:', e);
-      }
+    if (event.startDate) {
+      const dateStr = event.startDate.toISOString().split('T')[0].replace(/-/g, '');
+      eventUrl = `https://calendar.google.com/calendar/u/0/r/day/${dateStr}?cid=${encodeURIComponent(CALENDAR_ID)}`;
     }
 
     return {
@@ -261,14 +255,12 @@ function EventCard({ title, events, showLinks = true }) {
                           href={event.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="slds-button slds-button_icon slds-button_icon-border"
-                          title="View event in Google Calendar (opens in new window)"
-                          style={{ minWidth: '2rem', minHeight: '2rem' }}
+                          className="slds-text-link"
+                          title="View in Google Calendar (opens in new window)"
+                          style={{ fontSize: '1.25rem', lineHeight: '1' }}
                         >
-                          <svg className="slds-button__icon" aria-hidden="true" viewBox="0 0 52 52" style={{ width: '1rem', height: '1rem', fill: 'currentColor' }}>
-                            <path d="M43.7 11.1H33.8V8.3c0-1.2-1-2.1-2.2-2.1h-2.4c-1.2 0-2.1 1-2.1 2.1v2.8h-2.2V8.3c0-1.2-1-2.1-2.2-2.1h-2.4c-1.2 0-2.1 1-2.1 2.1v2.8H8.3c-1.8 0-3.2 1.4-3.2 3.2v29.4c0 1.8 1.4 3.2 3.2 3.2h35.4c1.8 0 3.2-1.4 3.2-3.2V14.3c0-1.8-1.4-3.2-3.2-3.2zM27.2 18.4h-2.4c-.6 0-1.1.5-1.1 1.1v2.4c0 .6.5 1.1 1.1 1.1h2.4c.6 0 1.1-.5 1.1-1.1v-2.4c0-.6-.5-1.1-1.1-1.1zm0 8.5h-2.4c-.6 0-1.1.5-1.1 1.1v2.4c0 .6.5 1.1 1.1 1.1h2.4c.6 0 1.1-.5 1.1-1.1V28c0-.6-.5-1.1-1.1-1.1zm0 8.6h-2.4c-.6 0-1.1.5-1.1 1.1v2.4c0 .6.5 1.1 1.1 1.1h2.4c.6 0 1.1-.5 1.1-1.1v-2.4c0-.6-.5-1.1-1.1-1.1zm-8.5-17.1h-2.4c-.6 0-1.1.5-1.1 1.1v2.4c0 .6.5 1.1 1.1 1.1h2.4c.6 0 1.1-.5 1.1-1.1v-2.4c0-.6-.5-1.1-1.1-1.1zm0 8.5h-2.4c-.6 0-1.1.5-1.1 1.1v2.4c0 .6.5 1.1 1.1 1.1h2.4c.6 0 1.1-.5 1.1-1.1V28c0-.6-.5-1.1-1.1-1.1zm0 8.6h-2.4c-.6 0-1.1.5-1.1 1.1v2.4c0 .6.5 1.1 1.1 1.1h2.4c.6 0 1.1-.5 1.1-1.1v-2.4c0-.6-.5-1.1-1.1-1.1zm8.5-8.6h2.4c.6 0 1.1-.5 1.1-1.1v-2.4c0-.6-.5-1.1-1.1-1.1h-2.4c-.6 0-1.1.5-1.1 1.1v2.4c0 .6.5 1.1 1.1 1.1zm8.5-8.5h-2.4c-.6 0-1.1.5-1.1 1.1v2.4c0 .6.5 1.1 1.1 1.1h2.4c.6 0 1.1-.5 1.1-1.1v-2.4c0-.6-.5-1.1-1.1-1.1zm0 8.5h-2.4c-.6 0-1.1.5-1.1 1.1v2.4c0 .6.5 1.1 1.1 1.1h2.4c.6 0 1.1-.5 1.1-1.1V28c0-.6-.5-1.1-1.1-1.1zm0 8.6h-2.4c-.6 0-1.1.5-1.1 1.1v2.4c0 .6.5 1.1 1.1 1.1h2.4c.6 0 1.1-.5 1.1-1.1v-2.4c0-.6-.5-1.1-1.1-1.1z" />
-                          </svg>
-                          <span className="slds-assistive-text">View event in Google Calendar (opens in new window)</span>
+                          📅
+                          <span className="slds-assistive-text">View in Google Calendar (opens in new window)</span>
                         </a>
                       </div>
                     )}
