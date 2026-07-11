@@ -9,7 +9,12 @@ export default function Dashboard() {
   useEffect(() => {
     fetch('/api/projects')
       .then(r => r.json())
-      .then(data => { setProjects(data); setLoading(false); })
+      .then(data => {
+        // Filter out archived projects for dashboard
+        const activeProjects = data.filter(p => !p.archived);
+        setProjects(activeProjects);
+        setLoading(false);
+      })
       .catch(() => { setError('Could not load projects.'); setLoading(false); });
   }, []);
 

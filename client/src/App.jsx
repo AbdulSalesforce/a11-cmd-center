@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import ProjectList from './pages/ProjectList';
+import ArchivedProjects from './pages/ArchivedProjects';
 import AuditorDetail from './pages/AuditorDetail';
 import NewProject from './pages/NewProject';
 import ProjectDetail from './pages/ProjectDetail';
@@ -20,6 +21,7 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="audits" element={<Dashboard />} />
         <Route path="projects" element={<ProjectList />} />
+        <Route path="projects/archived" element={<ArchivedProjects />} />
         <Route path="projects/new" element={<NewProject />} />
         <Route path="projects/:id" element={<ProjectDetail />} />
         <Route path="projects/:id/failures/new" element={<NewFailure />} />

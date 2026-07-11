@@ -111,11 +111,22 @@ export default function Layout() {
                   <li className="slds-nav-vertical__item">
                     <NavLink
                       to="/projects"
+                      end
                       className={({ isActive }) =>
                         isActive ? "slds-nav-vertical__action slds-is-active" : "slds-nav-vertical__action"
                       }
                     >
-                      All Projects
+                      Active Projects
+                    </NavLink>
+                  </li>
+                  <li className="slds-nav-vertical__item">
+                    <NavLink
+                      to="/projects/archived"
+                      className={({ isActive }) =>
+                        isActive ? "slds-nav-vertical__action slds-is-active" : "slds-nav-vertical__action"
+                      }
+                    >
+                      Archived Projects
                     </NavLink>
                   </li>
                   <li className="slds-nav-vertical__item">

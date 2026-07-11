@@ -162,6 +162,26 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.patch('/:id/archive', async (req, res) => {
+  try {
+    const project = await db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+
+    const { archived } = req.body;
+    if (typeof archived !== 'boolean') {
+      return res.status(400).json({ error: 'archived must be a boolean' });
+    }
+
+    await db.prepare('UPDATE projects SET archived = ? WHERE id = ?').run(archived ? 1 : 0, req.params.id);
+
+    const updated = await db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
+    res.json(updated);
+  } catch (err) {
+    console.error('Error updating project archive status:', err);
+    return res.status(500).json({ error: 'Failed to update project' });
+  }
+});
+
 router.delete('/:id', async (req, res) => {
   const project = await db.prepare('SELECT id FROM projects WHERE id = ?').get(req.params.id);
   if (!project) return res.status(404).json({ error: 'Project not found' });

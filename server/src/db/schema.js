@@ -19,6 +19,12 @@ if (checklistCols.includes('project_id') && !checklistCols.includes('scope_item_
   db.exec('DROP TABLE IF EXISTS checklist_items');
 }
 
+// Add archived column to projects table if it doesn't exist
+const projectCols = db.pragma('table_info(projects)').map(c => c.name);
+if (!projectCols.includes('archived')) {
+  db.exec('ALTER TABLE projects ADD COLUMN archived INTEGER NOT NULL DEFAULT 0 CHECK(archived IN (0, 1))');
+}
+
 db.exec(`
   CREATE TABLE IF NOT EXISTS projects (
     id TEXT PRIMARY KEY,
@@ -35,6 +41,7 @@ db.exec(`
     spreadsheet_id TEXT,
     drive_folder_id TEXT,
     evidence_folder_id TEXT,
+    archived INTEGER NOT NULL DEFAULT 0 CHECK(archived IN (0, 1)),
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
 

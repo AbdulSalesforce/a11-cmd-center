@@ -29,7 +29,12 @@ export default function ProjectList() {
   useEffect(() => {
     fetch('/api/projects')
       .then(r => r.json())
-      .then(data => { setProjects(data); setLoading(false); })
+      .then(data => {
+        // Filter out archived projects
+        const activeProjects = data.filter(p => !p.archived);
+        setProjects(activeProjects);
+        setLoading(false);
+      })
       .catch(() => { setError('Could not load projects.'); setLoading(false); });
   }, []);
 
@@ -56,6 +61,23 @@ export default function ProjectList() {
     }
   }
 
+  // Group projects by auditor
+  const auditorMap = new Map();
+  projects.forEach(project => {
+    const auditor = project.auditor_name || 'Unassigned';
+    if (!auditorMap.has(auditor)) {
+      auditorMap.set(auditor, []);
+    }
+    auditorMap.get(auditor).push(project);
+  });
+
+  // Convert to array and sort
+  const auditorGroups = Array.from(auditorMap.entries()).sort((a, b) => {
+    if (a[0] === 'Unassigned') return 1;
+    if (b[0] === 'Unassigned') return -1;
+    return a[0].localeCompare(b[0]);
+  });
+
   return (
     <div className="slds-scope">
       <div style={{
@@ -72,7 +94,7 @@ export default function ProjectList() {
               margin: 0,
               marginBottom: '0.5rem'
             }}>
-              Projects
+              Active Projects
             </h1>
             <p style={{
               color: '#ffffff',
@@ -80,7 +102,7 @@ export default function ProjectList() {
               margin: 0,
               opacity: 0.9
             }}>
-              All accessibility audit projects
+              All active accessibility audit projects
             </p>
           </div>
           <Link to="/projects/new" className="slds-button slds-button_brand">New project</Link>
@@ -93,7 +115,7 @@ export default function ProjectList() {
       {!loading && !error && projects.length === 0 && (
         <div className="slds-illustration slds-illustration_large">
           <div className="slds-text-longform">
-            <h3 className="slds-text-heading_medium">No projects yet</h3>
+            <h3 className="slds-text-heading_medium">No active projects</h3>
             <p className="slds-text-body_regular">Get started by creating your first accessibility audit project.</p>
             <Link to="/projects/new" className="slds-button slds-button_brand slds-m-top_medium">
               Create Your First Project
@@ -102,9 +124,11 @@ export default function ProjectList() {
         </div>
       )}
 
-      {!loading && projects.length > 0 && (
-        <div className="slds-grid slds-wrap slds-gutters">
-          {projects.map(project => {
+      {!loading && projects.length > 0 && auditorGroups.map(([auditorName, auditorProjects]) => (
+        <div key={auditorName} className="slds-m-bottom_x-large">
+          <h2 className="slds-text-heading_medium slds-m-bottom_medium">{auditorName}</h2>
+          <div className="slds-grid slds-wrap slds-gutters">
+          {auditorProjects.map(project => {
             const progressPercent = project.scope_total > 0
               ? Math.round((project.scope_complete / project.scope_total) * 100)
               : 0;
@@ -195,8 +219,10 @@ export default function ProjectList() {
               </div>
             );
           })}
+          </div>
         </div>
-      )}
+      ))
+      }
     </div>
   );
 }

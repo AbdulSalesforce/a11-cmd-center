@@ -21,6 +21,8 @@ export default function ProjectDetail() {
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'overview');
   const [acrGenerating, setAcrGenerating] = useState(false);
   const [acrError, setAcrError] = useState('');
+  const [archiving, setArchiving] = useState(false);
+  const [archiveError, setArchiveError] = useState('');
 
   // Failures filters
   const [filterPage, setFilterPage] = useState('all');
@@ -63,6 +65,29 @@ export default function ProjectDetail() {
       setAcrError(err.message);
     } finally {
       setAcrGenerating(false);
+    }
+  }
+
+  async function archiveProject() {
+    setArchiving(true);
+    setArchiveError('');
+    try {
+      const res = await fetch(`/api/projects/${id}/archive`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ archived: true }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Server error ${res.status}`);
+      }
+      // Refresh project data
+      const updatedProject = await fetch(`/api/projects/${id}`).then(r => r.json());
+      setProject(updatedProject);
+    } catch (err) {
+      setArchiveError(err.message);
+    } finally {
+      setArchiving(false);
     }
   }
 
@@ -238,20 +263,30 @@ export default function ProjectDetail() {
         )}
 
 
-        {/* Generate reports */}
+        {/* Generate reports and Archive */}
         <div className="overview-section">
           <div className="overview-section-header">
-            <h3>Generate reports</h3>
+            <h3>Project actions</h3>
           </div>
           {scopeTotal > 0 && scopeComplete < scopeTotal && (
             <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-3)' }}>
-              All scope items must be marked complete before reports can be generated.
+              All scope items must be marked complete before reports can be generated and project can be archived.
               ({scopeComplete}/{scopeTotal} complete)
             </p>
           )}
           {acrError && (
             <div className="alert alert-error" role="alert" style={{ marginBottom: 'var(--space-3)' }}>
               {acrError}
+            </div>
+          )}
+          {archiveError && (
+            <div className="alert alert-error" role="alert" style={{ marginBottom: 'var(--space-3)' }}>
+              {archiveError}
+            </div>
+          )}
+          {project.archived && (
+            <div className="alert alert-info" role="alert" style={{ marginBottom: 'var(--space-3)' }}>
+              This project is archived.
             </div>
           )}
           <div style={{ display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap' }}>
@@ -264,6 +299,17 @@ export default function ProjectDetail() {
             >
               {acrGenerating ? 'Generating…' : 'Generate ACR (.docx)'}
             </button>
+            {!project.archived && (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                disabled={scopeComplete < scopeTotal || archiving}
+                onClick={archiveProject}
+                aria-disabled={scopeComplete < scopeTotal || archiving}
+              >
+                {archiving ? 'Archiving…' : 'Archive Project'}
+              </button>
+            )}
           </div>
         </div>
 

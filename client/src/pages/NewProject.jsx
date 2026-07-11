@@ -64,6 +64,9 @@ export default function NewProject() {
   function validate() {
     const errs = {};
     if (!fields.product_name.trim()) errs.product_name = 'Product name is required.';
+    if (!multipleAuditors && !fields.auditor_name.trim()) {
+      errs.auditor_name = 'Auditor name is required.';
+    }
     if (multipleAuditors) {
       auditors.forEach((a, i) => {
         if (!a.name.trim()) errs[`auditor_name_${i}`] = 'Auditor name is required.';
@@ -247,14 +250,20 @@ export default function NewProject() {
           <h3 id="section-auditor" style={{ marginBottom: 'var(--space-5)' }}>Primary auditor</h3>
           <div className="form-grid">
             <div className="field field-full">
-              <label htmlFor="auditor_name">Auditor name</label>
+              <label htmlFor="auditor_name" className="required">Auditor name</label>
               <input
                 id="auditor_name"
                 type="text"
                 value={fields.auditor_name}
                 onChange={e => setField('auditor_name', e.target.value)}
                 placeholder="Your name"
+                aria-required="true"
+                aria-describedby={errors.auditor_name ? 'auditor_name_err' : undefined}
+                aria-invalid={!!errors.auditor_name}
               />
+              {errors.auditor_name && (
+                <span id="auditor_name_err" className="field-error" role="alert">{errors.auditor_name}</span>
+              )}
               <span className="field-hint">The lead auditor for this project. You can add additional auditors below.</span>
             </div>
           </div>
