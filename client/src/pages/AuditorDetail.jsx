@@ -60,33 +60,24 @@ export default function AuditorDetail() {
           <span style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem' }}>/</span>
           <span style={{ color: '#ffffff', opacity: 0.9, fontSize: '0.875rem' }}>{decodedName}</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
-          <div>
-            <h1 style={{
-              color: '#ffffff',
-              fontSize: '2rem',
-              fontWeight: '700',
-              margin: 0,
-              marginBottom: '0.5rem'
-            }}>
-              {decodedName}
-            </h1>
-            <p style={{
-              color: '#ffffff',
-              fontSize: '0.875rem',
-              margin: 0,
-              opacity: 0.9
-            }}>
-              {projects.length} project{projects.length !== 1 ? 's' : ''}
-            </p>
-          </div>
-          <button
-            className="slds-button slds-button_neutral"
-            onClick={() => navigate('/audits')}
-            title="Back to Dashboard"
-          >
-            Back to Dashboard
-          </button>
+        <div>
+          <h1 style={{
+            color: '#ffffff',
+            fontSize: '2rem',
+            fontWeight: '700',
+            margin: 0,
+            marginBottom: '0.5rem'
+          }}>
+            {decodedName}
+          </h1>
+          <p style={{
+            color: '#ffffff',
+            fontSize: '0.875rem',
+            margin: 0,
+            opacity: 0.9
+          }}>
+            {projects.length} project{projects.length !== 1 ? 's' : ''}
+          </p>
         </div>
       </div>
 

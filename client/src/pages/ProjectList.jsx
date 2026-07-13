@@ -85,27 +85,24 @@ export default function ProjectList() {
         padding: '2rem 2rem 1.5rem',
         marginBottom: '2rem'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <h1 style={{
-              color: '#ffffff',
-              fontSize: '2rem',
-              fontWeight: '700',
-              margin: 0,
-              marginBottom: '0.5rem'
-            }}>
-              Active Projects
-            </h1>
-            <p style={{
-              color: '#ffffff',
-              fontSize: '0.875rem',
-              margin: 0,
-              opacity: 0.9
-            }}>
-              All active accessibility audit projects
-            </p>
-          </div>
-          <Link to="/projects/new" className="slds-button slds-button_brand">New project</Link>
+        <div>
+          <h1 style={{
+            color: '#ffffff',
+            fontSize: '2rem',
+            fontWeight: '700',
+            margin: 0,
+            marginBottom: '0.5rem'
+          }}>
+            Active Projects
+          </h1>
+          <p style={{
+            color: '#ffffff',
+            fontSize: '0.875rem',
+            margin: 0,
+            opacity: 0.9
+          }}>
+            All active accessibility audit projects
+          </p>
         </div>
       </div>
 
