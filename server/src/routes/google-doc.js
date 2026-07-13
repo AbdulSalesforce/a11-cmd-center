@@ -1,30 +1,5 @@
 const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const { google } = require('googleapis');
 const router = express.Router();
-
-const TOKEN_PATH = path.join(__dirname, '../../google-token.json');
-const CREDENTIALS_PATH = path.join(__dirname, '../../google-credentials.json');
-
-// Load Google API credentials
-function loadCredentials() {
-  try {
-    const content = fs.readFileSync(CREDENTIALS_PATH, 'utf8');
-    const credentials = JSON.parse(content);
-    const token = fs.readFileSync(TOKEN_PATH, 'utf8');
-    const tokenData = JSON.parse(token);
-
-    const { client_secret, client_id, redirect_uris } = credentials.installed || credentials.web;
-    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
-    oAuth2Client.setCredentials(tokenData);
-
-    return oAuth2Client;
-  } catch (err) {
-    console.error('Google API credentials not found:', err.message);
-    return null;
-  }
-}
 
 // Extract document ID from Google Docs URL
 function extractDocId(url) {
@@ -127,33 +102,32 @@ function parseDocContent(content) {
   return data;
 }
 
-// Convert Google Docs API response to plain text
-function extractTextFromDoc(docData) {
-  let text = '';
+// Fetch document content using export URL
+async function fetchDocContent(docId) {
+  // Try multiple export methods
+  const urls = [
+    `https://docs.google.com/document/d/${docId}/export?format=txt`,
+    `https://docs.google.com/document/d/${docId}/pub`,
+  ];
 
-  if (!docData.body || !docData.body.content) {
-    return text;
-  }
+  for (const url of urls) {
+    try {
+      const response = await fetch(url);
 
-  function processElement(element) {
-    if (element.paragraph) {
-      element.paragraph.elements?.forEach(el => {
-        if (el.textRun && el.textRun.content) {
-          text += el.textRun.content;
+      if (response.ok) {
+        const content = await response.text();
+        // If it's HTML from /pub endpoint, strip tags
+        if (url.includes('/pub')) {
+          return content.replace(/<[^>]*>/g, '\n').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&');
         }
-      });
-    } else if (element.table) {
-      element.table.tableRows?.forEach(row => {
-        row.tableCells?.forEach(cell => {
-          cell.content?.forEach(contentEl => processElement(contentEl));
-        });
-      });
+        return content;
+      }
+    } catch (err) {
+      console.error(`Failed to fetch from ${url}:`, err.message);
     }
   }
 
-  docData.body.content.forEach(element => processElement(element));
-
-  return text;
+  throw new Error('Unable to access document with any method');
 }
 
 // Endpoint to parse Google Doc
@@ -170,46 +144,16 @@ router.post('/parse', async (req, res) => {
       return res.status(400).json({ error: 'Invalid Google Doc URL' });
     }
 
-    // Load Google API credentials
-    const auth = loadCredentials();
-    if (!auth) {
-      return res.status(500).json({
-        error: 'Google API authentication not configured. Please run the setup script on the server.'
-      });
-    }
+    // Fetch document content
+    const content = await fetchDocContent(docId);
+    const parsedData = parseDocContent(content);
 
-    // Fetch document using Google Docs API
-    const docs = google.docs({ version: 'v1', auth });
-
-    try {
-      const response = await docs.documents.get({
-        documentId: docId,
-      });
-
-      const content = extractTextFromDoc(response.data);
-      const parsedData = parseDocContent(content);
-
-      res.json(parsedData);
-    } catch (apiErr) {
-      console.error('Google Docs API error:', apiErr.message);
-
-      if (apiErr.code === 404) {
-        return res.status(404).json({
-          error: 'Document not found. Please check the URL and ensure the document is shared with the service account.'
-        });
-      } else if (apiErr.code === 403) {
-        return res.status(403).json({
-          error: 'Permission denied. Please ensure the document is shared with the appropriate Google account.'
-        });
-      } else {
-        return res.status(500).json({
-          error: 'Failed to access document. Please check permissions and try again.'
-        });
-      }
-    }
+    res.json(parsedData);
   } catch (err) {
     console.error('Error parsing Google Doc:', err);
-    res.status(500).json({ error: 'Failed to parse document. Please check the URL and try again.' });
+    res.status(500).json({
+      error: 'Failed to access document. Please ensure the document is shared with "Anyone with the link" at Salesforce, or is publicly accessible.'
+    });
   }
 });
 
