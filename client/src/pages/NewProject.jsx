@@ -35,9 +35,69 @@ export default function NewProject() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
+  const [googleDocUrl, setGoogleDocUrl] = useState('');
+  const [loadingDoc, setLoadingDoc] = useState(false);
+  const [docError, setDocError] = useState('');
+
   function setField(name, value) {
     setFields(f => ({ ...f, [name]: value }));
     if (errors[name]) setErrors(e => ({ ...e, [name]: '' }));
+  }
+
+  async function loadFromGoogleDoc() {
+    if (!googleDocUrl.trim()) {
+      setDocError('Please enter a Google Doc URL');
+      return;
+    }
+
+    setLoadingDoc(true);
+    setDocError('');
+
+    try {
+      const res = await fetch('/api/google-doc/parse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: googleDocUrl }),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || 'Failed to load document');
+      }
+
+      const data = await res.json();
+
+      // Auto-populate fields from parsed data
+      if (data.product_name) setField('product_name', data.product_name);
+      if (data.pm_name) setField('pm_name', data.pm_name);
+      if (data.pm_email) setField('pm_email', data.pm_email);
+      if (data.login_path) setField('login_path', data.login_path);
+      if (data.slack_channel) setField('slack_channel', data.slack_channel);
+      if (data.audit_theme_id) setField('audit_theme_id', data.audit_theme_id);
+      if (data.auditor_name) setField('auditor_name', data.auditor_name);
+
+      // Populate scope items if found
+      if (data.scope_items && data.scope_items.length > 0) {
+        setScope(data.scope_items.map(s => ({ id: crypto.randomUUID(), page_name: s.page_name || s, url: s.url || '' })));
+      }
+
+      // Populate product tags if found
+      if (data.product_tags && data.product_tags.length > 0) {
+        setTags(data.product_tags.map(t => ({
+          id: crypto.randomUUID(),
+          tag_name: t.tag_name || t,
+          tag_id: t.tag_id || ''
+        })));
+      }
+
+      // Show success message
+      setDocError(''); // Clear any previous errors
+
+    } catch (err) {
+      setDocError(err.message);
+    } finally {
+      setLoadingDoc(false);
+    }
   }
 
   // ── Auditor helpers ──
@@ -160,6 +220,41 @@ export default function NewProject() {
       </p>
 
       <form onSubmit={handleSubmit} noValidate>
+
+        {/* ── Google Doc Import ── */}
+        <section aria-labelledby="section-import" style={{ marginBottom: 'var(--space-8)' }}>
+          <h3 id="section-import" style={{ marginBottom: 'var(--space-5)' }}>Import from Google Doc (Optional)</h3>
+          <div className="form-grid">
+            <div className="field field-full">
+              <label htmlFor="google_doc_url">Google Doc URL</label>
+              <input
+                id="google_doc_url"
+                type="url"
+                value={googleDocUrl}
+                onChange={e => setGoogleDocUrl(e.target.value)}
+                placeholder="https://docs.google.com/document/d/..."
+                disabled={loadingDoc}
+              />
+              <span className="field-hint">Paste a Google Doc URL to auto-populate project details from an audit planning document.</span>
+              {docError && (
+                <span className="field-error" role="alert" style={{ display: 'block', marginTop: 'var(--space-2)' }}>
+                  {docError}
+                </span>
+              )}
+            </div>
+          </div>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={loadFromGoogleDoc}
+            disabled={loadingDoc || !googleDocUrl.trim()}
+            style={{ marginTop: 'var(--space-3)' }}
+          >
+            {loadingDoc ? 'Loading...' : 'Load from Document'}
+          </button>
+        </section>
+
+        <hr className="divider" />
 
         {/* ── Product Info ── */}
         <section aria-labelledby="section-product">

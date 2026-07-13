@@ -9,6 +9,7 @@ const scopeRouter = require('./src/routes/scope');
 const checklistRouter = require('./src/routes/checklist');
 const exportRouter = require('./src/routes/export');
 const calendarRouter = require('./src/routes/calendar');
+const googleDocRouter = require('./src/routes/google-doc');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -51,6 +52,7 @@ app.use('/api/projects/:projectId/scope', scopeRouter);
 app.use('/api/projects/:projectId/scope/:scopeItemId/checklist', checklistRouter);
 app.use('/api/projects/:projectId/export', exportRouter);
 app.use('/api/calendar', calendarRouter);
+app.use('/api/google-doc', googleDocRouter);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
