@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import WcagPicker from '../components/WcagPicker';
 import { getSuggestedSeverity, WCAG_CRITERIA } from '../data/wcag';
 import standardsContent from '../data/standards-content.json';
