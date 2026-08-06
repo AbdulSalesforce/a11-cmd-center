@@ -12,17 +12,12 @@ const db = new Database(DB_PATH);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
-// Migrate checklist_items from project-level to scope-item-level
+// Migrate checklist_items from project-level to scope-item-level.
+// Runs before table creation so a stale table is dropped and recreated below.
 const checklistCols = db.pragma('table_info(checklist_items)').map(c => c.name);
 if (checklistCols.includes('project_id') && !checklistCols.includes('scope_item_id')) {
   // Old schema: project-level checklist. Drop and recreate.
   db.exec('DROP TABLE IF EXISTS checklist_items');
-}
-
-// Add archived column to projects table if it doesn't exist
-const projectCols = db.pragma('table_info(projects)').map(c => c.name);
-if (!projectCols.includes('archived')) {
-  db.exec('ALTER TABLE projects ADD COLUMN archived INTEGER NOT NULL DEFAULT 0 CHECK(archived IN (0, 1))');
 }
 
 db.exec(`
@@ -109,6 +104,13 @@ db.exec(`
     UNIQUE(scope_item_id, sc_id)
   );
 `);
+
+// Add archived column to projects table if it doesn't exist (migration for
+// databases created before the column was part of the CREATE TABLE above).
+const projectCols = db.pragma('table_info(projects)').map(c => c.name);
+if (!projectCols.includes('archived')) {
+  db.exec('ALTER TABLE projects ADD COLUMN archived INTEGER NOT NULL DEFAULT 0 CHECK(archived IN (0, 1))');
+}
 
 // Wrap the database to make it async-compatible
 const wrappedDb = {
