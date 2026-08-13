@@ -5,11 +5,14 @@ import '@salesforce-ux/design-system/assets/styles/salesforce-lightning-design-s
 import './styles/global.css';
 import './styles/slds-overrides.css';
 import App from './App.jsx';
+import { AuthProvider } from './context/AuthContext';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>
 );

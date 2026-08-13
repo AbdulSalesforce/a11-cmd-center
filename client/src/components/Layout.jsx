@@ -1,8 +1,23 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/auth-context';
 import '../styles/header.css';
+
+// Build up-to-two-letter initials from a display name
+function initials(name) {
+  if (!name) return '?';
+  const parts = name.trim().split(/\s+/);
+  return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
+}
 
 export default function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+
+  function handleSignOut() {
+    signOut();
+    navigate('/login', { replace: true });
+  }
   const showSidebar = location.pathname.startsWith('/audits') ||
                       location.pathname.startsWith('/projects') ||
                       location.pathname.startsWith('/auditors') ||
@@ -81,6 +96,46 @@ export default function Layout() {
               </ul>
             </nav>
           </div>
+
+          {/* Right-side profile */}
+          {user && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div
+                aria-hidden="true"
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  background: '#0176d3',
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.8125rem',
+                  fontWeight: 700,
+                  flexShrink: 0,
+                }}
+              >
+                {initials(user.name)}
+              </div>
+              <div style={{ lineHeight: 1.2, textAlign: 'right' }}>
+                <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#032d60' }}>
+                  {user.name}
+                </div>
+                {user.role && (
+                  <div style={{ fontSize: '0.75rem', color: '#54698d' }}>{user.role}</div>
+                )}
+              </div>
+              <button
+                type="button"
+                className="slds-button slds-button_neutral"
+                onClick={handleSignOut}
+                style={{ marginLeft: '0.5rem' }}
+              >
+                Sign out
+              </button>
+            </div>
+          )}
         </div>
       </header>
 

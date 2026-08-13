@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
+import { getDummyProject } from '../data/dummyProjects';
+import { getStoredProject } from '../data/projectStore';
 import '../styles/project.css';
 
 const STATUS_LABELS = { pending: 'Not started', in_progress: 'In progress', complete: 'Complete' };
@@ -12,7 +14,6 @@ const TABS = [
 
 export default function ProjectDetail() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [project, setProject] = useState(null);
   const [failures, setFailures] = useState([]);
@@ -35,11 +36,28 @@ export default function ProjectDetail() {
       fetch(`/api/projects/${id}/failures`).then(r => r.json()),
     ])
       .then(([proj, fails]) => {
-        setProject(proj);
-        setFailures(fails);
+        if (proj && proj.id) {
+          setProject(proj);
+          setFailures(fails);
+        } else {
+          loadFallback();
+        }
         setLoading(false);
       })
-      .catch(() => { setError('Could not load project.'); setLoading(false); });
+      .catch(() => {
+        // API unavailable — fall back to a locally-created or demo project
+        loadFallback();
+        setLoading(false);
+      });
+
+    // Look up the project in the local store first, then the demo set.
+    function loadFallback() {
+      const local = getStoredProject(id);
+      if (local) { setProject({ scope_items: [], ...local }); setFailures([]); return; }
+      const demo = getDummyProject(id);
+      if (demo) { setProject({ ...demo, scope_items: [] }); setFailures([]); return; }
+      setError('Could not load project.');
+    }
   }, [id]);
 
 
@@ -129,6 +147,24 @@ export default function ProjectDetail() {
         padding: '2rem 2rem 1.5rem',
         marginBottom: '2rem'
       }}>
+        <Link
+          to="/projects"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.375rem',
+            color: '#ffffff',
+            fontSize: '0.875rem',
+            textDecoration: 'none',
+            marginBottom: '1rem',
+            opacity: 0.9
+          }}
+        >
+          <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Back to Projects
+        </Link>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
           <div>
             <h1 style={{

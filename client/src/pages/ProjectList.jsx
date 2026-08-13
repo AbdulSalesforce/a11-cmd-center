@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { DUMMY_PROJECTS } from '../data/dummyProjects';
+import { getStoredProjects } from '../data/projectStore';
 
 function CheckIcon() {
   return (
@@ -25,17 +27,22 @@ export default function ProjectList() {
   const [error, setError] = useState('');
   const [confirmingId, setConfirmingId] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
+    const stored = getStoredProjects().filter(p => !p.archived);
     fetch('/api/projects')
       .then(r => r.json())
       .then(data => {
         // Filter out archived projects
         const activeProjects = data.filter(p => !p.archived);
-        setProjects(activeProjects);
+        // Fall back to dummy projects when there's nothing from the API
+        const base = activeProjects.length > 0 ? activeProjects : DUMMY_PROJECTS;
+        // Locally-created projects always show, on top
+        setProjects([...stored, ...base]);
         setLoading(false);
       })
-      .catch(() => { setError('Could not load projects.'); setLoading(false); });
+      .catch(() => { setProjects([...stored, ...DUMMY_PROJECTS]); setLoading(false); });
   }, []);
 
   function handleDeleteClick(id) {
@@ -61,9 +68,18 @@ export default function ProjectList() {
     }
   }
 
+  // Filter projects by the search query (product name, auditor, or build)
+  const query = search.trim().toLowerCase();
+  const filteredProjects = query
+    ? projects.filter(p =>
+        [p.product_name, p.auditor_name, p.release_build_name]
+          .some(field => (field || '').toLowerCase().includes(query))
+      )
+    : projects;
+
   // Group projects by auditor
   const auditorMap = new Map();
-  projects.forEach(project => {
+  filteredProjects.forEach(project => {
     const auditor = project.auditor_name || 'Unassigned';
     if (!auditorMap.has(auditor)) {
       auditorMap.set(auditor, []);
@@ -99,10 +115,31 @@ export default function ProjectList() {
             color: '#ffffff',
             fontSize: '0.875rem',
             margin: 0,
+            marginBottom: '1.25rem',
             opacity: 0.9
           }}>
             All active accessibility audit projects
           </p>
+
+          <div style={{ maxWidth: '420px' }}>
+            <label htmlFor="project-search" className="slds-assistive-text">
+              Search projects
+            </label>
+            <input
+              id="project-search"
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by product, auditor, or build…"
+              style={{
+                width: '100%',
+                padding: '0.5rem 0.75rem',
+                borderRadius: '0.25rem',
+                border: '1px solid #ffffff',
+                fontSize: '0.875rem'
+              }}
+            />
+          </div>
         </div>
       </div>
 
@@ -121,7 +158,16 @@ export default function ProjectList() {
         </div>
       )}
 
-      {!loading && projects.length > 0 && auditorGroups.map(([auditorName, auditorProjects]) => (
+      {!loading && projects.length > 0 && filteredProjects.length === 0 && (
+        <div className="slds-illustration slds-illustration_large">
+          <div className="slds-text-longform">
+            <h3 className="slds-text-heading_medium">No projects match “{search}”</h3>
+            <p className="slds-text-body_regular">Try a different product name, auditor, or build.</p>
+          </div>
+        </div>
+      )}
+
+      {!loading && filteredProjects.length > 0 && auditorGroups.map(([auditorName, auditorProjects]) => (
         <div key={auditorName} className="slds-m-bottom_x-large">
           <h2 className="slds-text-heading_medium slds-m-bottom_medium">{auditorName}</h2>
           <div className="slds-grid slds-wrap slds-gutters">

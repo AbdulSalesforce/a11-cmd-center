@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { addStoredProject } from '../data/projectStore';
 
 const BUILD_IDS = [
   { label: '256 — Summer \'25', build_name: '256', build_id: 'a06EE000004rIFrYAM' },
@@ -15,7 +16,8 @@ export default function NewProject() {
   const navigate = useNavigate();
 
   const [fields, setFields] = useState({
-    product_name: '',
+    cloud_name: '',
+    feature_epic: '',
     auditor_name: '',
     pm_name: '',
     pm_email: '',
@@ -28,7 +30,7 @@ export default function NewProject() {
 
   const [multipleAuditors, setMultipleAuditors] = useState(false);
   const [auditors, setAuditors] = useState([makeAuditor()]);
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState([makeTag()]);
   const [scope, setScope] = useState([makeScope()]);
 
   const [errors, setErrors] = useState({});
@@ -68,7 +70,7 @@ export default function NewProject() {
       const data = await res.json();
 
       // Auto-populate fields from parsed data
-      if (data.product_name) setField('product_name', data.product_name);
+      if (data.product_name) setField('cloud_name', data.product_name);
       if (data.pm_name) setField('pm_name', data.pm_name);
       if (data.pm_email) setField('pm_email', data.pm_email);
       if (data.login_path) setField('login_path', data.login_path);
@@ -123,22 +125,20 @@ export default function NewProject() {
 
   function validate() {
     const errs = {};
-    if (!fields.product_name.trim()) errs.product_name = 'Product name is required.';
-    if (!multipleAuditors && !fields.auditor_name.trim()) {
-      errs.auditor_name = 'Auditor name is required.';
+
+    // Theme ID is mandatory.
+    if (!fields.audit_theme_id.trim()) errs.audit_theme_id = 'Audit theme ID is required.';
+
+    // At least one product tag is mandatory.
+    if (tags.length === 0) {
+      errs.tags = 'At least one product tag is required.';
     }
-    if (multipleAuditors) {
-      auditors.forEach((a, i) => {
-        if (!a.name.trim()) errs[`auditor_name_${i}`] = 'Auditor name is required.';
-      });
-    }
-    scope.forEach((s, i) => {
-      if (!s.page_name.trim()) errs[`scope_name_${i}`] = 'Page or component name is required.';
-    });
     tags.forEach((t, i) => {
       if (!t.tag_name.trim()) errs[`tag_name_${i}`] = 'Tag name is required.';
       if (!t.tag_id.trim()) errs[`tag_id_${i}`] = 'Tag ID is required.';
     });
+
+    // Everything else (cloud name, feature/epic, auditors, scope, etc.) is optional.
     return errs;
   }
 
@@ -157,8 +157,15 @@ export default function NewProject() {
 
     const build = BUILD_IDS.find(b => b.build_name === fields.release_build);
 
+    const cloud = fields.cloud_name.trim();
+    const feature = fields.feature_epic.trim();
+    // Combine the two name parts into the product_name the rest of the app uses.
+    const productName = [cloud, feature].filter(Boolean).join(' — ') || 'Untitled project';
+
     const body = {
-      product_name: fields.product_name.trim(),
+      product_name: productName,
+      cloud_name: cloud || null,
+      feature_epic: feature || null,
       auditor_name: fields.auditor_name.trim() || null,
       pm_name: fields.pm_name.trim() || null,
       pm_email: fields.pm_email.trim() || null,
@@ -166,7 +173,7 @@ export default function NewProject() {
       slack_channel: fields.slack_channel.trim() || null,
       release_build_name: build?.build_name || null,
       release_build_id: build?.build_id || null,
-      audit_theme_id: fields.audit_theme_id.trim() || null,
+      audit_theme_id: fields.audit_theme_id.trim(),
       epic_id: fields.epic_id.trim() || null,
       auditors: multipleAuditors ? auditors.map(a => ({ name: a.name.trim(), email: a.email.trim() || null })) : [],
       product_tags: tags.map(t => ({ tag_name: t.tag_name.trim(), tag_id: t.tag_id.trim() })),
@@ -182,9 +189,10 @@ export default function NewProject() {
       if (!res.ok) throw new Error(await res.text());
       const project = await res.json();
       navigate(`/projects/${project.id}`);
-    } catch (err) {
-      setSubmitError('Failed to create project. Please try again.');
-      setSubmitting(false);
+    } catch {
+      // API unavailable — persist the project locally so it still shows up.
+      const project = addStoredProject(body);
+      navigate(`/projects/${project.id}`);
     }
   }
 
@@ -260,21 +268,28 @@ export default function NewProject() {
         <section aria-labelledby="section-product">
           <h3 id="section-product" style={{ marginBottom: 'var(--space-5)' }}>Product information</h3>
           <div className="form-grid">
-            <div className="field field-full">
-              <label htmlFor="product_name" className="required">Product name</label>
+            <div className="field">
+              <label htmlFor="cloud_name">Cloud name</label>
               <input
-                id="product_name"
+                id="cloud_name"
                 type="text"
-                value={fields.product_name}
-                onChange={e => setField('product_name', e.target.value)}
-                aria-required="true"
-                aria-describedby={errors.product_name ? 'product_name_err' : undefined}
-                aria-invalid={!!errors.product_name}
+                value={fields.cloud_name}
+                onChange={e => setField('cloud_name', e.target.value)}
+                placeholder="e.g. Sales Cloud"
                 autoComplete="off"
               />
-              {errors.product_name && (
-                <span id="product_name_err" className="field-error" role="alert">{errors.product_name}</span>
-              )}
+            </div>
+
+            <div className="field">
+              <label htmlFor="feature_epic">Feature or epic</label>
+              <input
+                id="feature_epic"
+                type="text"
+                value={fields.feature_epic}
+                onChange={e => setField('feature_epic', e.target.value)}
+                placeholder="e.g. Opportunity Kanban"
+                autoComplete="off"
+              />
             </div>
 
             <div className="field field-full">
@@ -315,13 +330,19 @@ export default function NewProject() {
             </div>
 
             <div className="field">
-              <label htmlFor="audit_theme_id">Audit theme ID</label>
+              <label htmlFor="audit_theme_id" className="required">Audit theme ID</label>
               <input
                 id="audit_theme_id"
                 type="text"
                 value={fields.audit_theme_id}
                 onChange={e => setField('audit_theme_id', e.target.value)}
+                aria-required="true"
+                aria-invalid={!!errors.audit_theme_id}
+                aria-describedby={errors.audit_theme_id ? 'audit_theme_id_err' : undefined}
               />
+              {errors.audit_theme_id && (
+                <span id="audit_theme_id_err" className="field-error" role="alert">{errors.audit_theme_id}</span>
+              )}
               <span className="field-hint">Created by the ACR program.</span>
             </div>
 
@@ -345,20 +366,14 @@ export default function NewProject() {
           <h3 id="section-auditor" style={{ marginBottom: 'var(--space-5)' }}>Primary auditor</h3>
           <div className="form-grid">
             <div className="field field-full">
-              <label htmlFor="auditor_name" className="required">Auditor name</label>
+              <label htmlFor="auditor_name">Auditor name</label>
               <input
                 id="auditor_name"
                 type="text"
                 value={fields.auditor_name}
                 onChange={e => setField('auditor_name', e.target.value)}
                 placeholder="Your name"
-                aria-required="true"
-                aria-describedby={errors.auditor_name ? 'auditor_name_err' : undefined}
-                aria-invalid={!!errors.auditor_name}
               />
-              {errors.auditor_name && (
-                <span id="auditor_name_err" className="field-error" role="alert">{errors.auditor_name}</span>
-              )}
               <span className="field-hint">The lead auditor for this project. You can add additional auditors below.</span>
             </div>
           </div>
@@ -476,10 +491,14 @@ export default function NewProject() {
 
         {/* ── Product Tags ── */}
         <section aria-labelledby="section-tags">
-          <h3 id="section-tags" style={{ marginBottom: 'var(--space-2)' }}>Product tags</h3>
+          <h3 id="section-tags" style={{ marginBottom: 'var(--space-2)' }} className="required">Product tags</h3>
           <p className="field-hint" style={{ marginBottom: 'var(--space-5)' }}>
-            Optional. Add the Salesforce product tag name and numeric ID pairs for this audit.
+            Required. Add at least one Salesforce product tag name and numeric ID pair for this audit.
           </p>
+
+          {errors.tags && (
+            <span className="field-error" role="alert" style={{ display: 'block', marginBottom: 'var(--space-3)' }}>{errors.tags}</span>
+          )}
 
           <div className="repeat-group" role="list" aria-label="Product tag list">
             {tags.map((tag, i) => (
@@ -516,14 +535,16 @@ export default function NewProject() {
                     <span id={`tag_id_${i}_err`} className="field-error" role="alert">{errors[`tag_id_${i}`]}</span>
                   )}
                 </div>
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => removeTag(tag.id)}
-                  aria-label={`Remove tag ${tag.tag_name || i + 1}`}
-                >
-                  Remove
-                </button>
+                {tags.length > 1 && (
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => removeTag(tag.id)}
+                    aria-label={`Remove tag ${tag.tag_name || i + 1}`}
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
             ))}
           </div>
