@@ -13,6 +13,7 @@ import NewFailure from './pages/NewFailure';
 import FailureDetail from './pages/FailureDetail';
 import Checklist from './pages/Checklist';
 import Standards from './pages/Standards';
+import StandardBugs from './pages/StandardBugs';
 import StandardDetail from './pages/StandardDetail';
 import Tools from './pages/Tools';
 
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="projects/:id/scope/:scopeItemId/checklist" element={<Checklist />} />
         <Route path="auditors/:auditorName" element={<AuditorDetail />} />
         <Route path="standards" element={<Standards />} />
+        <Route path="standards/bugs" element={<StandardBugs />} />
         <Route path="standards/:id" element={<StandardDetail />} />
         <Route path="tools" element={<Tools />} />
       </Route>

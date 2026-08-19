@@ -176,23 +176,30 @@ export default function Standards() {
         padding: '2rem 2rem 1.5rem',
         marginBottom: '2rem'
       }}>
-        <h1 style={{
-          color: '#ffffff',
-          fontSize: '2rem',
-          fontWeight: '700',
-          margin: 0,
-          marginBottom: '0.5rem'
-        }}>
-          Salesforce Accessibility Standards
-        </h1>
-        <p style={{
-          color: '#ffffff',
-          fontSize: '0.875rem',
-          margin: 0,
-          opacity: 0.9
-        }}>
-          WCAG 2.2 Level A & AA Compliance Guidelines
-        </p>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+          <div>
+            <h1 style={{
+              color: '#ffffff',
+              fontSize: '2rem',
+              fontWeight: '700',
+              margin: 0,
+              marginBottom: '0.5rem'
+            }}>
+              Salesforce Accessibility Standards
+            </h1>
+            <p style={{
+              color: '#ffffff',
+              fontSize: '0.875rem',
+              margin: 0,
+              opacity: 0.9
+            }}>
+              WCAG 2.2 Level A & AA Compliance Guidelines
+            </p>
+          </div>
+          <Link to="/standards/bugs" className="slds-button slds-button_neutral">
+            Go To Standard Bugs
+          </Link>
+        </div>
       </div>
 
       {/* Content */}
