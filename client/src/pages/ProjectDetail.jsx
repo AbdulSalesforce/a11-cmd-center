@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { getDummyProject } from '../data/dummyProjects';
 import { getStoredProject } from '../data/projectStore';
+import { getStoredFailures, addStoredFailure } from '../data/failureStore';
+import LogFailurePanel from '../components/LogFailurePanel';
 import '../styles/project.css';
 
 const STATUS_LABELS = { pending: 'Not started', in_progress: 'In progress', complete: 'Complete' };
@@ -29,8 +31,15 @@ export default function ProjectDetail() {
   const [filterPage, setFilterPage] = useState('all');
   const [filterSeverity, setFilterSeverity] = useState('all');
 
+  // Log-failure side panel
+  const [panelOpen, setPanelOpen] = useState(false);
+
 
   useEffect(() => {
+    // Failures logged locally (when the API is down) are always merged in, so
+    // they appear in the table alongside anything the backend returns.
+    const stored = getStoredFailures(id);
+
     Promise.all([
       fetch(`/api/projects/${id}`).then(r => r.json()),
       fetch(`/api/projects/${id}/failures`).then(r => r.json()),
@@ -38,7 +47,7 @@ export default function ProjectDetail() {
       .then(([proj, fails]) => {
         if (proj && proj.id) {
           setProject(proj);
-          setFailures(fails);
+          setFailures([...(Array.isArray(fails) ? fails : []), ...stored]);
         } else {
           loadFallback();
         }
@@ -53,12 +62,30 @@ export default function ProjectDetail() {
     // Look up the project in the local store first, then the demo set.
     function loadFallback() {
       const local = getStoredProject(id);
-      if (local) { setProject({ scope_items: [], ...local }); setFailures([]); return; }
+      if (local) { setProject({ scope_items: [], ...local }); setFailures(stored); return; }
       const demo = getDummyProject(id);
-      if (demo) { setProject({ ...demo, scope_items: [] }); setFailures([]); return; }
+      if (demo) { setProject({ ...demo, scope_items: [] }); setFailures(stored); return; }
       setError('Could not load project.');
     }
   }, [id]);
+
+  // Save a failure from the panel: try the API, always persist locally so the
+  // table reflects it even when the backend isn't running.
+  async function handleLogFailure(failure) {
+    try {
+      await fetch(`/api/projects/${id}/failures`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(failure),
+      });
+    } catch {
+      // ignore — falls through to local persistence
+    }
+    const saved = addStoredFailure(id, failure, failures.length);
+    setFailures(prev => [...prev, saved]);
+    setPanelOpen(false);
+    setActiveTab('failures');
+  }
 
 
 
@@ -194,9 +221,9 @@ export default function ProjectDetail() {
               )}
             </div>
           </div>
-          <Link to={`/projects/${id}/failures/new`} className="slds-button slds-button_brand">
+          <button type="button" className="slds-button slds-button_brand" onClick={() => setPanelOpen(true)}>
             Log failure
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -299,6 +326,48 @@ export default function ProjectDetail() {
         )}
 
 
+        {/* Logged failures */}
+        <div className="overview-section">
+          <div className="overview-section-header">
+            <h3>Logged failures</h3>
+            <button type="button" className="btn btn-primary btn-sm" onClick={() => setPanelOpen(true)}>
+              + Log failure
+            </button>
+          </div>
+          {failures.length === 0 ? (
+            <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
+              No failures logged yet. Use “Log failure” to add one.
+            </p>
+          ) : (
+            <div className="failure-table-wrap">
+              <table className="failure-table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">WCAG criterion</th>
+                    <th scope="col">Page</th>
+                    <th scope="col">Platform</th>
+                    <th scope="col">Severity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {failures.map(f => (
+                    <tr key={f.id}>
+                      <td>{f.sf_issue_id}</td>
+                      <td><div className="failure-subject">{f.subject}</div></td>
+                      <td className="failure-criterion">{f.wcag_criterion}</td>
+                      <td>{f.page_name || '—'}</td>
+                      <td>{f.platform_type}</td>
+                      <td><span className={`badge badge-${f.severity.toLowerCase()}`}>{f.severity}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
         {/* Generate reports and Archive */}
         <div className="overview-section">
           <div className="overview-section-header">
@@ -392,15 +461,15 @@ export default function ProjectDetail() {
               </button>
             )}
           </div>
-          <Link to={`/projects/${id}/failures/new`} className="btn btn-primary btn-sm">
+          <button type="button" className="btn btn-primary btn-sm" onClick={() => setPanelOpen(true)}>
             + Log failure
-          </Link>
+          </button>
         </div>
 
         {failures.length === 0 ? (
           <div className="empty-state">
             <p>No failures logged yet.</p>
-            <Link to={`/projects/${id}/failures/new`} className="btn btn-primary">Log first failure</Link>
+            <button type="button" className="btn btn-primary" onClick={() => setPanelOpen(true)}>Log first failure</button>
           </div>
         ) : visibleFailures.length === 0 ? (
           <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)' }}>No failures match the current filters.</p>
@@ -492,6 +561,15 @@ export default function ProjectDetail() {
           </div>
         )}
       </div>
+
+      {panelOpen && (
+        <LogFailurePanel
+          onClose={() => setPanelOpen(false)}
+          onSave={handleLogFailure}
+          project={project}
+          existingFailures={failures}
+        />
+      )}
     </div>
   );
 }
