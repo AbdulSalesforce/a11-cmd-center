@@ -93,6 +93,13 @@ textarea::placeholder {
   color: var(--color-text-placeholder);
 }
 
+/* Read-only inputs (e.g. auto-filled GUS IDs) are visibly non-editable. */
+input[readonly] {
+  background-color: var(--color-bg);
+  color: var(--color-text-secondary);
+  cursor: default;
+}
+
 textarea {
   resize: vertical;
   min-height: 6rem;

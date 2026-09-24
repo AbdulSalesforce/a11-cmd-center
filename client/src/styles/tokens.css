@@ -21,6 +21,9 @@
   --color-warning-subtle: #fffbeb;
 
   /* Severity */
+  --color-p0-bg: #fbe4e6;
+  --color-p0-text: #9b1c1c;
+  --color-p0-border: #f0a5a5;
   --color-p1-bg: #fdf2f2;
   --color-p1-text: #c0392b;
   --color-p1-border: #f5c6c6;

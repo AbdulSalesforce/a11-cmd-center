@@ -57,6 +57,12 @@
   font-weight: var(--font-semibold);
 }
 
+.overview-section-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 /* ── Scope failure badge (clickable link to failures tab) ── */
 .scope-failure-badge {
   display: inline-flex;
@@ -304,6 +310,19 @@
   background-color: var(--color-bg);
 }
 
+.failure-select-col {
+  width: 1%;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.failure-select-col input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  accent-color: var(--color-primary, #1B5F9E);
+}
+
 .failure-subject {
   font-weight: var(--font-medium);
   color: var(--color-text);
@@ -323,4 +342,62 @@
 
 .empty-state p {
   margin-bottom: var(--space-4);
+}
+
+/* ── Delete-confirmation modal ── */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: var(--space-4);
+  animation: confirm-fade 0.12s ease;
+}
+
+.confirm-modal {
+  background: var(--color-surface, #fff);
+  border-radius: var(--radius-lg, 0.5rem);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-5);
+  animation: confirm-pop 0.12s ease;
+}
+
+.confirm-modal-title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-lg, 1.125rem);
+  font-weight: var(--font-semibold);
+}
+
+.confirm-modal-body {
+  margin: 0 0 var(--space-5);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.confirm-modal-subject {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--color-text);
+  word-break: break-word;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+@keyframes confirm-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes confirm-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }

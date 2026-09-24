@@ -110,6 +110,26 @@ db.exec(`
   );
 `);
 
+// Add "Found in build" columns to failures if they don't exist yet.
+const failureCols = db.pragma('table_info(failures)').map(c => c.name);
+if (!failureCols.includes('found_in_build_id')) {
+  db.exec('ALTER TABLE failures ADD COLUMN found_in_build_id TEXT');
+}
+if (!failureCols.includes('found_in_build_name')) {
+  db.exec('ALTER TABLE failures ADD COLUMN found_in_build_name TEXT');
+}
+
+// Persist the full audit-theme id/name lists (JSON arrays) so multi-theme
+// selections — and the human-readable theme names — survive a round-trip.
+// audit_theme_id keeps holding the primary id for backward compatibility.
+const projectColsNow = db.pragma('table_info(projects)').map(c => c.name);
+if (!projectColsNow.includes('audit_theme_ids')) {
+  db.exec('ALTER TABLE projects ADD COLUMN audit_theme_ids TEXT');
+}
+if (!projectColsNow.includes('audit_theme_names')) {
+  db.exec('ALTER TABLE projects ADD COLUMN audit_theme_names TEXT');
+}
+
 // Wrap the database to make it async-compatible
 const wrappedDb = {
   prepare: (sql) => {

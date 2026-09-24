@@ -36,3 +36,24 @@ export function addStoredProject(project) {
   }
   return saved;
 }
+
+// Update an existing locally-stored project in place. Returns the updated
+// project, or null if no local project has that id.
+export function updateStoredProject(id, patch) {
+  const projects = getStoredProjects();
+  const idx = projects.findIndex(p => p.id === id);
+  if (idx === -1) return null;
+  const updated = {
+    ...projects[idx],
+    ...patch,
+    id,
+    scope_total: patch.scope_items?.length ?? projects[idx].scope_total,
+  };
+  projects[idx] = updated;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+  } catch {
+    // storage full or unavailable — the edit just won't persist
+  }
+  return updated;
+}

@@ -42,3 +42,32 @@ export function addStoredFailure(projectId, failure, existingCount = 0) {
   writeAll(map);
   return saved;
 }
+
+// Merge a patch into a locally-stored failure, preserving its id and sf_issue_id.
+// No-op if the failure isn't in the local store (e.g. it only exists server-side).
+export function updateStoredFailure(projectId, failureId, patch) {
+  const map = readAll();
+  const list = map[projectId];
+  if (!list) return;
+  map[projectId] = list.map(f =>
+    f.id === failureId ? { ...f, ...patch, id: f.id, sf_issue_id: f.sf_issue_id } : f);
+  writeAll(map);
+}
+
+// Remove a locally-stored failure. No-op if it isn't in the local store (e.g. it
+// only exists server-side).
+export function removeStoredFailure(projectId, failureId) {
+  const map = readAll();
+  const list = map[projectId];
+  if (!list) return;
+  map[projectId] = list.filter(f => f.id !== failureId);
+  writeAll(map);
+}
+
+// Replace a project's entire stored failure list. Used to prune local copies
+// that the server already has, so they don't render twice after a reload.
+export function replaceStoredFailures(projectId, list) {
+  const map = readAll();
+  map[projectId] = list;
+  writeAll(map);
+}

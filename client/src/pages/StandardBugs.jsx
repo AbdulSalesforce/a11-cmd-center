@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import ISSUE_LIBRARY from '../data/issue-library.json';
 
 const SEVERITY_COLORS = {
-  P1: '#ba0517', P2: '#fe9339', P3: '#0176d3', P4: '#747474',
+  P0: '#8c0d13', P1: '#ba0517', P2: '#fe9339', P3: '#0176d3',
 };
 
 function SeverityPill({ severity }) {
@@ -18,7 +18,7 @@ function SeverityPill({ severity }) {
 }
 
 // A single expandable issue row: summary columns always visible, full detail
-// (failing scenario, recommendation, before/after code) shown when expanded.
+// (failing scenario + reference resources) shown when expanded.
 function IssueRow({ issue }) {
   const [open, setOpen] = useState(false);
   return (
@@ -42,27 +42,33 @@ function IssueRow({ issue }) {
             {issue.sc_code}
           </Link>
         </td>
-        <td>{issue.category}</td>
-        <td>{issue.level}</td>
+        <td>{issue.criterion_name}</td>
         <td><SeverityPill severity={issue.severity} /></td>
         <td>{issue.impact_level}</td>
-        <td>{issue.include_in_acr}</td>
         <td>
-          <button type="button" className="slds-button slds-button_link" onClick={() => setOpen(o => !o)}>
+          <button type="button" className="slds-button slds-button_link" onClick={() => setOpen(o => !o)} style={{ textAlign: 'left' }}>
             {issue.failing_scenario.length > 90 ? issue.failing_scenario.slice(0, 90) + '…' : issue.failing_scenario}
           </button>
         </td>
       </tr>
       {open && (
         <tr>
-          <td colSpan={9} style={{ background: '#f8f9fb', padding: '1rem 1.5rem' }}>
+          <td colSpan={7} style={{ background: '#f8f9fb', padding: '1rem 1.5rem' }}>
             <div style={{ display: 'grid', gap: '1.25rem' }}>
+              <Detail label="WCAG success criterion">{issue.wcag_criteria}</Detail>
               <Detail label="Failing scenario">{issue.failing_scenario}</Detail>
-              <Detail label="Recommendation">{issue.recommendation}</Detail>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <CodeBlock label="Code — Before (failing)" code={issue.code_before} tone="bad" />
-                <CodeBlock label="Code — After (fixed)" code={issue.code_after} tone="good" />
-              </div>
+              {issue.reference_resources?.length > 0 && (
+                <div>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#54698d', marginBottom: '0.25rem' }}>
+                    Reference resources
+                  </div>
+                  <ul style={{ margin: 0, paddingLeft: '1.25rem', fontSize: '0.875rem', lineHeight: 1.6 }}>
+                    {issue.reference_resources.map((ref, i) => (
+                      <li key={i}>{ref}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </td>
         </tr>
@@ -82,41 +88,19 @@ function Detail({ label, children }) {
   );
 }
 
-function CodeBlock({ label, code, tone }) {
-  return (
-    <div>
-      <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: tone === 'good' ? '#04844b' : '#ba0517', marginBottom: '0.25rem' }}>
-        {label}
-      </div>
-      <pre style={{
-        margin: 0,
-        background: '#0b1b2b',
-        color: '#e6edf3',
-        borderRadius: '0.25rem',
-        padding: '0.75rem',
-        overflowX: 'auto',
-        fontSize: '0.8125rem',
-        lineHeight: 1.45,
-      }}>
-        <code>{code}</code>
-      </pre>
-    </div>
-  );
-}
+const PRIORITIES = ['all', 'P0', 'P1', 'P2', 'P3'];
 
 export default function StandardBugs() {
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('all');
-
-  const categories = ['all', ...new Set(ISSUE_LIBRARY.map(i => i.category))];
+  const [priority, setPriority] = useState('all');
 
   const query = search.trim().toLowerCase();
   const issues = ISSUE_LIBRARY.filter(i => {
-    if (category !== 'all' && i.category !== category) return false;
+    if (priority !== 'all' && i.severity !== priority) return false;
     if (!query) return true;
     return [
-      i.id, i.sc_code, i.wcag_criteria, i.category, i.level, i.severity,
-      i.impact_level, i.include_in_acr, i.failing_scenario, i.recommendation,
+      i.id, i.sc_code, i.wcag_criteria, i.criterion_name, i.severity,
+      i.impact_level, i.failing_scenario, ...(i.reference_resources || []),
     ].some(field => (field || '').toLowerCase().includes(query));
   });
 
@@ -156,20 +140,20 @@ export default function StandardBugs() {
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by SC code, category, severity, scenario…"
+              placeholder="Search by SC code, criterion, priority, scenario…"
               style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '0.25rem', border: '1px solid #ffffff', fontSize: '0.875rem' }}
             />
           </div>
           <div>
-            <label htmlFor="issue-category" className="slds-assistive-text">Filter by category</label>
+            <label htmlFor="issue-priority" className="slds-assistive-text">Filter by priority</label>
             <select
-              id="issue-category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              id="issue-priority"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
               style={{ padding: '0.5rem 0.75rem', borderRadius: '0.25rem', border: '1px solid #ffffff', fontSize: '0.875rem' }}
             >
-              {categories.map(c => (
-                <option key={c} value={c}>{c === 'all' ? 'All categories' : c}</option>
+              {PRIORITIES.map(p => (
+                <option key={p} value={p}>{p === 'all' ? 'All priorities' : p}</option>
               ))}
             </select>
           </div>
@@ -189,11 +173,9 @@ export default function StandardBugs() {
               <th scope="col" style={{ width: '2.5rem' }}><span className="slds-assistive-text">Expand</span></th>
               <th scope="col"><div className="slds-truncate" title="ID">ID</div></th>
               <th scope="col"><div className="slds-truncate" title="SC Code">SC Code</div></th>
-              <th scope="col"><div className="slds-truncate" title="Category">Category</div></th>
-              <th scope="col"><div className="slds-truncate" title="Level">Level</div></th>
-              <th scope="col"><div className="slds-truncate" title="Severity">Severity</div></th>
+              <th scope="col"><div className="slds-truncate" title="Criterion">Criterion</div></th>
+              <th scope="col"><div className="slds-truncate" title="Priority">Priority</div></th>
               <th scope="col"><div className="slds-truncate" title="Impact Level">Impact Level</div></th>
-              <th scope="col"><div className="slds-truncate" title="In ACR?">In ACR?</div></th>
               <th scope="col"><div className="slds-truncate" title="Failing Scenario">Failing Scenario</div></th>
             </tr>
           </thead>

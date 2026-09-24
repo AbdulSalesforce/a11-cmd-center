@@ -12,6 +12,15 @@ function CheckIcon() {
   );
 }
 
+function PencilIcon() {
+  return (
+    <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M11.5 1.5a1.414 1.414 0 0 1 2 2L5 12l-3 1 1-3 8.5-8.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+      <path d="M10 3l3 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
 function TrashIcon() {
   return (
     <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -246,6 +255,14 @@ export default function ProjectList() {
                           <svg className="slds-button__icon slds-button__icon_right" aria-hidden="true">
                             <use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#forward"></use>
                           </svg>
+                        </Link>
+                        <Link
+                          to={`/projects/${project.id}/edit`}
+                          className="slds-button slds-button_icon slds-button_icon-border"
+                          aria-label={`Edit ${project.product_name}`}
+                          title="Edit project"
+                        >
+                          <PencilIcon />
                         </Link>
                         <button
                           className="slds-button slds-button_icon slds-button_icon-border"

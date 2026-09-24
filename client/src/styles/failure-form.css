@@ -102,6 +102,11 @@
   box-shadow: inset var(--focus-ring);
 }
 
+.severity-btn[aria-pressed="true"].severity-p0 {
+  background-color: var(--color-p0-bg);
+  color: var(--color-p0-text);
+}
+
 .severity-btn[aria-pressed="true"].severity-p1 {
   background-color: var(--color-p1-bg);
   color: var(--color-p1-text);

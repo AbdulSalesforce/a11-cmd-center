@@ -34,6 +34,7 @@ export default function App() {
         <Route path="projects" element={<ProjectList />} />
         <Route path="projects/archived" element={<ArchivedProjects />} />
         <Route path="projects/new" element={<NewProject />} />
+        <Route path="projects/:id/edit" element={<NewProject />} />
         <Route path="projects/:id" element={<ProjectDetail />} />
         <Route path="projects/:id/failures/new" element={<NewFailure />} />
         <Route path="projects/:id/failures/:failureId" element={<FailureDetail />} />

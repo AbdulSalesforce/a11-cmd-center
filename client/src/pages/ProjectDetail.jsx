@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { getDummyProject } from '../data/dummyProjects';
 import { getStoredProject } from '../data/projectStore';
-import { getStoredFailures, addStoredFailure } from '../data/failureStore';
+import { getStoredFailures, addStoredFailure, updateStoredFailure, removeStoredFailure, replaceStoredFailures } from '../data/failureStore';
 import LogFailurePanel from '../components/LogFailurePanel';
 import '../styles/project.css';
 
@@ -31,8 +31,67 @@ export default function ProjectDetail() {
   const [filterPage, setFilterPage] = useState('all');
   const [filterSeverity, setFilterSeverity] = useState('all');
 
-  // Log-failure side panel
+  // Log-failure side panel. editingFailure holds the row being edited, or null
+  // when logging a new failure.
   const [panelOpen, setPanelOpen] = useState(false);
+  const [editingFailure, setEditingFailure] = useState(null);
+
+  // Failure deletion — inline confirm on the row being removed.
+  const [confirmingDeleteId, setConfirmingDeleteId] = useState(null);
+  const [deletingFailure, setDeletingFailure] = useState(false);
+
+  // Row selection for the Overview "Logged failures" table.
+  const [selectedFailureIds, setSelectedFailureIds] = useState([]);
+
+  const toggleFailureSelected = (failureId) => {
+    setSelectedFailureIds(prev =>
+      prev.includes(failureId)
+        ? prev.filter(fid => fid !== failureId)
+        : [...prev, failureId]
+    );
+  };
+
+  const allFailuresSelected = failures.length > 0 && selectedFailureIds.length === failures.length;
+
+  const toggleAllFailuresSelected = () => {
+    setSelectedFailureIds(allFailuresSelected ? [] : failures.map(f => f.id));
+  };
+
+  // Push selected failures to Salesforce GUS. Feedback is shown inline above
+  // the table via gusStatus.
+  const [pushingGus, setPushingGus] = useState(false);
+  const [gusStatus, setGusStatus] = useState(null);
+
+  const pushSelectedToGus = async () => {
+    if (selectedFailureIds.length === 0) return;
+    setPushingGus(true);
+    setGusStatus(null);
+    try {
+      const res = await fetch(`/api/projects/${id}/failures/push-to-gus`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ failure_ids: selectedFailureIds }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to push failures to GUS.');
+      }
+      const count = data.pushed ?? selectedFailureIds.length;
+      const ids = (data.bugs || []).map(b => b.gusId).filter(Boolean);
+      const warned = (data.warnings || []).length
+        ? ` (${data.warnings.length} warning${data.warnings.length === 1 ? '' : 's'})`
+        : '';
+      setGusStatus({
+        type: 'success',
+        message: `Created ${count} GUS bug${count === 1 ? '' : 's'}${ids.length ? `: ${ids.join(', ')}` : ''}.${warned}`,
+      });
+      setSelectedFailureIds([]);
+    } catch (err) {
+      setGusStatus({ type: 'error', message: err.message });
+    } finally {
+      setPushingGus(false);
+    }
+  };
 
 
   useEffect(() => {
@@ -47,7 +106,17 @@ export default function ProjectDetail() {
       .then(([proj, fails]) => {
         if (proj && proj.id) {
           setProject(proj);
-          setFailures([...(Array.isArray(fails) ? fails : []), ...stored]);
+          const serverFailures = Array.isArray(fails) ? fails : [];
+          // Prune any locally-stored failure the server already has. Older
+          // builds wrote each saved failure to BOTH the API and localStorage,
+          // so those rows rendered twice. Match on subject + criterion + page
+          // and keep only true local-only rows (logged while the API was down);
+          // persist the pruned list so the duplicates don't come back.
+          const keyOf = f => `${f.subject}|${f.wcag_criterion}|${f.page_name || ''}`;
+          const serverKeys = new Set(serverFailures.map(keyOf));
+          const localOnly = stored.filter(f => !serverKeys.has(keyOf(f)));
+          if (localOnly.length !== stored.length) replaceStoredFailures(id, localOnly);
+          setFailures([...serverFailures, ...localOnly]);
         } else {
           loadFallback();
         }
@@ -69,22 +138,117 @@ export default function ProjectDetail() {
     }
   }, [id]);
 
-  // Save a failure from the panel: try the API, always persist locally so the
-  // table reflects it even when the backend isn't running.
-  async function handleLogFailure(failure) {
-    try {
-      await fetch(`/api/projects/${id}/failures`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(failure),
-      });
-    } catch {
-      // ignore — falls through to local persistence
-    }
-    const saved = addStoredFailure(id, failure, failures.length);
-    setFailures(prev => [...prev, saved]);
+  // Open the panel to log a new failure.
+  function openCreatePanel() {
+    setEditingFailure(null);
+    setPanelOpen(true);
+  }
+
+  // Open the panel to edit an existing failure row.
+  function openEditPanel(failure) {
+    setEditingFailure(failure);
+    setPanelOpen(true);
+  }
+
+  function closePanel() {
     setPanelOpen(false);
+    setEditingFailure(null);
+  }
+
+  // Save a failure from the panel. The DB is the source of truth: when the API
+  // call succeeds we do NOT also write to localStorage (writing to both is what
+  // produced duplicate rows). localStorage is only a fallback for when the
+  // backend isn't running. Updates the row in place when editing, otherwise
+  // appends a new one.
+  async function handleSaveFailure(failure) {
+    if (editingFailure) {
+      const failureId = editingFailure.id;
+      // Local-only rows have a `local-` id and never exist server-side.
+      const isLocalOnly = String(failureId).startsWith('local-');
+      let serverOk = false;
+      if (!isLocalOnly) {
+        try {
+          const res = await fetch(`/api/projects/${id}/failures/${failureId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(failure),
+          });
+          serverOk = res.ok;
+        } catch {
+          serverOk = false;
+        }
+      }
+      // Only touch localStorage for local-only rows or when the API save failed
+      // — never mirror a server-backed row into localStorage.
+      if (isLocalOnly || !serverOk) {
+        updateStoredFailure(id, failureId, failure);
+      }
+      setFailures(prev => prev.map(f =>
+        f.id === failureId ? { ...f, ...failure, id: f.id, sf_issue_id: f.sf_issue_id } : f));
+    } else {
+      let serverFailure = null;
+      try {
+        const res = await fetch(`/api/projects/${id}/failures`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(failure),
+        });
+        if (res.ok) serverFailure = await res.json().catch(() => null);
+      } catch {
+        serverFailure = null;
+      }
+      if (serverFailure?.id) {
+        // Persisted server-side: adopt the server's id and sf_issue_id, keeping
+        // the panel's display-only fields (product_tag_name, screenshot_link).
+        setFailures(prev => [...prev, { ...failure, ...serverFailure }]);
+      } else {
+        // API unavailable: fall back to localStorage so the row still shows.
+        const saved = addStoredFailure(id, failure, failures.length);
+        setFailures(prev => [...prev, saved]);
+      }
+    }
+    closePanel();
     setActiveTab('failures');
+  }
+
+  // Persist the panel's audit-theme edits to the project. Updates local project
+  // state so the Details tab and failure table reflect the change immediately;
+  // tolerates the API being down (demo/offline mode).
+  async function handleSaveThemes({ audit_theme_ids, audit_theme_names }) {
+    try {
+      const res = await fetch(`/api/projects/${id}/themes`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ audit_theme_ids, audit_theme_names }),
+      });
+      if (res.ok) {
+        const updated = await res.json().catch(() => null);
+        if (updated) { setProject(updated); return; }
+      }
+    } catch {
+      // ignore — fall through to optimistic local update
+    }
+    setProject(prev => prev && {
+      ...prev,
+      audit_theme_id: audit_theme_ids[0] || null,
+      audit_theme_ids,
+      audit_theme_names,
+    });
+  }
+
+  // Delete a failure: try the API, always remove locally and from the table so
+  // it disappears even when the backend isn't running.
+  async function handleDeleteFailure(failureId) {
+    setDeletingFailure(true);
+    try {
+      await fetch(`/api/projects/${id}/failures/${failureId}`, { method: 'DELETE' });
+    } catch {
+      // ignore — still remove locally
+    }
+    removeStoredFailure(id, failureId);
+    setFailures(prev => prev.filter(f => f.id !== failureId));
+    setConfirmingDeleteId(null);
+    setDeletingFailure(false);
   }
 
 
@@ -159,6 +323,12 @@ export default function ProjectDetail() {
 
   const uniquePages = [...new Set(failures.map(f => f.page_name).filter(Boolean))];
 
+  // Human-readable audit theme name(s), comma-separated. Falls back to the
+  // stored id only for legacy projects saved before names were persisted.
+  const themeNames = project.audit_theme_names?.length
+    ? project.audit_theme_names.join(', ')
+    : (project.audit_theme_id || '');
+
 
   // Tab label with counts
   function tabLabel(tab) {
@@ -221,7 +391,7 @@ export default function ProjectDetail() {
               )}
             </div>
           </div>
-          <button type="button" className="slds-button slds-button_brand" onClick={() => setPanelOpen(true)}>
+          <button type="button" className="slds-button slds-button_brand" onClick={openCreatePanel}>
             Log failure
           </button>
         </div>
@@ -330,10 +500,32 @@ export default function ProjectDetail() {
         <div className="overview-section">
           <div className="overview-section-header">
             <h3>Logged failures</h3>
-            <button type="button" className="btn btn-primary btn-sm" onClick={() => setPanelOpen(true)}>
-              + Log failure
-            </button>
+            <div className="overview-section-actions">
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={pushSelectedToGus}
+                disabled={selectedFailureIds.length === 0 || pushingGus}
+                aria-disabled={selectedFailureIds.length === 0 || pushingGus}
+              >
+                {pushingGus
+                  ? 'Pushing…'
+                  : `Push to GUS${selectedFailureIds.length ? ` (${selectedFailureIds.length})` : ''}`}
+              </button>
+              <button type="button" className="btn btn-primary btn-sm" onClick={openCreatePanel}>
+                + Log failure
+              </button>
+            </div>
           </div>
+          {gusStatus && (
+            <div
+              className={`alert alert-${gusStatus.type}`}
+              role="alert"
+              style={{ marginBottom: 'var(--space-3)' }}
+            >
+              {gusStatus.message}
+            </div>
+          )}
           {failures.length === 0 ? (
             <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
               No failures logged yet. Use “Log failure” to add one.
@@ -343,22 +535,38 @@ export default function ProjectDetail() {
               <table className="failure-table">
                 <thead>
                   <tr>
+                    <th scope="col" className="failure-select-col">
+                      <input
+                        type="checkbox"
+                        checked={allFailuresSelected}
+                        onChange={toggleAllFailuresSelected}
+                        aria-label="Select all failures"
+                      />
+                    </th>
                     <th scope="col">#</th>
                     <th scope="col">Subject</th>
                     <th scope="col">WCAG criterion</th>
-                    <th scope="col">Page</th>
-                    <th scope="col">Platform</th>
+                    <th scope="col">Theme name</th>
+                    <th scope="col">Product tag</th>
                     <th scope="col">Severity</th>
                   </tr>
                 </thead>
                 <tbody>
                   {failures.map(f => (
                     <tr key={f.id}>
+                      <td className="failure-select-col">
+                        <input
+                          type="checkbox"
+                          checked={selectedFailureIds.includes(f.id)}
+                          onChange={() => toggleFailureSelected(f.id)}
+                          aria-label={`Select failure ${f.subject}`}
+                        />
+                      </td>
                       <td>{f.sf_issue_id}</td>
                       <td><div className="failure-subject">{f.subject}</div></td>
                       <td className="failure-criterion">{f.wcag_criterion}</td>
-                      <td>{f.page_name || '—'}</td>
-                      <td>{f.platform_type}</td>
+                      <td>{themeNames || '—'}</td>
+                      <td>{f.product_tag_name || f.tag_name || '—'}</td>
                       <td><span className={`badge badge-${f.severity.toLowerCase()}`}>{f.severity}</span></td>
                     </tr>
                   ))}
@@ -461,7 +669,7 @@ export default function ProjectDetail() {
               </button>
             )}
           </div>
-          <button type="button" className="btn btn-primary btn-sm" onClick={() => setPanelOpen(true)}>
+          <button type="button" className="btn btn-primary btn-sm" onClick={openCreatePanel}>
             + Log failure
           </button>
         </div>
@@ -469,7 +677,7 @@ export default function ProjectDetail() {
         {failures.length === 0 ? (
           <div className="empty-state">
             <p>No failures logged yet.</p>
-            <button type="button" className="btn btn-primary" onClick={() => setPanelOpen(true)}>Log first failure</button>
+            <button type="button" className="btn btn-primary" onClick={openCreatePanel}>Log first failure</button>
           </div>
         ) : visibleFailures.length === 0 ? (
           <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)' }}>No failures match the current filters.</p>
@@ -481,8 +689,8 @@ export default function ProjectDetail() {
                   <th scope="col">#</th>
                   <th scope="col">Subject</th>
                   <th scope="col">WCAG criterion</th>
-                  <th scope="col">Page</th>
-                  <th scope="col">Platform</th>
+                  <th scope="col">Theme name</th>
+                  <th scope="col">Product tag</th>
                   <th scope="col">Severity</th>
                   <th scope="col"></th>
                 </tr>
@@ -493,16 +701,28 @@ export default function ProjectDetail() {
                     <td>{f.sf_issue_id}</td>
                     <td><div className="failure-subject">{f.subject}</div></td>
                     <td className="failure-criterion">{f.wcag_criterion}</td>
-                    <td>{f.page_name || '—'}</td>
-                    <td>{f.platform_type}</td>
+                    <td>{project.audit_theme_id || '—'}</td>
+                    <td>{f.product_tag_name || f.tag_name || '—'}</td>
                     <td><span className={`badge badge-${f.severity.toLowerCase()}`}>{f.severity}</span></td>
                     <td>
-                      <Link
-                        to={`/projects/${id}/failures/${f.id}`}
-                        className="btn btn-secondary btn-sm"
-                      >
-                        View
-                      </Link>
+                      <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                        <button
+                          type="button"
+                          className="btn btn-secondary btn-sm"
+                          onClick={() => openEditPanel(f)}
+                          aria-label={`View and edit failure ${f.sf_issue_id}`}
+                        >
+                          View
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm"
+                          onClick={() => setConfirmingDeleteId(f.id)}
+                          aria-label={`Delete failure ${f.sf_issue_id}`}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -525,7 +745,7 @@ export default function ProjectDetail() {
             ['Login path', project.login_path],
             ['Release build', project.release_build_name],
             ['Slack channel', project.slack_channel],
-            ['Audit theme ID', project.audit_theme_id],
+            ['Audit theme(s)', themeNames],
             ['Epic ID', project.epic_id],
           ].filter(([, val]) => val).map(([label, val]) => (
             <div key={label} style={{ display: 'contents' }}>
@@ -564,12 +784,56 @@ export default function ProjectDetail() {
 
       {panelOpen && (
         <LogFailurePanel
-          onClose={() => setPanelOpen(false)}
-          onSave={handleLogFailure}
+          onClose={closePanel}
+          onSave={handleSaveFailure}
+          onSaveThemes={handleSaveThemes}
           project={project}
-          existingFailures={failures}
+          initialFailure={editingFailure}
+          existingFailures={editingFailure
+            ? failures.filter(f => f.id !== editingFailure.id)
+            : failures}
         />
       )}
+
+      {confirmingDeleteId && (() => {
+        const target = failures.find(f => f.id === confirmingDeleteId);
+        const cancel = () => { if (!deletingFailure) setConfirmingDeleteId(null); };
+        return (
+          <div className="confirm-overlay" onMouseDown={cancel}>
+            <div
+              className="confirm-modal"
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="confirm-delete-title"
+              onMouseDown={e => e.stopPropagation()}
+            >
+              <h2 id="confirm-delete-title" className="confirm-modal-title">Delete this bug?</h2>
+              <p className="confirm-modal-body">
+                This will permanently delete the bug:
+                <strong className="confirm-modal-subject">{target?.subject || 'this failure'}</strong>
+              </p>
+              <div className="confirm-modal-actions">
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleDeleteFailure(confirmingDeleteId)}
+                  disabled={deletingFailure}
+                >
+                  {deletingFailure ? 'Deleting…' : 'Delete'}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={cancel}
+                  disabled={deletingFailure}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

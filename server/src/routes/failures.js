@@ -1,8 +1,16 @@
 const express = require('express');
 const { randomUUID } = require('crypto');
 const db = require('../db');
+const { pushFailuresToGus } = require('../lib/gus-push');
 
 const router = express.Router({ mergeParams: true });
+
+// Parse a JSON-array TEXT column back into an array, tolerating null/legacy.
+function parseJsonArray(value) {
+  if (Array.isArray(value)) return value;
+  if (!value) return [];
+  try { const p = JSON.parse(value); return Array.isArray(p) ? p : []; } catch { return []; }
+}
 
 router.get('/', async (req, res) => {
   try {
@@ -37,7 +45,8 @@ router.post('/', async (req, res) => {
     auditor_id, agency_ref_id, subject, details, steps, impact,
     recommendations, html_code, auditor_comments, page_name, sub_page_name,
     wcag_criterion, platform_type, mobile_os, severity, known_work_id,
-    product_tag_id, screenshots = [], additional_pages = []
+    product_tag_id, found_in_build_id, found_in_build_name,
+    screenshots = [], additional_pages = []
   } = req.body;
 
   // Required field validation
@@ -119,14 +128,15 @@ router.post('/', async (req, res) => {
         id, project_id, auditor_id, sf_issue_id, agency_ref_id, subject,
         details, steps, impact, recommendations, html_code, auditor_comments,
         page_name, sub_page_name, wcag_criterion, platform_type, mobile_os,
-        severity, known_work_id, product_tag_id
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        severity, known_work_id, product_tag_id, found_in_build_id, found_in_build_name
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
       id, projectId, auditor_id || null, sf_issue_id, agency_ref_id || null,
       subject, details || null, steps || null, impact || null,
       recommendations || null, html_code || null, auditor_comments || null,
       page_name || null, sub_page_name || null, wcag_criterion, platform_type,
-      mobile_os || null, severity, known_work_id || null, product_tag_id || null
+      mobile_os || null, severity, known_work_id || null, product_tag_id || null,
+      found_in_build_id || null, found_in_build_name || null
     );
 
     // Validate and insert screenshots
@@ -214,7 +224,7 @@ router.put('/:failureId', async (req, res) => {
     auditor_id, agency_ref_id, subject, details, steps, impact,
     recommendations, html_code, auditor_comments, page_name, sub_page_name,
     wcag_criterion, platform_type, mobile_os, severity, known_work_id,
-    product_tag_id
+    product_tag_id, found_in_build_id, found_in_build_name
   } = req.body;
 
   // Required field validation
@@ -276,14 +286,17 @@ router.put('/:failureId', async (req, res) => {
         mobile_os = ?,
         severity = ?,
         known_work_id = ?,
-        product_tag_id = ?
+        product_tag_id = ?,
+        found_in_build_id = ?,
+        found_in_build_name = ?
       WHERE id = ? AND project_id = ?
     `).run(
       auditor_id || null, agency_ref_id || null, subject, details || null,
       steps || null, impact || null, recommendations || null, html_code || null,
       auditor_comments || null, page_name || null, sub_page_name || null,
       wcag_criterion, platform_type, mobile_os || null, severity,
-      known_work_id || null, product_tag_id || null, failureId, projectId
+      known_work_id || null, product_tag_id || null,
+      found_in_build_id || null, found_in_build_name || null, failureId, projectId
     );
 
     const updated = await db.prepare('SELECT * FROM failures WHERE id = ?').get(failureId);
@@ -306,6 +319,44 @@ router.delete('/:failureId', async (req, res) => {
   } catch (err) {
     console.error('Error deleting failure:', err);
     return res.status(500).json({ error: 'Failed to delete failure' });
+  }
+});
+
+// Create one GUS ADM_Work__c bug per selected failure. Atomic: if the org is
+// unreachable or any failure can't be fully resolved, nothing is created.
+router.post('/push-to-gus', async (req, res) => {
+  const { projectId } = req.params;
+  const { failure_ids } = req.body;
+
+  if (!Array.isArray(failure_ids) || failure_ids.length === 0) {
+    return res.status(400).json({ error: 'failure_ids must be a non-empty array' });
+  }
+
+  try {
+    const project = await db.prepare('SELECT * FROM projects WHERE id = ?').get(projectId);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    project.audit_theme_ids = parseJsonArray(project.audit_theme_ids);
+
+    // Load the selected failures, joined to their product tag's real GUS id.
+    const placeholders = failure_ids.map(() => '?').join(', ');
+    const failures = await db.prepare(`
+      SELECT f.*, pt.tag_name, pt.tag_id
+      FROM failures f
+      LEFT JOIN product_tags pt ON f.product_tag_id = pt.id
+      WHERE f.project_id = ? AND f.id IN (${placeholders})
+    `).all(projectId, ...failure_ids);
+
+    if (failures.length === 0) {
+      return res.status(404).json({ error: 'No matching failures found for this project.' });
+    }
+
+    const result = await pushFailuresToGus({ failures, project });
+    res.json(result);
+  } catch (err) {
+    console.error('Error pushing failures to GUS:', err);
+    if (err.unreachable) return res.status(502).json({ error: err.message });
+    if (err.problems) return res.status(422).json({ error: err.message, problems: err.problems });
+    return res.status(500).json({ error: err.message || 'Failed to push failures to GUS.' });
   }
 });
 

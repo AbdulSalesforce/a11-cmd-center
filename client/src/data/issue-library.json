@@ -1,142 +1,1161 @@
 [
   {
-    "id": "1",
+    "id": "SF_A11y_001",
+    "sc_code": "2.3.1",
+    "wcag_criteria": "2.3.1 Three Flashes or Below Threshold",
+    "criterion_name": "Three Flashes or Below Threshold",
+    "severity": "P0",
+    "impact_level": "Accessibility: Task blocking (Safety Risk)",
+    "failing_scenario": "Flashing occurs on the page (or in a video) with a frequency greater than 3 flashes per second.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.3.1 Three Flashes or Below Threshold"
+    ]
+  },
+  {
+    "id": "SF_A11y_002",
     "sc_code": "1.1.1",
-    "wcag_criteria": "1.1.1 Non-Text Content",
-    "category": "Images",
-    "level": "A",
+    "wcag_criteria": "1.1.1 Non-text Content",
+    "criterion_name": "Non-text Content",
     "severity": "P1",
-    "impact_level": "Accessibility: task blocking",
-    "include_in_acr": "Yes",
-    "failing_scenario": "An <img> informative image element is missing the alt attribute entirely.",
-    "recommendation": "Add a descriptive alt attribute to all informative <img> elements. The alt text must convey the meaning or purpose of the image — not describe its visual appearance.\n\nGuideline: Be concise, specific, and avoid starting with 'Image of' or 'Picture of'.",
-    "code_before": "<img src=\"sales-chart.png\">",
-    "code_after": "<img src=\"sales-chart.png\" alt=\"Bar chart showing Q1–Q4 2024 sales growth from $2M to $3.5M\">"
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Alt text descriptions are not provided for informative images. Note: This also applies to images that are uploaded, such as in a chat feature. There must be an option to include alt text.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.1.1 Non-text Content"
+    ]
   },
   {
-    "id": "2",
+    "id": "SF_A11y_003",
     "sc_code": "1.1.1",
-    "wcag_criteria": "1.1.1 Non-Text Content",
-    "category": "Images",
-    "level": "A",
+    "wcag_criteria": "1.1.1 Non-text Content",
+    "criterion_name": "Non-text Content",
     "severity": "P1",
-    "impact_level": "Accessibility: task blocking",
-    "include_in_acr": "Yes",
-    "failing_scenario": "An <img> informative image has alt=\"\" (empty alt text), hiding meaningful content from screen reader users.",
-    "recommendation": "Replace the empty alt attribute with meaningful alternative text that conveys the purpose and information of the image. Empty alt (alt=\"\") signals a decorative image — using it on an informative image causes the content to be skipped entirely by screen readers.",
-    "code_before": "<img src=\"warning-icon.png\" alt=\"\">",
-    "code_after": "<img src=\"warning-icon.png\" alt=\"Warning: Your session will expire in 5 minutes\">"
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Interactive elements like navigation items and buttons use images without providing text alternatives (e.g., image-only buttons or links).",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.1.1 Non-text Content"
+    ]
   },
   {
-    "id": "3",
-    "sc_code": "1.1.1",
-    "wcag_criteria": "1.1.1 Non-Text Content",
-    "category": "Images",
-    "level": "A",
-    "severity": "P3",
-    "impact_level": "Accessibility: limited impact",
-    "include_in_acr": "Yes",
-    "failing_scenario": "An <img> decorative image element is missing alt=\"\" (empty alt), causing it to be announced by screen readers.",
-    "recommendation": "Add alt=\"\" (empty alt text) to all decorative <img> elements so assistive technologies skip them. Do not use alt=\" \" (a space) as some screen readers will still announce it.\n\nA decorative image is one that adds no information — e.g., visual dividers, background textures, or purely stylistic icons.",
-    "code_before": "<img src=\"decorative-divider.png\">",
-    "code_after": "<img src=\"decorative-divider.png\" alt=\"\">"
-  },
-  {
-    "id": "4",
-    "sc_code": "1.1.1",
-    "wcag_criteria": "1.1.1 Non-Text Content",
-    "category": "Images",
-    "level": "A",
-    "severity": "P3",
-    "impact_level": "Accessibility: limited impact",
-    "include_in_acr": "No",
-    "failing_scenario": "A decorative <svg> icon is missing aria-hidden=\"true\", causing it to be read aloud by screen readers.",
-    "recommendation": "Add aria-hidden=\"true\" and focusable=\"false\" to all decorative <svg> elements. Also remove any <title> or <desc> elements from decorative SVGs, as these may still be announced. For functional SVGs (e.g., icon buttons), provide aria-label on the parent control instead.",
-    "code_before": "<button class=\"close-btn\">\n  <svg class=\"icon\"><use href=\"#icon-close\"></use></svg>\n</button>",
-    "code_after": "<button class=\"close-btn\" aria-label=\"Close dialog\">\n  <svg class=\"icon\" aria-hidden=\"true\" focusable=\"false\">\n    <use href=\"#icon-close\"></use>\n  </svg>\n</button>"
-  },
-  {
-    "id": "5",
-    "sc_code": "1.1.1",
-    "wcag_criteria": "1.1.1 Non-Text Content",
-    "category": "Images",
-    "level": "A",
+    "id": "SF_A11y_004",
+    "sc_code": "1.2.1",
+    "wcag_criteria": "1.2.1 Audio-only and Video-only (Prerecorded)",
+    "criterion_name": "Audio-only and Video-only (Prerecorded)",
     "severity": "P1",
-    "impact_level": "Accessibility: task blocking",
-    "include_in_acr": "Yes",
-    "failing_scenario": "An image-only button or link is missing an accessible name — no alt, aria-label, or aria-labelledby is provided.",
-    "recommendation": "Provide an accessible name for every interactive image element using one of these methods:\n  1. Add a meaningful alt attribute to the <img> inside the button/link.\n  2. Add aria-label directly on the <button> or <a> element.\n  3. Use aria-labelledby referencing visible text.\n\nThe accessible name must describe the action or destination — not the visual appearance.",
-    "code_before": "<!-- Image-only button -->\n<button><img src=\"search-icon.png\"></button>\n\n<!-- Image-only link -->\n<a href=\"/home\"><img src=\"logo.png\"></a>",
-    "code_after": "<!-- Option 1: alt on the image -->\n<button><img src=\"search-icon.png\" alt=\"Search\"></button>\n<a href=\"/home\"><img src=\"logo.png\" alt=\"Go to Home page\"></a>\n\n<!-- Option 2: aria-label on the control, empty alt on image -->\n<button aria-label=\"Search\"><img src=\"search-icon.png\" alt=\"\"></button>"
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Prerecorded audio-only files do not come with a descriptive text transcript.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.2.1 Audio or Video-only (Prerecorded)"
+    ]
   },
   {
-    "id": "6",
-    "sc_code": "1.1.1",
-    "wcag_criteria": "1.1.1 Non-Text Content",
-    "category": "Images",
-    "level": "A",
+    "id": "SF_A11y_005",
+    "sc_code": "1.2.1",
+    "wcag_criteria": "1.2.1 Audio-only and Video-only (Prerecorded)",
+    "criterion_name": "Audio-only and Video-only (Prerecorded)",
     "severity": "P1",
-    "impact_level": "Accessibility: task blocking",
-    "include_in_acr": "Yes",
-    "failing_scenario": "A complex image (chart, graph, or infographic) has only a brief alt text and is missing a long text description.",
-    "recommendation": "For complex images, provide a short alt text AND a detailed long description that conveys the same information as the image. Use one of these approaches:\n  1. aria-describedby referencing a visible or hidden description element.\n  2. A visible <figcaption> within a <figure> element.\n  3. A link to a separate page with the full data.\n\nThe long description must convey all data, trends, and key insights from the image.",
-    "code_before": "<img src=\"quarterly-report.png\" alt=\"Quarterly Sales Chart\">",
-    "code_after": "<figure>\n  <img src=\"quarterly-report.png\"\n       alt=\"Quarterly Sales Chart 2024\"\n       aria-describedby=\"chart-longdesc\">\n  <figcaption id=\"chart-longdesc\">\n    Sales grew from $2M in Q1 to $3.5M in Q4. A dip occurred in Q2 ($1.8M)\n    due to supply chain disruptions. Q3 recovered to $2.9M.\n  </figcaption>\n</figure>"
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Prerecorded video-only files (no dialogue) do not come with a text or audio description of what happens on the visual track.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.2.1 Audio or Video-only (Prerecorded)"
+    ]
   },
   {
-    "id": "7",
+    "id": "SF_A11y_006",
+    "sc_code": "1.2.2",
+    "wcag_criteria": "1.2.2 Captions (Prerecorded)",
+    "criterion_name": "Captions (Prerecorded)",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Prerecorded multimedia files (video with audio files) lack or contain inadequate text-based synchronized captions.",
+    "reference_resources": [
+      "W3C: Captions/Subtitles",
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.2.2 - Captions (Prerecorded)"
+    ]
+  },
+  {
+    "id": "SF_A11y_007",
+    "sc_code": "1.2.4",
+    "wcag_criteria": "1.2.4 Captions (Live)",
+    "criterion_name": "Captions (Live)",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Live captions are present but are so inaccurate (for example, AI hallucinations or gibberish) that the meaning of the presentation is lost.",
+    "reference_resources": [
+      "Salesforce Accessibility: Accessible Events",
+      "Trailhead: Inclusive and Accessible Events",
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.2.4 Captions (Live)"
+    ]
+  },
+  {
+    "id": "SF_A11y_008",
+    "sc_code": "1.2.4",
+    "wcag_criteria": "1.2.4 Captions (Live)",
+    "criterion_name": "Captions (Live)",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Live video (video with audio files) lacks text-based synchronized captions.",
+    "reference_resources": [
+      "Salesforce Accessibility: Accessible Events",
+      "Trailhead: Inclusive and Accessible Events",
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.2.4 Captions (Live)"
+    ]
+  },
+  {
+    "id": "SF_A11y_009",
+    "sc_code": "1.2.5",
+    "wcag_criteria": "1.2.5 Audio Description (Prerecorded)",
+    "criterion_name": "Audio Description (Prerecorded)",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Prerecorded multimedia files (video with dialogue) containing essential information that is only conveyed visually lack an audio description track.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.2.5 Audio Description (Prerecorded)"
+    ]
+  },
+  {
+    "id": "SF_A11y_010",
+    "sc_code": "1.3.1",
+    "wcag_criteria": "1.3.1 Info and Relationships",
+    "criterion_name": "Info and Relationships",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Visual information essential for task completion (e.g., message sender identity, workflow step, record state) is conveyed only visually with no programmatic or text equivalent.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.3.1 Info and Relationships"
+    ]
+  },
+  {
+    "id": "SF_A11y_011",
+    "sc_code": "1.4.1",
+    "wcag_criteria": "1.4.1 Use of Color",
+    "criterion_name": "Use of Color",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Color is the sole means of communicating information about the state or purpose of the UI, and there is no alternative way of accessing information portrayed by color alone.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.4.11 Non-text Contrast",
+      "WebAIM Link Contrast Checker"
+    ]
+  },
+  {
+    "id": "SF_A11y_012",
+    "sc_code": "1.4.2",
+    "wcag_criteria": "1.4.2 Audio Control",
+    "criterion_name": "Audio Control",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "There is no mechanism to stop, pause, mute, or adjust volume for audio that automatically plays for more than 3 seconds.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.4.2 Audio Control"
+    ]
+  },
+  {
+    "id": "SF_A11y_013",
+    "sc_code": "1.4.3",
+    "wcag_criteria": "1.4.3 Contrast (Minimum)",
+    "criterion_name": "Contrast (Minimum)",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "There is not sufficient color contrast between foreground and background text colors (this includes the hover and focus state of text, images of text, placeholder text, and text in front of gradients).",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.4.3 Color Contrast",
+      "SLDS: Text and Color Contrast"
+    ]
+  },
+  {
+    "id": "SF_A11y_014",
+    "sc_code": "1.4.11",
+    "wcag_criteria": "1.4.11 Non-text Contrast",
+    "criterion_name": "Non-text Contrast",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "There is not sufficient color contrast for the visual presentation of form elements, borders, focus indicators or visual images.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.4.11 Non-text Contrast"
+    ]
+  },
+  {
+    "id": "SF_A11y_015",
+    "sc_code": "2.1.1",
+    "wcag_criteria": "2.1.1 Keyboard",
+    "criterion_name": "Keyboard",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "There are interactive elements on the page that can be reached via mouse, but not via keyboard.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology 2.1.1 Keyboard Navigation",
+      "ARIA Authoring Practices Guide",
+      "WebAIM: Keyboard Accessibility"
+    ]
+  },
+  {
+    "id": "SF_A11y_016",
+    "sc_code": "2.1.2",
+    "wcag_criteria": "2.1.2 No Keyboard Trap",
+    "criterion_name": "No Keyboard Trap",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Keyboard focus is locked or trapped inside any page element.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.1.2 No Keyboard Trap"
+    ]
+  },
+  {
+    "id": "SF_A11y_017",
+    "sc_code": "2.1.4",
+    "wcag_criteria": "2.1.4 Character Key Shortcuts",
+    "criterion_name": "Character Key Shortcuts",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Single-character key shortcuts exist for destructive functionality (such as deleting) that cannot be remapped or disabled, or do not function only when an element has keyboard focus.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.1.4 Character Key Shortcuts"
+    ]
+  },
+  {
+    "id": "SF_A11y_018",
+    "sc_code": "2.2.1",
+    "wcag_criteria": "2.2.1 Timing Adjustable",
+    "criterion_name": "Timing Adjustable",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "The user is timed out of the system without being warned or given the opportunity to extend the time limit.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.2.1 Timing Adjustable"
+    ]
+  },
+  {
+    "id": "SF_A11y_019",
+    "sc_code": "2.2.1",
+    "wcag_criteria": "2.2.1 Timing Adjustable",
+    "criterion_name": "Timing Adjustable",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Toasts with required information not found elsewhere, or actionable items, close before the user is able to read or take action.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.2.1 Timing Adjustable"
+    ]
+  },
+  {
+    "id": "SF_A11y_020",
+    "sc_code": "2.2.2",
+    "wcag_criteria": "2.2.2 Pause, Stop, Hide",
+    "criterion_name": "Pause, Stop, Hide",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "There is no stop, pause, or hide function for animations lasting longer than 5 seconds.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.2.2 Pause, Stop, Hide"
+    ]
+  },
+  {
+    "id": "SF_A11y_021",
+    "sc_code": "2.4.3",
+    "wcag_criteria": "2.4.3 Focus Order",
+    "criterion_name": "Focus Order",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Focus order is structured in a way which completely prevents task completion.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology 2.4.3a Focus Order",
+      "SLDS Global Focus Guidelines"
+    ]
+  },
+  {
+    "id": "SF_A11y_022",
+    "sc_code": "2.4.7",
+    "wcag_criteria": "2.4.7 Focus Visible",
+    "criterion_name": "Focus Visible",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Keyboard interactive elements are missing a visual focus indicator.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.4.7 Focus Visible"
+    ]
+  },
+  {
+    "id": "SF_A11y_023",
+    "sc_code": "2.5.1",
+    "wcag_criteria": "2.5.1 Pointer Gestures",
+    "criterion_name": "Pointer Gestures",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Functionality (such as advancing a carousel, dismissing an overlay, or revealing an action) is only accessible via a multipoint or path-based gesture with no single-pointer alternative. The task cannot be completed without the gesture.",
+    "reference_resources": [
+      "Deque University (requires login): SC 2.5.1 Pointer Gestures"
+    ]
+  },
+  {
+    "id": "SF_A11y_024",
+    "sc_code": "2.5.2",
+    "wcag_criteria": "2.5.2 Pointer Cancellation (A)",
+    "criterion_name": "Pointer Cancellation (A)",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task Blocking",
+    "failing_scenario": "An irreversible action is executed on the down event.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.5.2 Pointer Cancellation (A)"
+    ]
+  },
+  {
+    "id": "SF_A11y_025",
+    "sc_code": "2.5.4",
+    "wcag_criteria": "2.5.4 Motion Actuation",
+    "criterion_name": "Motion Actuation",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Functionality exists that relies on device or user motion, but no way is provided to disable it from accidental activation.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.5.4 Motion Actuation"
+    ]
+  },
+  {
+    "id": "SF_A11y_026",
+    "sc_code": "2.5.4",
+    "wcag_criteria": "2.5.4 Motion Actuation",
+    "criterion_name": "Motion Actuation",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Functionality exists that relies on device or user motion, but there is no alternative accessible way to use that functionality (such as a UI button).",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.5.4 Motion Actuation"
+    ]
+  },
+  {
+    "id": "SF_A11y_027",
+    "sc_code": "2.5.7",
+    "wcag_criteria": "2.5.7 Dragging Movements",
+    "criterion_name": "Dragging Movements",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Dragging motions are the only way to reposition items using a single pointer.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing, Detailed Methodology SC 2.5.7 Dragging Movements",
+      "How to test 2.5.7 Dragging Movements"
+    ]
+  },
+  {
+    "id": "SF_A11y_028",
+    "sc_code": "3.3.1",
+    "wcag_criteria": "3.3.1 Error Identification",
+    "criterion_name": "Error Identification",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "Form fields in error are not identified in text.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 3.3.1 Error Identification"
+    ]
+  },
+  {
+    "id": "SF_A11y_029",
+    "sc_code": "3.3.2",
+    "wcag_criteria": "3.3.2 Labels or Instructions",
+    "criterion_name": "Labels or Instructions",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "A form field has a visible label but the visible label is not announced by AT on focus.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 3.3.2 Labels or Instructions"
+    ]
+  },
+  {
+    "id": "SF_A11y_030",
+    "sc_code": "3.3.2",
+    "wcag_criteria": "3.3.2 Labels or Instructions",
+    "criterion_name": "Labels or Instructions",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task Blocking",
+    "failing_scenario": "Not all form fields have a persistent visible label.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 3.3.2 Labels or Instructions"
+    ]
+  },
+  {
+    "id": "SF_A11y_031",
+    "sc_code": "3.3.4",
+    "wcag_criteria": "3.3.4 Error Prevention (Legal, Financial, Data)",
+    "criterion_name": "Error Prevention (Legal, Financial, Data)",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task blocking",
+    "failing_scenario": "A high-stakes action (legal, financial, data modification/deletion, or test submission) occurs without the required error prevention: reversibility, system check, or user confirmation.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 3.3.4 Error Prevention (Legal, Financial, Data)"
+    ]
+  },
+  {
+    "id": "SF_A11y_032",
+    "sc_code": "4.1.2",
+    "wcag_criteria": "4.1.2 Name, Role, Value",
+    "criterion_name": "Name, Role, Value",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task Blocking",
+    "failing_scenario": "Interactive elements (e.g., navigation items, buttons) use images without text alternatives (buttons, links that are image only).",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 4.1.2 Name, Role, Value",
+      "ARIA Authoring Practices Guide (APG)",
+      "Accessible Rich Internet Applications (WAI-ARIA) spec"
+    ]
+  },
+  {
+    "id": "SF_A11y_033",
+    "sc_code": "4.1.2",
+    "wcag_criteria": "4.1.2 Name, Role, Value",
+    "criterion_name": "Name, Role, Value",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task Blocking",
+    "failing_scenario": "Interactive elements do not communicate their name, role, and/or current state to assistive technology.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 4.1.2 Name, Role, Value",
+      "ARIA Authoring Practices Guide (APG)",
+      "Accessible Rich Internet Applications (WAI-ARIA) spec"
+    ]
+  },
+  {
+    "id": "SF_A11y_034",
+    "sc_code": "4.1.3",
+    "wcag_criteria": "4.1.3 Status Messages",
+    "criterion_name": "Status Messages",
+    "severity": "P1",
+    "impact_level": "Accessibility: Task Blocking",
+    "failing_scenario": "Status messages displayed on screen are not announced by a screen reader.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing, Detailed Methodology SC 4.1.3 Status Messages"
+    ]
+  },
+  {
+    "id": "SF_A11y_035",
     "sc_code": "1.1.1",
-    "wcag_criteria": "1.1.1 Non-Text Content",
-    "category": "Images",
-    "level": "A",
+    "wcag_criteria": "1.1.1 Non-text Content",
+    "criterion_name": "Non-text Content",
     "severity": "P2",
-    "impact_level": "Accessibility: difficult to finish",
-    "include_in_acr": "Yes",
-    "failing_scenario": "An <img> element has non-descriptive alt text (e.g., 'image', 'photo', filename, or a URL) that does not convey the image's content.",
-    "recommendation": "Replace vague or non-descriptive alt text with meaningful alternative text.\n\nRules for good alt text:\n  - Convey the information or function of the image\n  - Do not start with 'Image of', 'Picture of', or 'Graphic of'\n  - Do not use the filename or URL as alt text\n  - Keep it concise (typically under 150 characters)\n  - Match the context in which the image appears",
-    "code_before": "<img src=\"img_003.jpg\" alt=\"image\">\n<img src=\"profile.jpg\" alt=\"photo.jpg\">\n<img src=\"banner.png\" alt=\"https://cdn.example.com/banner.png\">",
-    "code_after": "<img src=\"img_003.jpg\" alt=\"Customer service rep smiling at a help desk\">\n<img src=\"profile.jpg\" alt=\"Jane Smith, Customer Success Manager\">\n<img src=\"banner.png\" alt=\"Summer Sale — 30% off all products until June 30\">"
+    "impact_level": "Accessibility: Difficult to use",
+    "failing_scenario": "Complex images (such as charts) exist and are exposed to screen readers, but only to let the user know they exist. Long-form description is missing.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.1.1 Non-text Content"
+    ]
   },
   {
-    "id": "8",
-    "sc_code": "1.1.1",
-    "wcag_criteria": "1.1.1 Non-Text Content",
-    "category": "Images",
-    "level": "A",
-    "severity": "P1",
-    "impact_level": "Accessibility: task blocking",
-    "include_in_acr": "Yes",
-    "failing_scenario": "User-uploaded images (e.g., in a chat or post feature) do not provide an option to add alternative text at the point of upload.",
-    "recommendation": "Provide an alt text input field at the point of image upload. Include:\n  1. A text field for the user to enter alt text.\n  2. A checkbox to mark the image as decorative (skips alt text requirement).\n  3. Store and render the user-provided alt text in the img element when displayed.\n\nPrompt the user with clear guidance on what good alt text looks like.",
-    "code_before": "<!-- No alt text option provided -->\n<input type=\"file\" accept=\"image/*\" id=\"upload\">",
-    "code_after": "<label for=\"img-upload\">Upload Image</label>\n<input type=\"file\" id=\"img-upload\" accept=\"image/*\">\n\n<label for=\"img-alt\">Alternative text</label>\n<input type=\"text\" id=\"img-alt\"\n       placeholder=\"Describe the image for screen reader users\">\n\n<label>\n  <input type=\"checkbox\" id=\"img-decorative\">\n  This image is decorative (no alt text needed)\n</label>"
-  },
-  {
-    "id": "9",
-    "sc_code": "1.1.1",
-    "wcag_criteria": "1.1.1 Non-Text Content",
-    "category": "Images",
-    "level": "A",
-    "severity": "P3",
-    "impact_level": "Accessibility: limited impact",
-    "include_in_acr": "No",
-    "failing_scenario": "An <img> decorative image contains alt text that is duplicative of adjacent visible text, causing redundant screen reader announcements.",
-    "recommendation": "When an image is purely decorative and adjacent text already conveys the same information, set alt=\"\" (empty) on the image so screen readers do not repeat the content.\n\nExample scenario: A checkmark icon next to the word 'Confirmed' — the icon adds no additional information and should have alt=\"\".",
-    "code_before": "<!-- Screen reader announces: \"Next Next\" -->\n<img src=\"arrow-right.png\" alt=\"Next\"> Next\n\n<!-- Screen reader announces: \"Confirmed Confirmed\" -->\n<img src=\"checkmark.png\" alt=\"Confirmed\"> Confirmed",
-    "code_after": "<!-- Screen reader announces: \"Next\" -->\n<img src=\"arrow-right.png\" alt=\"\"> Next\n\n<!-- Screen reader announces: \"Confirmed\" -->\n<img src=\"checkmark.png\" alt=\"\"> Confirmed"
-  },
-  {
-    "id": "10",
-    "sc_code": "1.1.1",
-    "wcag_criteria": "1.1.1 Non-Text Content",
-    "category": "Images",
-    "level": "A",
+    "id": "SF_A11y_036",
+    "sc_code": "1.2.4",
+    "wcag_criteria": "1.2.4 Captions (Live)",
+    "criterion_name": "Captions (Live)",
     "severity": "P2",
-    "impact_level": "Accessibility: difficult to finish",
-    "include_in_acr": "Yes",
-    "failing_scenario": "A CSS background-image conveys meaningful information without a visible text alternative or programmatic text description.",
-    "recommendation": "CSS background images cannot carry alt text. If the image is meaningful, use one of:\n  1. Replace with an inline <img> element and add a descriptive alt attribute.\n  2. Add a visually-hidden <span> inside the element with the same information.\n  3. Use aria-label on the container element.\n\nIf the background image is purely decorative, no action is needed.",
-    "code_before": "/* CSS */\n.error-badge { background-image: url(\"error-icon.png\"); }\n\n<!-- HTML (no text alternative for the error state) -->\n<span class=\"error-badge\"></span>",
-    "code_after": "/* Option 1: Inline image with alt text */\n<span class=\"error-badge\">\n  <img src=\"error-icon.png\" alt=\"Error\">\n</span>\n\n/* Option 2: Visually-hidden text */\n<span class=\"error-badge\">\n  <span class=\"visually-hidden\">Error: </span>\n</span>\n\n/* CSS for visually-hidden helper */\n.visually-hidden {\n  position: absolute; width: 1px; height: 1px;\n  padding: 0; margin: -1px; overflow: hidden;\n  clip: rect(0,0,0,0); white-space: nowrap; border: 0;\n}"
+    "impact_level": "Accessibility: Difficult to use",
+    "failing_scenario": "Captions are present but lag by more than 15 seconds, causing the text to describe something that is no longer on screen.",
+    "reference_resources": [
+      "Salesforce Accessibility: Accessible Events",
+      "Trailhead: Inclusive and Accessible Events",
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.2.4 Captions (Live)"
+    ]
+  },
+  {
+    "id": "SF_A11y_037",
+    "sc_code": "1.3.1",
+    "wcag_criteria": "1.3.1 Info and Relationships",
+    "criterion_name": "Info and Relationships",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to use",
+    "failing_scenario": "Content is arranged in a visual list but no semantic list roles define that list programmatically, preventing AT users from understanding list structure or item count.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.3.1 Info and Relationships"
+    ]
+  },
+  {
+    "id": "SF_A11y_038",
+    "sc_code": "1.3.1",
+    "wcag_criteria": "1.3.1 Info and Relationships",
+    "criterion_name": "Info and Relationships",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to use",
+    "failing_scenario": "Group labels are not programmatically associated with the group.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.3.1 Info and Relationships"
+    ]
+  },
+  {
+    "id": "SF_A11y_039",
+    "sc_code": "1.3.1",
+    "wcag_criteria": "1.3.1 Info and Relationships",
+    "criterion_name": "Info and Relationships",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to use",
+    "failing_scenario": "Intermediate wrapper elements between a list and its items are not removed from the accessibility tree, causing inaccurate item count announcements.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.3.1 Info and Relationships"
+    ]
+  },
+  {
+    "id": "SF_A11y_040",
+    "sc_code": "1.3.1",
+    "wcag_criteria": "1.3.1 Info and Relationships",
+    "criterion_name": "Info and Relationships",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to use",
+    "failing_scenario": "Text that visually introduces a page section is not marked up as a semantic heading, preventing screen reader users from navigating to that section by heading.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.3.1 Info and Relationships"
+    ]
+  },
+  {
+    "id": "SF_A11y_041",
+    "sc_code": "1.3.2",
+    "wcag_criteria": "1.3.2 Meaningful Sequence",
+    "criterion_name": "Meaningful Sequence",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "The programmatic order and the visual order do not match in a way that breaks meaning of the content for screen reader or other assistive technology users.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.3.2 Meaningful Sequence"
+    ]
+  },
+  {
+    "id": "SF_A11y_042",
+    "sc_code": "1.3.3",
+    "wcag_criteria": "1.3.3 Sensory Characteristics",
+    "criterion_name": "Sensory Characteristics",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "Information and instructions provided only rely on ability to see (e.g., reference visual characteristics such as shape, color, size, visual location, or orientation).",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.3.3 Sensory Characteristics"
+    ]
+  },
+  {
+    "id": "SF_A11y_043",
+    "sc_code": "1.3.5",
+    "wcag_criteria": "1.3.5 Identify Input Purpose",
+    "criterion_name": "Identify Input Purpose",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "Autocomplete attribute is incorrect or missing on a field collecting personal information about the user that falls under the WCAG input purposes list.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.3.5 Identify Input Purpose"
+    ]
+  },
+  {
+    "id": "SF_A11y_044",
+    "sc_code": "1.4.4",
+    "wcag_criteria": "1.4.4 Resize Text",
+    "criterion_name": "Resize Text",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "All Resize Text issues are currently classified under the same impact level.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology 1.4.4.a Resize (200%)",
+      "WCAG SC 1.4.4 Resize Text & 1.4.10 Reflow"
+    ]
+  },
+  {
+    "id": "SF_A11y_045",
+    "sc_code": "1.4.5",
+    "wcag_criteria": "1.4.5 Images of Text",
+    "criterion_name": "Images of Text",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "Images of text are used instead of real text.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.4.5 Images of Text"
+    ]
+  },
+  {
+    "id": "SF_A11y_046",
+    "sc_code": "1.4.10",
+    "wcag_criteria": "1.4.10 Reflow",
+    "criterion_name": "Reflow",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "Other Reflow issues are currently classified under the same impact level.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.4.10 Reflow",
+      "WCAG SC 1.4.4 Resize Text & 1.4.10 Reflow",
+      "Effective Reflow/Responsiveness Design for more Accessible Websites",
+      "What Does Responsive Web Design Have to do with Accessibility?",
+      "Content reflows even when zoomed or enlarged (Western Washington University)"
+    ]
+  },
+  {
+    "id": "SF_A11y_047",
+    "sc_code": "1.4.12",
+    "wcag_criteria": "1.4.12 Text Spacing",
+    "criterion_name": "Text Spacing",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "Information is cut off after changes to, or setting of, style properties such as line-height and spacing.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.4.12 Text Spacing"
+    ]
+  },
+  {
+    "id": "SF_A11y_048",
+    "sc_code": "1.4.13",
+    "wcag_criteria": "1.4.13 Content on Hover or Focus",
+    "criterion_name": "Content on Hover or Focus",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to finish",
+    "failing_scenario": "Triggered content appears on focus but cannot be dismissed without moving focus, and it obscures other interactive content, preventing keyboard users from operating controls beneath it.",
+    "reference_resources": [
+      "Deque University (requires login): SC 1.4.13 Content on Hover or Focus"
+    ]
+  },
+  {
+    "id": "SF_A11y_049",
+    "sc_code": "1.4.13",
+    "wcag_criteria": "1.4.13 Content on Hover or Focus",
+    "criterion_name": "Content on Hover or Focus",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to finish",
+    "failing_scenario": "Triggered content auto-dismisses after a short timeout.",
+    "reference_resources": [
+      "Deque University (requires login): SC 1.4.13 Content on Hover or Focus"
+    ]
+  },
+  {
+    "id": "SF_A11y_050",
+    "sc_code": "1.4.13",
+    "wcag_criteria": "1.4.13 Content on Hover or Focus",
+    "criterion_name": "Content on Hover or Focus",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to finish",
+    "failing_scenario": "When additional content is triggered on pointer hover or on keyboard focus, the mouse pointer cannot be moved over the tooltip or dialog content without the additional content disappearing.",
+    "reference_resources": [
+      "Deque University (requires login): SC 1.4.13 Content on Hover or Focus"
+    ]
+  },
+  {
+    "id": "SF_A11y_051",
+    "sc_code": "2.4.2",
+    "wcag_criteria": "2.4.2 Page Titled",
+    "criterion_name": "Page Titled",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "The page is missing a <title>.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.4.2 Page Titled"
+    ]
+  },
+  {
+    "id": "SF_A11y_052",
+    "sc_code": "2.4.3",
+    "wcag_criteria": "2.4.3 Focus Order",
+    "criterion_name": "Focus Order",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "Focus order follows an illogical order which may be confusing, but does not prevent task completion.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology 2.4.3a Focus Order",
+      "SLDS Global Focus Guidelines"
+    ]
+  },
+  {
+    "id": "SF_A11y_053",
+    "sc_code": "2.4.3",
+    "wcag_criteria": "2.4.3 Focus Order",
+    "criterion_name": "Focus Order",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "When a component that has focus on the page is removed (such as when deleting a pill, or a row in a table), focus is moved to the beginning of the page or somewhere unexpected, rather than returned to a logical spot in the workflow.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology 2.4.3a Focus Order",
+      "SLDS Global Focus Guidelines"
+    ]
+  },
+  {
+    "id": "SF_A11y_054",
+    "sc_code": "2.4.3",
+    "wcag_criteria": "2.4.3 Focus Order",
+    "criterion_name": "Focus Order",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "When focus is moved to aid in task completion, such as opening a modal, it should be returned to where it started, or the next logical step, once the modal closes.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology 2.4.3a Focus Order",
+      "SLDS Global Focus Guidelines"
+    ]
+  },
+  {
+    "id": "SF_A11y_055",
+    "sc_code": "2.4.4",
+    "wcag_criteria": "2.4.4 Link Purpose (In Context)",
+    "criterion_name": "Link Purpose (In Context)",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to finish",
+    "failing_scenario": "The purpose or destination of a link cannot be determined solely from the link text itself or from the programmatic context immediately surrounding the link (e.g., same sentence, paragraph, list item, table cell, or table header for the cell).",
+    "reference_resources": [
+      "Deque University (requires login): SC 2.4.4 Link Purpose (In Context)"
+    ]
+  },
+  {
+    "id": "SF_A11y_056",
+    "sc_code": "2.4.6",
+    "wcag_criteria": "2.4.6 Headings and Labels",
+    "criterion_name": "Headings and Labels",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "The text used in headings or labels does not accurately or adequately describe the topic or purpose of the content they introduce.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.4.6 Headings and Labels"
+    ]
+  },
+  {
+    "id": "SF_A11y_057",
+    "sc_code": "2.4.11",
+    "wcag_criteria": "2.4.11 Focus Not Obscured (Minimum)",
+    "criterion_name": "Focus Not Obscured (Minimum)",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "Interactive controls are completely obscured by other page content that is not easily dismissible without moving focus. (Modals are an exception.)",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing, Detailed Methodology SC 2.4.11 Focus Not Obscured (Minimum)"
+    ]
+  },
+  {
+    "id": "SF_A11y_058",
+    "sc_code": "2.5.1",
+    "wcag_criteria": "2.5.1 Pointer Gestures",
+    "criterion_name": "Pointer Gestures",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to finish",
+    "failing_scenario": "A single-pointer alternative exists but is not visible in the same view, requires additional navigation to locate, or is significantly harder to discover than the gesture.",
+    "reference_resources": [
+      "Deque University (requires login): SC 2.5.1 Pointer Gestures"
+    ]
+  },
+  {
+    "id": "SF_A11y_059",
+    "sc_code": "2.5.2",
+    "wcag_criteria": "2.5.2 Pointer Cancellation (A)",
+    "criterion_name": "Pointer Cancellation (A)",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "A reversible action is executed on the down event.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.5.2 Pointer Cancellation (A)"
+    ]
+  },
+  {
+    "id": "SF_A11y_060",
+    "sc_code": "2.5.3",
+    "wcag_criteria": "2.5.3 Label in Name",
+    "criterion_name": "Label in Name",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "Control's visual label is not in its accessible name.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.5.3 Label in Name"
+    ]
+  },
+  {
+    "id": "SF_A11y_061",
+    "sc_code": "2.5.8",
+    "wcag_criteria": "2.5.8 Target Size (Minimum)",
+    "criterion_name": "Target Size (Minimum)",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "The control does not meet the minimum 24 by 24 CSS pixel size, and/or does not have spacing around it that meets the 24 by 24 pixel minimum.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing, Detailed Methodology SC 2.5.8 Target Size (Minimum)",
+      "How to test 2.5.8 Target Size (Minimum)"
+    ]
+  },
+  {
+    "id": "SF_A11y_062",
+    "sc_code": "3.1.1",
+    "wcag_criteria": "3.1.1 Language of Page",
+    "criterion_name": "Language of Page",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "The page does not have a lang attribute on the <html> tag that matches the primary language of the page’s content.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 3.1.1 Language of Page"
+    ]
+  },
+  {
+    "id": "SF_A11y_063",
+    "sc_code": "3.1.2",
+    "wcag_criteria": "3.1.2 Language of Parts",
+    "criterion_name": "Language of Parts",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "When there's a change in language (e.g., a section of the page in another language than the rest of the page), that change is not communicated programmatically.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 3.1.2 Language of Parts"
+    ]
+  },
+  {
+    "id": "SF_A11y_064",
+    "sc_code": "3.2.1",
+    "wcag_criteria": "3.2.1 On Focus",
+    "criterion_name": "On Focus",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "The user encounters an unexpected change of context when a UI element receives focus.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 3.2.1 On Focus"
+    ]
+  },
+  {
+    "id": "SF_A11y_065",
+    "sc_code": "3.2.2",
+    "wcag_criteria": "3.2.2 On Input",
+    "criterion_name": "On Input",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "The user encounters an unexpected change of context when a UI element receives input.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 3.2.2 On Input"
+    ]
+  },
+  {
+    "id": "SF_A11y_066",
+    "sc_code": "3.2.3",
+    "wcag_criteria": "3.2.3 Consistent Navigation",
+    "criterion_name": "Consistent Navigation",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to finish",
+    "failing_scenario": "A repeated navigation mechanism is present on some pages but absent on others, or is present but in a different relative order, making it unreliable for users who depend on it",
+    "reference_resources": [
+      "SLDS: Modal component",
+      "SLDS: Button component"
+    ]
+  },
+  {
+    "id": "SF_A11y_067",
+    "sc_code": "3.3.2",
+    "wcag_criteria": "3.3.2 Labels or Instructions",
+    "criterion_name": "Labels or Instructions",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to use",
+    "failing_scenario": "Labels or instructions do not specify data formats for data entry fields.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 3.3.2 Labels or Instructions"
+    ]
+  },
+  {
+    "id": "SF_A11y_068",
+    "sc_code": "3.3.2",
+    "wcag_criteria": "3.3.2 Labels or Instructions",
+    "criterion_name": "Labels or Instructions",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to use",
+    "failing_scenario": "Placeholder text is the only label for an input field; the accessible name is lost once the user begins typing.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 3.3.2 Labels or Instructions"
+    ]
+  },
+  {
+    "id": "SF_A11y_069",
+    "sc_code": "3.3.2",
+    "wcag_criteria": "3.3.2 Labels or Instructions",
+    "criterion_name": "Labels or Instructions",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to use",
+    "failing_scenario": "Required form fields are not marked as required.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 3.3.2 Labels or Instructions"
+    ]
+  },
+  {
+    "id": "SF_A11y_070",
+    "sc_code": "3.3.3",
+    "wcag_criteria": "3.3.3 Error Suggestion",
+    "criterion_name": "Error Suggestion",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "When an error is detected and the user is notified, a suggestion is not provided to help them resolve it. Generic error messages are not descriptive enough to guide users in resolving the issue. Users are left to fix the issue through \"trial and error guessing\".",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 3.3.3 Error Suggestion"
+    ]
+  },
+  {
+    "id": "SF_A11y_071",
+    "sc_code": "3.3.7",
+    "wcag_criteria": "3.3.7 Redundant Entry",
+    "criterion_name": "Redundant Entry",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to use",
+    "failing_scenario": "A multi-step process requires users to re-enter information they have already provided in an earlier step, with no auto-population or selectable option provided.",
+    "reference_resources": [
+      "Deque University (requires login): SC 3.3.7 Redundant Entry"
+    ]
+  },
+  {
+    "id": "SF_A11y_072",
+    "sc_code": "3.3.8",
+    "wcag_criteria": "3.3.8 Accessible Authentication (Minimum)",
+    "criterion_name": "Accessible Authentication (Minimum)",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Use",
+    "failing_scenario": "An authentication step blocks paste or autofill on a credential field, or requires completion of a cognitive function test (character CAPTCHA, puzzle, math problem) with no accessible alternative.",
+    "reference_resources": [
+      "Deque University (requires login): SC 3.3.8 Accessible Authentication (Minimum)"
+    ]
+  },
+  {
+    "id": "SF_A11y_073",
+    "sc_code": "4.1.2",
+    "wcag_criteria": "4.1.2 Name, Role, Value",
+    "criterion_name": "Name, Role, Value",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "A modal dialog does not have an accessible name.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 4.1.2 Name, Role, Value",
+      "ARIA Authoring Practices Guide (APG)",
+      "Accessible Rich Internet Applications (WAI-ARIA) spec"
+    ]
+  },
+  {
+    "id": "SF_A11y_074",
+    "sc_code": "4.1.2",
+    "wcag_criteria": "4.1.2 Name, Role, Value",
+    "criterion_name": "Name, Role, Value",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "An interactive iframe does not contain a title, or the title does not have meaningful information.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 4.1.2 Name, Role, Value",
+      "ARIA Authoring Practices Guide (APG)",
+      "Accessible Rich Internet Applications (WAI-ARIA) spec"
+    ]
+  },
+  {
+    "id": "SF_A11y_075",
+    "sc_code": "4.1.2",
+    "wcag_criteria": "4.1.2 Name, Role, Value",
+    "criterion_name": "Name, Role, Value",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to use",
+    "failing_scenario": "Interactive element states (e.g., selected, required, disabled, expanded) are communicated visually but not programmatically via ARIA state attributes.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 4.1.2 Name, Role, Value",
+      "ARIA Authoring Practices Guide (APG)",
+      "Accessible Rich Internet Applications (WAI-ARIA) spec"
+    ]
+  },
+  {
+    "id": "SF_A11y_076",
+    "sc_code": "4.1.2",
+    "wcag_criteria": "4.1.2 Name, Role, Value",
+    "criterion_name": "Name, Role, Value",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to Finish",
+    "failing_scenario": "Selected item not announced as selected by the screen reader.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 4.1.2 Name, Role, Value",
+      "ARIA Authoring Practices Guide (APG)",
+      "Accessible Rich Internet Applications (WAI-ARIA) spec"
+    ]
+  },
+  {
+    "id": "SF_A11y_077",
+    "sc_code": "4.1.3",
+    "wcag_criteria": "4.1.3 Status Messages",
+    "criterion_name": "Status Messages",
+    "severity": "P2",
+    "impact_level": "Accessibility: Difficult to use",
+    "failing_scenario": "Status messages displayed on screen are announced but screen reader users are not given enough context for the result or status change that is provided visually. (For example, the number “3” is announced, but there is no context that it is the number of items in a shopping cart.)",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing, Detailed Methodology SC 4.1.3 Status Messages"
+    ]
+  },
+  {
+    "id": "SF_A11y_078",
+    "sc_code": "1.1.1",
+    "wcag_criteria": "1.1.1 Non-text Content",
+    "criterion_name": "Non-text Content",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited Impact",
+    "failing_scenario": "Decorative <img> or <svg> elements are missing the alt=\"\" attribute or aria-hidden=\"true\", which are needed to hide them from screen readers.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.1.1 Non-text Content"
+    ]
+  },
+  {
+    "id": "SF_A11y_079",
+    "sc_code": "1.1.1",
+    "wcag_criteria": "1.1.1 Non-text Content",
+    "criterion_name": "Non-text Content",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited Impact",
+    "failing_scenario": "Decorative images <img> or <svg> contain duplicative alternative text, leading to redundant announcements by screen readers.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.1.1 Non-text Content"
+    ]
+  },
+  {
+    "id": "SF_A11y_080",
+    "sc_code": "1.3.1",
+    "wcag_criteria": "1.3.1 Info and Relationships",
+    "criterion_name": "Info and Relationships",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited Impact",
+    "failing_scenario": "Heading levels are skipped in a way that breaks the logical content hierarchy and could confuse AT users navigating by heading level.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.3.1 Info and Relationships"
+    ]
+  },
+  {
+    "id": "SF_A11y_081",
+    "sc_code": "1.3.4",
+    "wcag_criteria": "1.3.4 Orientation",
+    "criterion_name": "Orientation",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited impact",
+    "failing_scenario": "Users are not able to operate the UI in their preferred orientation (Portrait or Landscape) unless a specific orientation is essential for the functionality.",
+    "reference_resources": [
+      "Deque University (requires login): SC 1.3.4 Orientation"
+    ]
+  },
+  {
+    "id": "SF_A11y_082",
+    "sc_code": "1.4.10",
+    "wcag_criteria": "1.4.10 Reflow",
+    "criterion_name": "Reflow",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited Impact",
+    "failing_scenario": "Focus is obscured behind another element when zoomed in at 400%.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.4.10 Reflow",
+      "WCAG SC 1.4.4 Resize Text & 1.4.10 Reflow",
+      "Effective Reflow/Responsiveness Design for more Accessible Websites",
+      "What Does Responsive Web Design Have to do with Accessibility?",
+      "Content reflows even when zoomed or enlarged (Western Washington University)"
+    ]
+  },
+  {
+    "id": "SF_A11y_083",
+    "sc_code": "1.4.12",
+    "wcag_criteria": "1.4.12 Text Spacing",
+    "criterion_name": "Text Spacing",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited Impact",
+    "failing_scenario": "User is unable to override text spacing.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 1.4.12 Text Spacing"
+    ]
+  },
+  {
+    "id": "SF_A11y_084",
+    "sc_code": "1.4.13",
+    "wcag_criteria": "1.4.13 Content on Hover or Focus",
+    "criterion_name": "Content on Hover or Focus",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited impact",
+    "failing_scenario": "Triggered content has no working keyboard dismissal mechanism while focus remains on the trigger. This includes cases where Escape is implemented but is intercepted by a competing handler on the same page, leaving the user with no effective way to dismiss the content.",
+    "reference_resources": [
+      "Deque University (requires login): SC 1.4.13 Content on Hover or Focus"
+    ]
+  },
+  {
+    "id": "SF_A11y_085",
+    "sc_code": "2.1.4",
+    "wcag_criteria": "2.1.4 Character Key Shortcuts",
+    "criterion_name": "Character Key Shortcuts",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited Impact",
+    "failing_scenario": "Single-character key shortcuts exist that cannot be remapped or disabled, or do not function only when an element has keyboard focus.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.1.4 Character Key Shortcuts"
+    ]
+  },
+  {
+    "id": "SF_A11y_086",
+    "sc_code": "2.4.1",
+    "wcag_criteria": "2.4.1 Bypass Blocks",
+    "criterion_name": "Bypass Blocks",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited Impact",
+    "failing_scenario": "Skip navigation is either missing or is present, but does not work.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.4.1 Bypass Blocks",
+      "WebAIM: Skip Navigation Links"
+    ]
+  },
+  {
+    "id": "SF_A11y_087",
+    "sc_code": "2.4.2",
+    "wcag_criteria": "2.4.2 Page Titled",
+    "criterion_name": "Page Titled",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited Impact",
+    "failing_scenario": "The page title exists, but is not descriptive or relevant to the page's topic (e.g., \"Salesforce\").",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.4.2 Page Titled"
+    ]
+  },
+  {
+    "id": "SF_A11y_088",
+    "sc_code": "2.4.5",
+    "wcag_criteria": "2.4.5 Multiple Ways",
+    "criterion_name": "Multiple Ways",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited Impact",
+    "failing_scenario": "Multiple methods of navigation are not provided for content.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 2.4.5 Multiple Ways"
+    ]
+  },
+  {
+    "id": "SF_A11y_089",
+    "sc_code": "3.2.3",
+    "wcag_criteria": "3.2.3 Consistent Navigation",
+    "criterion_name": "Consistent Navigation",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited impact",
+    "failing_scenario": "A repeated navigation mechanism has a minor inconsistency in labeling or visual presentation that does not affect its position or availability (e.g., a Help link labeled differently on one page than others)",
+    "reference_resources": [
+      "SLDS: Modal component",
+      "SLDS: Button component"
+    ]
+  },
+  {
+    "id": "SF_A11y_090",
+    "sc_code": "3.2.6",
+    "wcag_criteria": "3.2.6 Consistent Help",
+    "criterion_name": "Consistent Help",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited Impact",
+    "failing_scenario": "Help mechanisms are not located in a consistent place on all pages in a set.",
+    "reference_resources": [
+      "Deque University (requires login): SC 3.2.6 Consistent Help"
+    ]
+  },
+  {
+    "id": "SF_A11y_091",
+    "sc_code": "3.3.8",
+    "wcag_criteria": "3.3.8 Accessible Authentication (Minimum)",
+    "criterion_name": "Accessible Authentication (Minimum)",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited Impact",
+    "failing_scenario": "An MFA or one-time-code field is missing autocomplete=\"one-time-code\", preventing automated code-fill on mobile but not blocking authentication entirely.",
+    "reference_resources": [
+      "Deque University (requires login): SC 3.3.8 Accessible Authentication (Minimum)"
+    ]
+  },
+  {
+    "id": "SF_A11y_092",
+    "sc_code": "4.1.2",
+    "wcag_criteria": "4.1.2 Name, Role, Value",
+    "criterion_name": "Name, Role, Value",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited Impact",
+    "failing_scenario": "A table with role=\"grid\" lacks an accessible name.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing Methodology SC 4.1.2 Name, Role, Value",
+      "ARIA Authoring Practices Guide (APG)",
+      "Accessible Rich Internet Applications (WAI-ARIA) spec"
+    ]
+  },
+  {
+    "id": "SF_A11y_093",
+    "sc_code": "4.1.3",
+    "wcag_criteria": "4.1.3 Status Messages",
+    "criterion_name": "Status Messages",
+    "severity": "P3",
+    "impact_level": "Accessibility: Limited Impact",
+    "failing_scenario": "Loading indicator (spinner) not announced via screen reader.",
+    "reference_resources": [
+      "Deque University (requires login): WCAG 2.2 Conformance Testing, Detailed Methodology SC 4.1.3 Status Messages"
+    ]
   }
 ]

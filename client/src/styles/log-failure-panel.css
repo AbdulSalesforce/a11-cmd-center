@@ -11,7 +11,8 @@
 }
 
 .lfp-panel {
-  width: 480px;
+  width: 50vw;
+  min-width: 360px;
   max-width: 100vw;
   height: 100%;
   background: var(--color-surface, #fff);
@@ -46,6 +47,13 @@
   font-weight: var(--font-semibold);
 }
 
+/* Required-note sits just left of the close button in the header. */
+.lfp-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
 .lfp-close {
   border: none;
   background: none;
@@ -71,6 +79,81 @@
 
 .lfp-required-note {
   margin: 0;
+  white-space: nowrap;
+}
+
+/* Small, muted placeholder for the subject field. */
+.lfp-subject-input::placeholder {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+/* WCAG criterion, priority pills, and impact on one line. */
+.lfp-triple-row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+.lfp-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.lfp-col-wcag {
+  flex: 2;
+}
+
+.lfp-col-impact {
+  flex: 1;
+}
+
+.lfp-triple-row input {
+  width: 100%;
+  min-width: 0;
+}
+
+.lfp-severity-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+/* Product tag + Found in build on one line. */
+.lfp-pair-row {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.lfp-pair-row .field {
+  flex: 1;
+  min-width: 0;
+}
+
+.lfp-severity-hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.lfp-severity-pills {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* Selected priority: uniform dark-blue background with white text so every
+   priority reads clearly. Overrides the per-severity coloured pressed styles. */
+.lfp-severity-field .lfp-severity-pills .severity-btn[aria-pressed="true"] {
+  background-color: var(--color-brand-dark);
+  color: #fff;
+}
+
+.lfp-severity-field .lfp-severity-pills .severity-btn[aria-pressed="true"]:hover {
+  background-color: var(--color-brand-dark);
 }
 
 .lfp-actions {
@@ -80,4 +163,49 @@
   margin-top: auto;
   border-top: 1px solid var(--color-border);
   padding-top: var(--space-4);
+}
+
+/* Applied audit themes — chip list with per-chip remove, plus an add picker. */
+.lfp-theme-list {
+  list-style: none;
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.lfp-theme-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 2px 2px 2px var(--space-3);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: var(--text-sm);
+}
+
+.lfp-theme-chip-label {
+  line-height: 1.4;
+}
+
+.lfp-theme-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lfp-theme-chip-remove:hover {
+  background-color: var(--color-danger, #ba0517);
+  color: #fff;
 }
